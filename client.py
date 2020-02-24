@@ -23,17 +23,21 @@ log = logging.getLogger()
 log.setLevel(logging.DEBUG)
 
 
-def run_server(address,port):
+def run_server(address,port,inputtype):
 
     #initialize the data on full address range
     store = ModbusSlaveContext(di=ModbusSequentialDataBlock.create())
 
     context = ModbusServerContext(slaves=store, single=True)
 
-    #defaut empty strings for identity
+    # defaut empty strings for identity
     identity = ModbusDeviceIdentification()
 
-    #start server
+
+
+    # start server
     StartTcpServer(context, identity=identity, address=(address, port))
+
+
 
 
