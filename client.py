@@ -23,7 +23,7 @@ log = logging.getLogger()
 log.setLevel(logging.DEBUG)
 
 
-def run_server():
+def run_server(address,port):
 
     #initialize the data on full address range
     store = ModbusSlaveContext(di=ModbusSequentialDataBlock.create())
@@ -34,9 +34,6 @@ def run_server():
     identity = ModbusDeviceIdentification()
 
     #start server
-    StartTcpServer(context, identity=identity, address=("localhost", 5020))
+    StartTcpServer(context, identity=identity, address=(address, port))
 
-
-if __name__ == "__main__":
-    run_server()
 
