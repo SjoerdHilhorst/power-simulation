@@ -1,8 +1,7 @@
 from pymodbus.client.sync import ModbusTcpClient
 
 
-
-def run_master(add,port,in1,in2,in3,queue):
+def run_master(add, port, in1, in2, in3, queue):
     # get_registers
     queue.put("started")
     power_register_in_address = in1
@@ -21,9 +20,9 @@ def run_master(add,port,in1,in2,in3,queue):
     input = client.read_holding_registers(power_register_in_address)
     current = client.read_holding_registers(current_register_in_address)
     charge = client.read_holding_registers(state_charge_address)
-    i=0
-    c=0
-    cu=0
+    i = 0
+    c = 0
+    cu = 0
     i = input.registers[0]
     c = current.registers[0]
     cu = charge.registers[0]
@@ -36,4 +35,3 @@ def run_master(add,port,in1,in2,in3,queue):
     queue.put(str(c))
     queue.put(str(cu))
     client.close()
-
