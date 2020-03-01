@@ -18,6 +18,9 @@ store = ModbusSlaveContext(
     hr=ModbusSequentialDataBlock.create(),  # holding registers (16 bit, read-write)
     ir=ModbusSequentialDataBlock.create())  # input registers (16 bit, read-only)
 
+#fx=1->co; 2->di;3->hr;4->ir
+#store.setValues(4,0,[1]*100)
+
 # single = only one slave
 context = ModbusServerContext(slaves=store, single=True)
 StartTcpServer(context, address=("localhost", 5020))

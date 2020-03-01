@@ -1,32 +1,17 @@
 from tkinter import *
 from tkinter import messagebox
 import threading
-<<<<<<< HEAD
-from multiprocessing import Queue, Process
-=======
+
 from multiprocessing import Queue,Process
 
 inputType = "default"
 stopThread = False
->>>>>>> b8f2c4a6be6f060f4cb6d6a9ccab31aeb2bd722f
+
 
 clientRunning = False
 window = Tk()
 window.title("Client GUI")
-<<<<<<< HEAD
-window.geometry('350x350')
-lbl = Label(window, text="Hello")
-lbl.grid(column=0, row=0)
 
-serverLbl = Label(window, text="Server Address: ")
-serverLbl.grid(column=0, row=2)
-
-portLbl = Label(window, text="Port Address: ")
-portLbl.grid(column=0, row=3)
-
-powerLbl = Label(window, text="Power In Address: ")
-powerLbl.grid(column=0, row=5)
-=======
 window.geometry('500x350')
 lbl = Label(window,text="Hello")
 lbl.grid(column = 0, row = 0, columnspan = 7)
@@ -44,35 +29,14 @@ currentLbl = Label(window,text="Current In Address: ")
 currentLbl.grid(column = 4,row=2)
 chargeLbl = Label(window,text="Charge Address: ")
 chargeLbl.grid(column = 4, row = 3)
->>>>>>> b8f2c4a6be6f060f4cb6d6a9ccab31aeb2bd722f
+
 
 currentLbl = Label(window, text="Current In Address: ")
 currentLbl.grid(column=0, row=6)
 chargeLbl = Label(window, text="Charge Address: ")
 chargeLbl.grid(column=0, row=7)
 
-<<<<<<< HEAD
-serverTxt = Entry(window, width=10)
-serverTxt.grid(column=1, row=2)
 
-powerTxt = Entry(window, width=10)
-powerTxt.grid(column=1, row=5)
-
-currentTxt = Entry(window, width=10)
-currentTxt.grid(column=1, row=6)
-
-chargeTxt = Entry(window, width=10)
-chargeTxt.grid(column=1, row=7)
-
-portTxt = Entry(window, width=10)
-portTxt.grid(column=1, row=3)
-
-canvas = Canvas(window, width=20, height=20)
-canvas.grid(column=1, row=4)
-
-canvasMaster = Canvas(window, width=20, height=20)
-canvasMaster.grid(column=1, row=8)
-=======
 serverTxt = Entry(window,width=10)
 serverTxt.grid(column = 1, row = 1)
 
@@ -93,7 +57,7 @@ canvas.grid(column=1,row=3)
 
 canvasMaster = Canvas(window, width=20,height=20)
 canvasMaster.grid(column=5,row=4)
->>>>>>> b8f2c4a6be6f060f4cb6d6a9ccab31aeb2bd722f
+
 
 
 def create_circle(x, y, r, canvasName, fill):  # center coordinates, radius
@@ -103,36 +67,7 @@ def create_circle(x, y, r, canvasName, fill):  # center coordinates, radius
     y1 = y + r
     return canvasName.create_oval(x0, y0, x1, y1, fill=fill, outline=fill)
 
-<<<<<<< HEAD
 
-create_circle(10, 10, 5, canvas, "red")
-create_circle(10, 10, 5, canvasMaster, "red")
-
-
-def startclicked():
-    global clientRunning
-    clientRunning = True
-    print("Starting Client")
-    add = serverTxt.get()
-    port = portTxt.get()
-    if add == "":
-        add = "localhost"
-        serverTxt.insert(0, add)
-    if port == "":
-        port = 5021
-        portTxt.insert(0, port)
-    else:
-        port = int(port)
-    create_circle(10, 10, 5, canvas, "green")
-    th = threading.Thread(target=runserver, args=(add, port))
-    th.start()
-
-
-def runserver(add, port):
-    print(add, port)
-    from client import run_server
-    run_server(add, port)
-=======
 create_circle(10,10,5,canvas,"red")
 create_circle(10,10,5,canvasMaster,"red")
 def startclicked():
@@ -172,7 +107,6 @@ def runserver(add,port):
     th.start()
 
 
->>>>>>> b8f2c4a6be6f060f4cb6d6a9ccab31aeb2bd722f
 
 
 def startMaster():
@@ -215,12 +149,6 @@ def startMaster():
     th = threading.Thread(target=runmaster, args=(add, port, power, current, charge, queue))
     th.start()
 
-<<<<<<< HEAD
-
-Label(window, text="Power Result: ").grid(column=0, row=9)
-Label(window, text="Current Result: ").grid(column=0, row=10)
-Label(window, text="Charge Result: ").grid(column=0, row=11)
-=======
 Label(window,text="Power Result: ").grid(column = 4, row = 5)
 Label(window,text="Current Result: ").grid(column = 4, row = 6)
 Label(window,text="Charge Result: ").grid(column = 4, row = 7)
@@ -231,7 +159,7 @@ cuR = Label(window,text="")
 cuR.grid(column = 5, row = 6)
 chR = Label(window,text="")
 chR.grid(column = 5, row = 7)
->>>>>>> b8f2c4a6be6f060f4cb6d6a9ccab31aeb2bd722f
+
 
 pR = Label(window, text="")
 pR.grid(column=1, row=9)
@@ -260,13 +188,6 @@ def runmaster(add, port, power, current, charge, queue):
                 chR.config(text=r3)
 
 
-<<<<<<< HEAD
-startButton = Button(window, text="Start Client", command=startclicked)
-startButton.grid(column=0, row=4)
-
-startMasterB = Button(window, text="Start Master", command=startMaster)
-startMasterB.grid(column=0, row=8)
-=======
 simCanvas = Canvas(window, width=20,height=20)
 simCanvas.grid(column=1,row=7)
 create_circle(10,10,5,simCanvas,"red")
@@ -328,10 +249,5 @@ stopButton  = Button(window,text="Stop Client",command =stopClicked)
 stopButton.grid(column = 0, row = 4)
 
 
-
-
-
-
->>>>>>> b8f2c4a6be6f060f4cb6d6a9ccab31aeb2bd722f
 
 window.mainloop()

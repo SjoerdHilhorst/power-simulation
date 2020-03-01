@@ -16,8 +16,8 @@ client.connect()
 # Write: first parameter is the address and second is the value to write
 
 log.debug("Reading Coils")
-rr = client.read_coils(1, 1)
-assert (rr.bits[0] == False)  # test the expected value
+rr = client.read_coils(0, 8)
+
 
 log.debug("Write to a Coil and read back")
 rq = client.write_coil(0, True)
@@ -34,9 +34,11 @@ resp = [True] * 21
 
 log.debug("Read discrete inputs")
 rr = client.read_discrete_inputs(0, 8)
+
 assert (rq.function_code < 0x80)  # test that we are not an error
 
 log.debug("Write to a holding register and read back")
+
 rq = client.write_register(1, 10)
 rr = client.read_holding_registers(1, 1)
 a = client.read_holding_registers(2, 1)
