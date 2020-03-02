@@ -32,10 +32,10 @@ reactive_power_converter = 0  # float   dep
 time = datetime.now()
 system_status = 0             # int    const
 system_mode = 0               # int    const
-accept_values = False         # bool   const
-converter_started = False     # bool   in
-input_connected = False       # bool   in
-system_on_backup_battery = False  # bool   in
+accept_values = 0             # bool   const
+converter_started = 0         # bool   in
+input_connected = 0           # bool   in
+system_on_backup_battery = 0  # bool   in
 
 # Enumerations
 
