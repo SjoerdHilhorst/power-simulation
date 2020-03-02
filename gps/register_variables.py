@@ -3,7 +3,7 @@ from datetime import datetime
 # Battery Data:
 
 
-battery_id = "GREENER_001"    # str     config
+battery_id = 0                # str     config
 soc = 0                       # float   dep
 active_power_in = 0           # float   in
 reactive_power_in = 0         # float   in
@@ -29,7 +29,7 @@ reactive_power_converter = 0  # float   dep
 
 # Battery State
 
-time = datetime.now()
+time = 0
 system_status = 0             # int    const
 system_mode = 0               # int    const
 accept_values = 0             # bool   const
