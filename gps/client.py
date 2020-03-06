@@ -1,7 +1,8 @@
 """ Client == master == GreenerEye """
 
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
-import register_variables as address
+import def_config as address
+
 
 import logging
 
@@ -12,19 +13,22 @@ log.setLevel(logging.DEBUG)
 client = ModbusClient('localhost', port=5020)
 client.connect()
 
-# example requests
 
-log.debug("Read state of charge")
-rr = client.read_holding_registers(address.soc)
-assert (rr.registers[address.soc] == 100)
-print(rr.registers[address.soc])
+def read_value(addr):
+    fx = addr // 100
+    address = addr % 100
+    if fx == 1:
+        val = client.read_coils(address).bits
+    elif fx == 2:
+        val = client.read_discrete_inputs(address).bits
+    elif fx == 3:
+        val = client.read_holding_registers(address).registers
+    else:
+        val = client.read_input_registers(address).registers
+    return val[0]
 
-log.debug("Update state of charge")
-client.write_registers(address.soc, 99)
 
-log.debug("Read state of charge")
-rr = client.read_holding_registers(address.soc)
-assert (rr.registers[address.soc] == 99)
-print(rr.registers[address.soc])
+print(read_value(address.soc))
+print(read_value(address.accept_values))
 
 client.close()
