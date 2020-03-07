@@ -131,3 +131,4 @@ dmypy.json
 # project
 /gps/venv/
 /gps/.idea/
+/.idea
