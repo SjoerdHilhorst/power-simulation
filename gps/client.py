@@ -1,8 +1,7 @@
 """ Client == master == GreenerEye """
 
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
-import def_config as address
-
+from def_config import Battery as battery
 
 import logging
 
@@ -28,7 +27,7 @@ def read_value(addr):
     return val[0]
 
 
-print(read_value(address.soc))
-print(read_value(address.accept_values))
+print(read_value(battery.soc))
+print(read_value(battery.accept_values))
 
 client.close()
