@@ -50,7 +50,93 @@ class Battery:
     map_type = 100
     map_address = 100
 
+    def __init__(self,
+                 active_power_in,
+                 reactive_power_in,
+                 active_power_out,
+                 reactive_power_out,
+                 converter_started,
+                 input_connected,
+                 system_on_backup_battery,
+                 store,
+                 system_status=1,
+                 system_mode=5,
+                 accept_values=1
+                 ):
+        """
+        fill modbus server with initial data
+        """
+        self.set_value(active_power_in, store, self.active_power_in)
+        self.set_value(reactive_power_in, store, self.reactive_power_in)
+        self.set_value(active_power_out, store, self.active_power_out)
+        self.set_value(reactive_power_out, store, self.reactive_power_out)
+        self.set_value(converter_started, store, self.converter_started)
+        self.set_value(active_power_out, store, self.active_power_out)
+        self.set_value(input_connected, store, self.input_connected)
+        self.set_value(system_on_backup_battery, store, self.system_on_backup_battery)
+        self.set_value(system_status, store, self.system_status)
+        self.set_value(system_mode, store, self.system_mode)
+        self.set_value(accept_values, store, self.accept_values)
+
+        # fill relational fields
+        self.update(store)
+
+    def update(self, store):
+        """
+        update all relational fields
+        :param store:
+        """
+        self.set_active_power_converter(store)
+        self.set_reactive_power_converter(store)
+        self.set_soc(store)
+        self.set_voltage_I1_I2_in(store)
+        self.set_voltage_I2_I3_in(store)
+        self.set_voltage_I3_I1_in(store)
+        self.set_current_I1_in(store)
+        self.set_current_I2_in(store)
+        self.set_current_I3_in(store)
+        self.set_frequency_in(store)
+        self.set_voltage_I1_I2_out(store)
+        self.set_voltage_I2_I3_out(store)
+        self.set_voltage_I3_I1_out(store)
+        self.set_current_I1_out(store)
+        self.set_current_I2_out(store)
+        self.set_current_I3_out(store)
+        self.set_frequency_out(store)
+
     # helper functions
+
+    def print_all_values(self, store):
+        print("active power in: ", self.get_value(self.active_power_in, store))
+        print("reactive power in: ", self.get_value(self.reactive_power_in, store))
+        print("active power out: ", self.get_value(self.active_power_out, store))
+        print("reactive power out: ", self.get_value(self.reactive_power_out, store))
+        print("converter started: ", self.get_value(self.converter_started, store))
+        print("active power out: ", self.get_value(self.active_power_out, store))
+        print("input connected: ", self.get_value(self.input_connected, store))
+        print("system on backup battery: ", self.get_value(self.system_on_backup_battery, store))
+        print("system status: ", self.get_value(self.system_status, store))
+        print("system mode: ", self.get_value(self.system_mode, store))
+        print("accept values: ", self.get_value(self.accept_values, store))
+        print("active power converter: ", self.get_value(self.active_power_converter, store))
+        print("reactive power converter: ", self.get_value(self.reactive_power_converter, store))
+        print("soc: ", self.get_value(self.soc, store))
+        print("voltage I1 I2 in: ", self.get_value(self.voltage_l1_l2_in, store))
+        print("voltage I2 I3 in: ", self.get_value(self.voltage_l2_l3_in, store))
+        print("voltage I3 I1 in: ", self.get_value(self.voltage_l3_l1_in, store))
+        print("current I1 in: ", self.get_value(self.current_l1_in, store))
+        print("current I2 in: ", self.get_value(self.current_l2_in, store))
+        print("current I3 in: ", self.get_value(self.current_l3_in, store))
+        print("frequency in: ", self.get_value(self.frequency_in, store))
+        print("voltage I1 I2 out: ", self.get_value(self.voltage_l1_l2_out, store))
+        print("voltage I2 I3 out: ", self.get_value(self.voltage_l2_l3_out, store))
+        print("voltage I3 I1 out: ", self.get_value(self.voltage_l3_l1_out, store))
+        print("current I1 out: ", self.get_value(self.current_l1_out, store))
+        print("current I2 out: ", self.get_value(self.current_l2_out, store))
+        print("current I3 out: ", self.get_value(self.current_l3_out, store))
+        print("frequency out: ", self.get_value(self.frequency_out, store))
+
+
 
     def get_register_type_address(self, register):
         """
@@ -89,7 +175,8 @@ class Battery:
 
     def set_value(self, value, store, address):
         """
-
+        preferably only used for the fields from input
+        but can be used for any field
         :param value: the value to be stored
         :param store:
         :param address: the address to store the value in
@@ -102,8 +189,7 @@ class Battery:
         register_type, register_address = self.get_register_type_address(register)
         return store.getValues(register_type, register_address, 1)[0]
 
-    # dependent fields
-
+    # (semi-)dependent fields
 
     def set_active_power_converter(self, store):
         """
@@ -113,7 +199,7 @@ class Battery:
 
         register_type, register_address = self.get_register_type_address(self.active_power_converter)
         apc = self.get_value(self.active_power_in, store) - self.get_value(self.active_power_out, store)
-        store.setValues(register_type, register_address, apc)
+        store.setValues(register_type, register_address, [apc])
 
     def set_reactive_power_converter(self, store):
         """
@@ -123,9 +209,8 @@ class Battery:
 
         register_type, register_address = self.get_register_type_address(self.reactive_power_converter)
         rpc = self.get_value(self.reactive_power_in, store) - self.get_value(self.reactive_power_out, store)
-        store.setValues(register_type, register_address, rpc)
+        store.setValues(register_type, register_address, [rpc])
 
-    # previous SoC + [(active_power_converter) / (Some configurable max battery capacity, say 330 kWh)] * 3600.
     def set_soc(self, store):
         """
         :param store:
@@ -134,7 +219,7 @@ class Battery:
         """
         register_type, register_address = self.get_register_type_address(self.soc)
         prev_soc = self.get_value(self.soc, store)
-        apc = self.get_value(self.active_power_converter)
+        apc = self.get_value(self.active_power_converter, store)
         new_soc = prev_soc + (apc / self.max_capacity) * 3600
         store.setValues(register_type, register_address, [new_soc])
 

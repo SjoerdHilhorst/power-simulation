@@ -6,26 +6,14 @@ import logging
 
 from pymodbus.datastore import ModbusSequentialDataBlock
 from pymodbus.datastore import ModbusSlaveContext, ModbusServerContext
-from def_config import Battery
+from battery_class import Battery
 
-#setup battery
-battery = Battery()
+
 
 logging.basicConfig()
 log = logging.getLogger()
-log.setLevel(logging.DEBUG)
+#log.setLevel(logging.DEBUG)
 
-
-def set_value(addr, value):
-    fx = addr // 100
-    address = addr % 100
-    store.setValues(fx, address, [value])
-
-
-def get_value(addr):
-    fx = addr // 100
-    address = addr % 100
-    return store.getValues(fx, address, 1)[0]
 
 
 # initialize  data store
@@ -52,6 +40,13 @@ print(get_value(battery.battery_id))
 context = ModbusServerContext(slaves=store, single=True)
 StartTcpServer(context, address=("localhost", 5020))
 """
-print(battery.get_power(store, 321))
-battery.set_power(20, store, 321)
-print(battery.get_power(store, 321))
+
+battery = Battery(60, 60, 30, 20, 1, 1, 1, store)
+battery.print_all_values(store)
+
+context = ModbusServerContext(slaves=store, single=True)
+StartTcpServer(context, address=("localhost", 5030))
+
+
+
+
