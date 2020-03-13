@@ -1,16 +1,17 @@
 import numpy as np
 import math
+
 """ Default configuration of the addresses
 
 The addresses are in following format: first digit represents the type of registry
 (coils = 1, discrete input = 2, holding reg = 3, input reg = 4);
 remaining two digits are the actual address """
 
-
 class Battery:
+
     # Battery Registers:
 
-    battery_id = 310  # str     config
+    battery_id = 310 # str     config
     soc = 311  # float   dep
     active_power_in = 312  # float   in
     reactive_power_in = 313  # float   in
@@ -49,6 +50,8 @@ class Battery:
     # register mapping
     map_type = 100
     map_address = 100
+
+
 
     def __init__(self,
                  active_power_in,
