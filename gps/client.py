@@ -1,7 +1,7 @@
 """ Client == master == GreenerEye """
 
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
-from battery_class import Battery as battery
+from battery import Battery as battery
 
 import logging
 
