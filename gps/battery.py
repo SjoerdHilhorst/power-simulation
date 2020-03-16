@@ -3,13 +3,13 @@ import math
 
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock, ModbusServerContext
 from pymodbus.server.sync import StartTcpServer
-import def_config as address
+import config as address
 
 """Battery represents the Server/Slave"""
 
 
 class Battery:
-    reg_config = 'DEFAULT'  # by default the mapping is default
+
     max_capacity = 330
 
     # initialize the store
@@ -20,7 +20,7 @@ class Battery:
         ir=ModbusSequentialDataBlock.create())  # input registers (16 bit, read-only)
 
     # constructor
-    def __init__(self, reg_config,
+    def __init__(self,
                  active_power_in,
                  reactive_power_in,
                  active_power_out,
@@ -32,13 +32,6 @@ class Battery:
                  system_mode=5,
                  accept_values=1
                  ):
-
-        # set the configuration type and import another module if needed
-        self.reg_config = reg_config
-        if reg_config == 'DEFAULT':
-            import def_config as address
-        else:
-            import custom_config as address
 
         # fill modbus server with initial data
         self.set_value(address.active_power_in, active_power_in)
@@ -302,6 +295,5 @@ class Battery:
 
     def run(self):
         print("START")
-        print("MAP: ", self.reg_config)
         context = ModbusServerContext(slaves=self.store, single=True)
         StartTcpServer(context, address=("localhost", 5030))

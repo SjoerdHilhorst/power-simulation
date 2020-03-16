@@ -1,7 +1,7 @@
 """ Client == master == GreenerEye """
 
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
-import def_config as address
+import config as address
 
 client = ModbusClient('localhost', port=5030)
 client.connect()
