@@ -9,6 +9,15 @@ import def_config as address
 """Battery represents the Server/Slave"""
 
 
+def random_gaussian_value(mu, sigma):
+    """
+    :param mu:
+    :param sigma:
+    :return: return random normal distribution value
+    """
+    return np.random.normal(mu, sigma)
+
+
 class Battery:
     max_capacity = 330
 
@@ -114,14 +123,6 @@ class Battery:
         print("current I3 out: ", self.get_value(address.current_l3_out))
         print("frequency out: ", self.get_value(address.frequency_out))
 
-    def random_gaussian_value(self, mu, sigma):
-        """
-        :param mu:
-        :param sigma:
-        :return: return random normal distribution value
-        """
-        return np.random.normal(mu, sigma)
-
     def get_power_factor_in(self):
         """
         :return: active_power_in / sqrt(active_power_in^2 + reactive_power_in^2)
@@ -167,7 +168,7 @@ class Battery:
         :return: Gaussian distribution centered around 400, deviation 3
         """
 
-        value = self.random_gaussian_value(400, 3)
+        value = random_gaussian_value(400, 3)
         self.set_value(address.voltage_l1_l2_in, value)
 
     def set_voltage_l2_l3_in(self):
@@ -175,14 +176,14 @@ class Battery:
         :return: Gaussian distribution centered around 400, deviation 3
         """
 
-        value = self.random_gaussian_value(400, 3)
+        value = random_gaussian_value(400, 3)
         self.set_value(address.voltage_l2_l3_in, value)
 
     def set_voltage_l3_l1_in(self):
         """
         :return: Gaussian distribution centered around 400, deviation 3
         """
-        value = self.random_gaussian_value(400, 3)
+        value = random_gaussian_value(400, 3)
         self.set_value(address.voltage_l3_l1_in, value)
 
     def set_current_l1_in(self):
@@ -221,28 +222,28 @@ class Battery:
         """
         :return: Gaussian distribution centered around 50, deviation 0.01
         """
-        value = self.random_gaussian_value(50, 0.01)
+        value = random_gaussian_value(50, 0.01)
         self.set_value(address.frequency_in, value)
 
     def set_voltage_l1_l2_out(self):
         """
         :return: Gaussian distribution centered around 400, deviation 3
         """
-        value = self.random_gaussian_value(400, 3)
+        value = random_gaussian_value(400, 3)
         self.set_value(address.voltage_l1_l2_out, value)
 
     def set_voltage_l2_l3_out(self):
         """
         :return: Gaussian distribution centered around 400, deviation 3
         """
-        value = self.random_gaussian_value(400, 3)
+        value = random_gaussian_value(400, 3)
         self.set_value(address.voltage_l2_l3_out, value)
 
     def set_voltage_l3_l1_out(self):
         """
         :return: Gaussian distribution centered around 400, deviation 3
         """
-        value = self.random_gaussian_value(400, 3)
+        value = random_gaussian_value(400, 3)
         self.set_value(address.voltage_l3_l1_out, value)
 
     def set_current_l1_out(self):
@@ -279,7 +280,7 @@ class Battery:
         """
         :return: Gaussian distribution centered around 50, deviation 0.01
         """
-        value = self.random_gaussian_value(50, 0.01)
+        value = random_gaussian_value(50, 0.01)
         self.set_value(address.frequency_out, value)
 
     def run(self):
