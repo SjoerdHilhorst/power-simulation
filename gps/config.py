@@ -1,19 +1,39 @@
-""" Default configuration of the addresses
+"""
+Default configuration of the addresses
 
 The addresses are in following format: first digit represents the type of registry
 (coils = 1, discrete input = 2, holding reg = 3, input reg = 4);
-remaining two digits are the actual address """
+remaining two digits are the actual address
+"""
 
-# CONSTANTS
-BATTERY_DATA_VARS = 21  # number of fields of battery data
-BATTERY_STATE_VARS = 6  # number of fields of battery state
+"""
+number of fields of battery data
+"""
+BATTERY_DATA_VARS = 21
+"""
+number of fields of battery state
+"""
+BATTERY_STATE_VARS = 6
 
-fx_addr_separator = 100  # used to separate registry type and actual address
-float_mode = "SCALE"  # means that floats are stored as ints multiplied by scaling_factor
-scaling_factor = 100  # scaling factor for floats precision
+
+"""
+used to separate registry type and actual address
+"""
+fx_addr_separator = 100
+"""
+means that floats are stored as ints multiplied by scaling_factor
+"""
+float_mode = "SCALE"
+"""
+scaling factor for floats precision
+"""
+scaling_factor = 100
+
 # TODO: add needed fields for 'COMB', eg endianness
 
-# Battery Data :
+"""
+Battery Data
+"""
 soc = 310  # float   dep
 active_power_in = 311  # float   in
 reactive_power_in = 312  # float   in
@@ -36,7 +56,7 @@ frequency_out = 328  # float   semi
 active_power_converter = 329  # float   dep
 reactive_power_converter = 330  # float   dep
 
-# Battery State
+""" Battery State """
 system_status = 331  # int    const
 system_mode = 332  # int    const
 accept_values = 110  # bool   const

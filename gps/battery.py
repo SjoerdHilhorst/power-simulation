@@ -5,21 +5,24 @@ from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock, Mo
 from pymodbus.server.sync import StartTcpServer
 import config as address
 
-"""Battery represents the Server/Slave"""
+"""
+Battery represents the Server/Slave
+"""
 
 
 class Battery:
-
     max_capacity = 330
-
-    # initialize the store
+    """
+    Initialize the store
+    """
     store = ModbusSlaveContext(
         di=ModbusSequentialDataBlock.create(),  # discrete input (1 bit, read-only)
         co=ModbusSequentialDataBlock.create(),  # coils (1 bit, read-write)
         hr=ModbusSequentialDataBlock.create(),  # holding registers (16 bit, read-write)
         ir=ModbusSequentialDataBlock.create())  # input registers (16 bit, read-only)
-
-    # constructor
+    """
+    constructor
+    """
     def __init__(self,
                  active_power_in,
                  reactive_power_in,
@@ -33,7 +36,9 @@ class Battery:
                  accept_values=1
                  ):
 
-        # fill modbus server with initial data
+        """
+        fill modbus server with initial data
+        """
         self.set_value(address.active_power_in, active_power_in)
         self.set_value(address.reactive_power_in, reactive_power_in)
         self.set_value(address.active_power_out, active_power_out)
@@ -45,13 +50,18 @@ class Battery:
         self.set_value(address.system_status, system_status)
         self.set_value(address.system_mode, system_mode)
         self.set_value(address.accept_values, accept_values)
-
-        # fill relational fields
+        """
+        fill relational fields
+        """
         self.update()
 
-    # sets the value to the given address; ALL data which is assigned to  16-bit registers (meaning fx > 2) is
-    # multiplied by scaling factor and converted to integers first with the method handle_float()
     def set_value(self, addr, value):
+        """
+        sets the value to the given address; ALL data which is assigned to  16-bit registers (meaning fx > 2) is
+        multiplied by scaling factor and converted to integers first with the method handle_float()
+        :param addr: address where first digit stands for reg type
+        :param value: value to set
+        """
         fx = addr // address.fx_addr_separator
         addr = addr % address.fx_addr_separator
         if fx > 2:
@@ -60,8 +70,12 @@ class Battery:
         else:
             self.store.setValues(fx, addr, [value])
 
-    # gets the value from given address; ALL data from  16-bit registers (meaning fx > 2) is divided by scaling factor
     def get_value(self, addr):
+        """
+        gets the value from given address; ALL data from  16-bit registers (meaning fx > 2) is divided by scaling factor
+        :param addr: address where first digit stands for reg type
+        :return: value from the given address
+        """
         fx = addr // address.fx_addr_separator
         addr = addr % address.fx_addr_separator
         value = self.store.getValues(fx, addr, 1)[0]
@@ -69,10 +83,14 @@ class Battery:
             value = self.store.getValues(fx, addr, 1)[0] / address.scaling_factor
         return value
 
-    # handles float according to the way it is stored in registry
-    # SCALE stands for multiplying/dividing by scaling factor method
-    # COMB stands for storing the float in two registers
     def handle_float(self, value):
+        """
+        handles float according to the way it is stored in registry
+        SCALE stands for multiplying/dividing by scaling factor method
+        COMB stands for storing the float in two registers
+        :param value: float which should be handled
+        :return: float rounded to integer
+        """
         if address.float_mode == "SCALE":
             return [int(value * address.scaling_factor)]
         # TODO: storing float in two registers
@@ -177,7 +195,6 @@ class Battery:
         """
         :return: Gaussian distribution centered around 400, deviation 3
         """
-
         value = self.random_gaussian_value(400, 3)
         self.set_value(address.voltage_l1_l2_in, value)
 
@@ -185,7 +202,6 @@ class Battery:
         """
         :return: Gaussian distribution centered around 400, deviation 3
         """
-
         value = self.random_gaussian_value(400, 3)
         self.set_value(address.voltage_l2_l3_in, value)
 
@@ -198,10 +214,8 @@ class Battery:
 
     def set_current_I1_in(self):
         """
-
         :return: active_power_in / (sqrt(3) * voltage_l1_l2_in * power_factor_in)
         """
-
         ap = self.get_value(address.active_power_in)
         voltage = self.get_value(address.voltage_l1_l2_in)
         pf = self.get_power_factor_in()
@@ -294,6 +308,9 @@ class Battery:
         self.set_value(address.frequency_out, value)
 
     def run(self):
+        """
+        starts the servers with filled in context
+        """
         print("START")
         context = ModbusServerContext(slaves=self.store, single=True)
         StartTcpServer(context, address=("localhost", 5030))

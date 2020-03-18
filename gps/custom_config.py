@@ -1,10 +1,14 @@
 import config as config
-from config import *
 
 
-# changes the configuration;
-# param addresses is the list of addresses provided by user while configuring map. Order matters
 def modify(float_mode, fx_addr_separator, scaling_factor, addresses):
+    """
+    changes the default configuration defined in config
+    :param float_mode: "SCALE" or "COMB"
+    :param fx_addr_separator: factor to separate first digit and rest of address
+    :param scaling_factor: degree of precision of float result
+    :param addresses: list of addresses provided by user while configuring map, order matters (!)
+    """
     config.float_mode = float_mode
     config.fx_addr_separator = fx_addr_separator
     config.scaling_factor = scaling_factor
@@ -31,7 +35,6 @@ def modify(float_mode, fx_addr_separator, scaling_factor, addresses):
     config.active_power_converter = addresses[19]  # float   dep
     config.reactive_power_converter = addresses[20]  # float   dep
 
-    # Battery State
     config.system_status = addresses[21]  # int    const
     config.system_mode = addresses[22]  # int    const
     config.accept_values = addresses[23]  # bool   const
