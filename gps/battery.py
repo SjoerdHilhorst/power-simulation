@@ -3,12 +3,8 @@ import math
 
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock, ModbusServerContext
 from pymodbus.server.sync import StartTcpServer
-from pymodbus.payload import BinaryPayloadBuilder, Endian
+from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder as decoder, Endian
 import config as address
-
-class SplitFloat():
-
-
 
 """
 Battery represents the Server/Slave
@@ -21,8 +17,6 @@ class Battery:
     Initialize the store
     """
 
-
-
     store = ModbusSlaveContext(
         di=ModbusSequentialDataBlock.create(),  # discrete input (1 bit, read-only)
         co=ModbusSequentialDataBlock.create(),  # coils (1 bit, read-write)
@@ -31,6 +25,7 @@ class Battery:
     """
     constructor
     """
+
     def __init__(self,
                  active_power_in,
                  reactive_power_in,
@@ -42,12 +37,13 @@ class Battery:
                  system_status=1,
                  system_mode=5,
                  accept_values=1,
-                 wordorder = Endian.Big
+                 word_order=Endian.Big
                  ):
 
         # initialize payload builder, this converts floats, negative values to
         # IEEE-754 hex format before writing in to the datastore
-        self.builder = BinaryPayloadBuilder(byteorder=Endian.Big, wordorder=wordorder)
+        self.word_order = word_order
+        self.builder = BinaryPayloadBuilder(byteorder=Endian.Big, wordorder=word_order)
 
         """
         fill modbus server with initial data
@@ -78,7 +74,7 @@ class Battery:
         fx = addr // address.fx_addr_separator
         addr = addr % address.fx_addr_separator
         if fx > 2:
-            value = self.(value)
+            value = self.encode_float(value)
             self.store.setValues(fx, addr, value)
         else:
             self.store.setValues(fx, addr, [value])
@@ -93,7 +89,9 @@ class Battery:
         addr = addr % address.fx_addr_separator
         value = self.store.getValues(fx, addr, 1)[0]
         if fx > 2:
-            value = self.store.getValues(fx, addr, 1)[0] / address.scaling_factor
+            encoded_value = self.store.getValues(fx, addr, 2)
+            decoder = decoder.fromRegisters(encoded_value, byteorder=Endian.Big, wordorder=self.word_order)
+
         return value
 
     def encode_float(self, value):
