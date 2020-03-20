@@ -3,7 +3,12 @@ import math
 
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock, ModbusServerContext
 from pymodbus.server.sync import StartTcpServer
+from pymodbus.payload import BinaryPayloadBuilder, Endian
 import config as address
+
+class SplitFloat():
+
+
 
 """
 Battery represents the Server/Slave
@@ -15,6 +20,9 @@ class Battery:
     """
     Initialize the store
     """
+
+
+
     store = ModbusSlaveContext(
         di=ModbusSequentialDataBlock.create(),  # discrete input (1 bit, read-only)
         co=ModbusSequentialDataBlock.create(),  # coils (1 bit, read-write)
@@ -33,8 +41,13 @@ class Battery:
                  system_on_backup_battery,
                  system_status=1,
                  system_mode=5,
-                 accept_values=1
+                 accept_values=1,
+                 wordorder = Endian.Big
                  ):
+
+        # initialize payload builder, this converts floats, negative values to
+        # IEEE-754 hex format before writing in to the datastore
+        self.builder = BinaryPayloadBuilder(byteorder=Endian.Big, wordorder=wordorder)
 
         """
         fill modbus server with initial data
@@ -65,7 +78,7 @@ class Battery:
         fx = addr // address.fx_addr_separator
         addr = addr % address.fx_addr_separator
         if fx > 2:
-            value = self.handle_float(value)
+            value = self.(value)
             self.store.setValues(fx, addr, value)
         else:
             self.store.setValues(fx, addr, [value])
@@ -82,6 +95,11 @@ class Battery:
         if fx > 2:
             value = self.store.getValues(fx, addr, 1)[0] / address.scaling_factor
         return value
+
+    def encode_float(self, value):
+        self.builder.reset()
+        self.builder.add_16bit_int(value)
+        return self.builder.to_registers()
 
     def handle_float(self, value):
         """

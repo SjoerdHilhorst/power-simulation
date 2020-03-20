@@ -3,7 +3,7 @@ import custom_config
 import config
 
 # user chooses the option for map
-#configuration = "CUSTOM"
+#c  onfiguration = "CUSTOM"
 configuration = "DEFAULT"
 
 # if it is custom user provides information and config is modified, here it is hardcoded for now
