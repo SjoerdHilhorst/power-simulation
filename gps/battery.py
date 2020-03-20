@@ -1,8 +1,14 @@
+import threading
+import time
+
 import numpy as np
 import math
 
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock, ModbusServerContext
-from pymodbus.server.sync import StartTcpServer
+from pymodbus.server.sync import StartTcpServer, ModbusTcpServer
+from twisted.internet import reactor
+from twisted.internet.task import LoopingCall
+
 import config as address
 
 """
@@ -12,6 +18,7 @@ Battery represents the Server/Slave
 
 class Battery:
     max_capacity = 330
+
     """
     Initialize the store
     """
@@ -23,6 +30,7 @@ class Battery:
     """
     constructor
     """
+
     def __init__(self,
                  active_power_in,
                  reactive_power_in,
@@ -35,6 +43,9 @@ class Battery:
                  system_mode=5,
                  accept_values=1
                  ):
+
+        self.context = ModbusServerContext(slaves=self.store, single=True)
+        self.server = ModbusTcpServer(self.context, address=("localhost", 5030))
 
         """
         fill modbus server with initial data
@@ -53,7 +64,9 @@ class Battery:
         """
         fill relational fields
         """
+
         self.update()
+
 
     def set_value(self, addr, value):
         """
@@ -307,10 +320,18 @@ class Battery:
         value = self.random_gaussian_value(50, 0.01)
         self.set_value(address.frequency_out, value)
 
+
+
     def run(self):
         """
         starts the servers with filled in context
+        runs in separate thread
         """
-        print("START")
-        context = ModbusServerContext(slaves=self.store, single=True)
-        StartTcpServer(context, address=("localhost", 5030))
+        print("SERVER: is running")
+        t = threading.Thread(target=self.server.serve_forever, daemon=True)
+        t.start()
+
+        #loop = LoopingCall(f=self.update)
+        #loop.start(2, now=True)
+        #reactor.run()
+

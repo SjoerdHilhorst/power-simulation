@@ -1,10 +1,18 @@
+import threading
+
 from battery import Battery
+
 import custom_config
 import config
 
 # user chooses the option for map
-#configuration = "CUSTOM"
-configuration = "DEFAULT"
+
+
+from client import GreenerEye
+
+configuration = "CUSTOM"
+#configuration = "DEFAULT"
+
 
 # if it is custom user provides information and config is modified, here it is hardcoded for now
 if configuration == "CUSTOM":
@@ -20,7 +28,12 @@ if configuration == "CUSTOM":
     custom_config.modify(float_mode, fx_addr_separator, scaling_factor, addresses)
 
 battery = Battery(60, 60, 30, 20, 1, 1, 1)
-battery.print_all_values()
 battery.run()
+
+
+eye = GreenerEye()
+eye.run()
+
+
 
 
