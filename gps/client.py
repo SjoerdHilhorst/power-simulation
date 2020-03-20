@@ -1,6 +1,8 @@
 """ Client == master == GreenerEye """
 
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
+from pymodbus.payload import BinaryPayloadDecoder, Endian
+
 import config as address
 
 client = ModbusClient('localhost', port=5050)
@@ -21,6 +23,11 @@ def read_value(addr):
         val = client.read_input_registers(addr).registers[0] / address.scaling_factor
     return val
 
+
+r = client.read_holding_registers(10, 40, unit=1)
+d = BinaryPayloadDecoder.fromRegisters(r.registers, byteorder=Endian.Big, wordorder=Endian.Big)
+while 1:
+    print(d.decode_32bit_float())
 
 # examples
 print(read_value(address.active_power_in))

@@ -3,7 +3,7 @@ import math
 
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock, ModbusServerContext
 from pymodbus.server.sync import StartTcpServer
-from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder as decoder, Endian
+from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder, Endian
 import config as address
 
 """
@@ -90,13 +90,13 @@ class Battery:
         value = self.store.getValues(fx, addr, 1)[0]
         if fx > 2:
             encoded_value = self.store.getValues(fx, addr, 2)
-            decoder = decoder.fromRegisters(encoded_value, byteorder=Endian.Big, wordorder=self.word_order)
-
+            decoder = BinaryPayloadDecoder.fromRegisters(encoded_value, byteorder=Endian.Big, wordorder=self.word_order)
+            value = decoder.decode_32bit_float()
         return value
 
     def encode_float(self, value):
         self.builder.reset()
-        self.builder.add_16bit_int(value)
+        self.builder.add_32bit_float(value)
         return self.builder.to_registers()
 
     def handle_float(self, value):
