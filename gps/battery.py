@@ -3,27 +3,27 @@ import math
 
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock, ModbusServerContext
 from pymodbus.server.sync import StartTcpServer
-import def_config as address
+import config as address
 
-"""Battery represents the Server/Slave"""
+"""
+Battery represents the Server/Slave
+"""
 
 
 class Battery:
-    reg_config = 'DEFAULT'  # by default the mapping is default
     max_capacity = 330
-    eight_bit = 255
-
-
-    # initialize the store
+    """
+    Initialize the store
+    """
     store = ModbusSlaveContext(
         di=ModbusSequentialDataBlock.create(),  # discrete input (1 bit, read-only)
         co=ModbusSequentialDataBlock.create(),  # coils (1 bit, read-write)
         hr=ModbusSequentialDataBlock.create(),  # holding registers (16 bit, read-write)
         ir=ModbusSequentialDataBlock.create())  # input registers (16 bit, read-only)
-
-    # constructor
+    """
+    constructor
+    """
     def __init__(self,
-                 reg_config,
                  active_power_in,
                  reactive_power_in,
                  active_power_out,
@@ -36,14 +36,9 @@ class Battery:
                  accept_values=1
                  ):
 
-        # set the configuration type and import another module if needed
-        self.reg_config = reg_config
-        if reg_config == 'DEFAULT':
-            import def_config as address
-        else:
-            import custom_config as address
-
-        # fill modbus server with initial data
+        """
+        fill modbus server with initial data
+        """
         self.set_value(address.active_power_in, active_power_in)
         self.set_value(address.reactive_power_in, reactive_power_in)
         self.set_value(address.active_power_out, active_power_out)
@@ -55,13 +50,18 @@ class Battery:
         self.set_value(address.system_status, system_status)
         self.set_value(address.system_mode, system_mode)
         self.set_value(address.accept_values, accept_values)
-
-        # fill relational fields
+        """
+        fill relational fields
+        """
         self.update()
 
-    # sets the value to the given address; ALL data which is assigned to  16-bit registers (meaning fx > 2) is
-    # multiplied by scaling factor and converted to integers first with the method handle_float()
     def set_value(self, addr, value):
+        """
+        sets the value to the given address; ALL data which is assigned to  16-bit registers (meaning fx > 2) is
+        multiplied by scaling factor and converted to integers first with the method handle_float()
+        :param addr: address where first digit stands for reg type
+        :param value: value to set
+        """
         fx = addr // address.fx_addr_separator
         addr = addr % address.fx_addr_separator
         if fx > 2:
@@ -70,41 +70,33 @@ class Battery:
         else:
             self.store.setValues(fx, addr, [value])
 
-    # gets the value from given address; ALL data from  16-bit registers (meaning fx > 2) is divided by scaling factor
     def get_value(self, addr):
+        """
+        gets the value from given address; ALL data from  16-bit registers (meaning fx > 2) is divided by scaling factor
+        :param addr: address where first digit stands for reg type
+        :return: value from the given address
+        """
         fx = addr // address.fx_addr_separator
         addr = addr % address.fx_addr_separator
-        if fx > 2 and address.float_mode == "SCALE":
-            value = self.store.getValues(fx, addr, 3)
-            print(value)
-        elif fx > 2 and address.float_mode == "COMB":
-            #REMINDER!!: result of get value active power in in initialization is 0 while it should be 40 probably because im missing adding a 0 entry somewhere
-            #I know already, i acces the values of the other registers
-            values = self.store.getValues(fx, addr, 1)
-            #print("outcome 1", values)
-            value = values[1]/1000 + values[0]   # merge two registers to single value
-            #print("outcome 2", value)
-        else:
-            value = self.store.getValues(fx, addr, 1)[0]
+        value = self.store.getValues(fx, addr, 1)[0]
+        if fx > 2:
+            value = self.store.getValues(fx, addr, 1)[0] / address.scaling_factor
         return value
-
 
     def handle_float(self, value):
         """
         handles float according to the way it is stored in registry
         SCALE stands for multiplying/dividing by scaling factor method
         COMB stands for storing the float in two registers
-        :param value:
-        :return:
+        :param value: float which should be handled
+        :return: float rounded to integer
         """
         if address.float_mode == "SCALE":
             return [int(value * address.scaling_factor)]
-        elif address.float_mode == "COMB":
-            value_tuple = math.modf(value)  # split value in decimal part and integer part
-            x = [round(value_tuple[1]), round(value_tuple[0]*1000)]
-            #print("input ", x, value)
-            return x    # fit the decimal part in biggest 8 bit integer
-
+        # TODO: storing float in two registers
+        # elif address.float_mode == "COMB":
+        # temp = int(value * address.scaling_factor)
+        # return [int(value), int(temp % address.scaling_factor)]
 
     def update(self):
         self.set_active_power_converter()
@@ -203,7 +195,6 @@ class Battery:
         """
         :return: Gaussian distribution centered around 400, deviation 3
         """
-
         value = self.random_gaussian_value(400, 3)
         self.set_value(address.voltage_l1_l2_in, value)
 
@@ -211,7 +202,6 @@ class Battery:
         """
         :return: Gaussian distribution centered around 400, deviation 3
         """
-
         value = self.random_gaussian_value(400, 3)
         self.set_value(address.voltage_l2_l3_in, value)
 
@@ -224,10 +214,8 @@ class Battery:
 
     def set_current_I1_in(self):
         """
-
         :return: active_power_in / (sqrt(3) * voltage_l1_l2_in * power_factor_in)
         """
-
         ap = self.get_value(address.active_power_in)
         voltage = self.get_value(address.voltage_l1_l2_in)
         pf = self.get_power_factor_in()
@@ -320,7 +308,9 @@ class Battery:
         self.set_value(address.frequency_out, value)
 
     def run(self):
+        """
+        starts the servers with filled in context
+        """
         print("START")
-        print("MAP: ", self.reg_config)
         context = ModbusServerContext(slaves=self.store, single=True)
-        StartTcpServer(context, address=("localhost", 5030))
+        StartTcpServer(context, address=("localhost", 5050))

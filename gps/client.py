@@ -1,9 +1,9 @@
 """ Client == master == GreenerEye """
 
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
-import def_config as address
+import config as address
 
-client = ModbusClient('localhost', port=5030)
+client = ModbusClient('localhost', port=5050)
 client.connect()
 
 
@@ -16,14 +16,14 @@ def read_value(addr):
     elif fx == 2:
         val = client.read_discrete_inputs(addr).bits[0]
     elif fx == 3:
-        val = client.read_holding_registers(addr).registers[0] / address.scaling_factor
+        val = client.read_holding_registers(addr)
     else:
         val = client.read_input_registers(addr).registers[0] / address.scaling_factor
     return val
 
 
 # examples
-print(read_value(address.active_power_out))
+print(read_value(address.active_power_in))
 print(read_value(address.reactive_power_in))
 print(read_value(address.current_l1_in))
 print(read_value(address.voltage_l1_l2_out))
