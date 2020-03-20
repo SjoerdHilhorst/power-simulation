@@ -2,7 +2,7 @@
 
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
 from battery import Battery as battery
-
+import def_config as battery
 import logging
 
 logging.basicConfig()
