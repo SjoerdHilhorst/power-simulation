@@ -1,3 +1,5 @@
+from pymodbus.payload import Endian
+
 """
 Default configuration of the addresses
 
@@ -15,7 +17,6 @@ number of fields of battery state
 """
 BATTERY_STATE_VARS = 6
 
-
 """
 used to separate registry type and actual address
 """
@@ -23,17 +24,14 @@ fx_addr_separator = 100
 """
 means that floats are stored as ints multiplied by scaling_factor
 """
-float_mode = "SCALE"
-"""
-scaling factor for floats precision
-"""
-scaling_factor = 100
+#float_mode = "SCALE"        #
+float_mode = "COMB"       # uncomment if user wants to store float in IEEE  754 format
+word_order = Endian.Big     # define endianness of byte in word
+byte_order = Endian.Big     # define endianness of bits in byte
+scaling_factor = 100        # scaling factor for floats precision, only needed if float_mode = "SCALE"
 
-# TODO: add needed fields for 'COMB', eg endianness
+# Battery Data
 
-"""
-Battery Data
-"""
 soc = 310  # float   dep
 active_power_in = 312  # float   in
 reactive_power_in = 314  # float   in
