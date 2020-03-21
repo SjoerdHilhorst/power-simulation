@@ -91,8 +91,9 @@ class Battery:
         addr = addr % address.fx_addr_separator
         value = self.store.getValues(fx, addr, 1)[0]
         if fx <= 2:
-            value = self.store.getValues(fx, addr, 1)[0]
-
+            encoded_value = self.store.getValues(fx, addr, 1)
+            decoder = BinaryPayloadDecoder.fromRegisters(encoded_value, byteorder=self.byte_order, wordorder=self.word_order)
+            value = decoder.decode
         if fx > 2:
             encoded_value = self.store.getValues(fx, addr, 2)
             decoder = BinaryPayloadDecoder.fromRegisters(encoded_value, byteorder=self.byte_order, wordorder=self.word_order)
