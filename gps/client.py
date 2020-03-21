@@ -24,7 +24,7 @@ def read_value(addr):
     return val
 
 
-r = client.read_holding_registers(10, 40, unit=1)
+r = client.read_holding_registers(10, 42, unit=1)
 d = BinaryPayloadDecoder.fromRegisters(r.registers, byteorder=Endian.Big, wordorder=Endian.Big)
 while 1:
     print(d.decode_32bit_float())

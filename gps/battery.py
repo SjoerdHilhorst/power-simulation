@@ -37,13 +37,15 @@ class Battery:
                  system_status=1,
                  system_mode=5,
                  accept_values=1,
+                 byte_order=Endian.Big,
                  word_order=Endian.Big
                  ):
 
         # initialize payload builder, this converts floats, negative values to
         # IEEE-754 hex format before writing in to the datastore
+        self.byte_order = byte_order
         self.word_order = word_order
-        self.builder = BinaryPayloadBuilder(byteorder=Endian.Big, wordorder=word_order)
+        self.builder = BinaryPayloadBuilder(byteorder=byte_order, wordorder=word_order)
 
         """
         fill modbus server with initial data
@@ -88,9 +90,12 @@ class Battery:
         fx = addr // address.fx_addr_separator
         addr = addr % address.fx_addr_separator
         value = self.store.getValues(fx, addr, 1)[0]
+        if fx <= 2:
+            value = self.store.getValues(fx, addr, 1)[0]
+
         if fx > 2:
             encoded_value = self.store.getValues(fx, addr, 2)
-            decoder = BinaryPayloadDecoder.fromRegisters(encoded_value, byteorder=Endian.Big, wordorder=self.word_order)
+            decoder = BinaryPayloadDecoder.fromRegisters(encoded_value, byteorder=self.byte_order, wordorder=self.word_order)
             value = decoder.decode_32bit_float()
         return value
 
