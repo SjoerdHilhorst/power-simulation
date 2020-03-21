@@ -1,4 +1,3 @@
-import threading
 
 from battery import Battery
 
@@ -7,11 +6,8 @@ import config
 
 # user chooses the option for map
 
-
-from client import GreenerEye
-
-configuration = "CUSTOM"
-#configuration = "DEFAULT"
+#configuration = "CUSTOM"
+configuration = "DEFAULT"
 
 
 # if it is custom user provides information and config is modified, here it is hardcoded for now
@@ -29,10 +25,6 @@ if configuration == "CUSTOM":
 
 battery = Battery(60, 60, 30, 20, 1, 1, 1)
 battery.run()
-
-
-eye = GreenerEye()
-eye.run()
 
 
 

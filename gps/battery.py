@@ -6,6 +6,7 @@ import math
 
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock, ModbusServerContext
 from pymodbus.server.sync import StartTcpServer, ModbusTcpServer
+
 from twisted.internet import reactor
 from twisted.internet.task import LoopingCall
 
@@ -20,13 +21,26 @@ class Battery:
     max_capacity = 330
 
     """
-    Initialize the store
+    Initialize the store and the context
     """
     store = ModbusSlaveContext(
         di=ModbusSequentialDataBlock.create(),  # discrete input (1 bit, read-only)
         co=ModbusSequentialDataBlock.create(),  # coils (1 bit, read-write)
         hr=ModbusSequentialDataBlock.create(),  # holding registers (16 bit, read-write)
         ir=ModbusSequentialDataBlock.create())  # input registers (16 bit, read-only)
+
+    context = ModbusServerContext(slaves=store, single=True)
+
+    """
+    Initialize the server with provided address
+    """
+    server = ModbusTcpServer(context, address=("localhost", 5030))
+
+    """
+    Create a thread on which server runs
+    """
+    t = threading.Thread(target=server.serve_forever, daemon=True)
+
     """
     constructor
     """
@@ -44,9 +58,6 @@ class Battery:
                  accept_values=1
                  ):
 
-        self.context = ModbusServerContext(slaves=self.store, single=True)
-        self.server = ModbusTcpServer(self.context, address=("localhost", 5030))
-
         """
         fill modbus server with initial data
         """
@@ -61,12 +72,11 @@ class Battery:
         self.set_value(address.system_status, system_status)
         self.set_value(address.system_mode, system_mode)
         self.set_value(address.accept_values, accept_values)
+
         """
         fill relational fields
         """
-
         self.update()
-
 
     def set_value(self, addr, value):
         """
@@ -114,7 +124,6 @@ class Battery:
     def update(self):
         self.set_active_power_converter()
         self.set_reactive_power_converter()
-        self.set_soc()
         self.set_voltage_I1_I2_in()
         self.set_voltage_I2_I3_in()
         self.set_voltage_I3_I1_in()
@@ -129,6 +138,7 @@ class Battery:
         self.set_current_I2_out()
         self.set_current_I3_out()
         self.set_frequency_out()
+        self.set_soc()
 
     def print_all_values(self):
 
@@ -320,18 +330,17 @@ class Battery:
         value = self.random_gaussian_value(50, 0.01)
         self.set_value(address.frequency_out, value)
 
-
-
     def run(self):
         """
         starts the servers with filled in context
         runs in separate thread
         """
+
+        self.t.start()  # start the thread
         print("SERVER: is running")
-        t = threading.Thread(target=self.server.serve_forever, daemon=True)
-        t.start()
 
-        #loop = LoopingCall(f=self.update)
-        #loop.start(2, now=True)
-        #reactor.run()
-
+        # update each 2 secs
+        interval = 2  # interval with which update happens, in that case every 2 seconds
+        loop = LoopingCall(f=self.update)
+        loop.start(interval, now=True)
+        reactor.run()
