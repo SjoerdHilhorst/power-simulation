@@ -3,13 +3,13 @@ import math
 
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock, ModbusServerContext
 from pymodbus.server.sync import StartTcpServer
+from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
 import config as address
+
 
 """
 Battery represents the Server/Slave
 """
-
-
 class Battery:
     max_capacity = 330
     """
@@ -20,6 +20,7 @@ class Battery:
         co=ModbusSequentialDataBlock.create(),  # coils (1 bit, read-write)
         hr=ModbusSequentialDataBlock.create(),  # holding registers (16 bit, read-write)
         ir=ModbusSequentialDataBlock.create())  # input registers (16 bit, read-only)
+
     """
     constructor
     """
@@ -33,8 +34,12 @@ class Battery:
                  system_on_backup_battery,
                  system_status=1,
                  system_mode=5,
-                 accept_values=1
+                 accept_values=1,
                  ):
+
+        # initialize payload builder, this converts floats, negative values to
+        # IEEE-754 hex format before writing in to the datastore
+        self.builder = BinaryPayloadBuilder(byteorder=address.byte_order, wordorder=address.word_order)
 
         """
         fill modbus server with initial data
@@ -65,7 +70,7 @@ class Battery:
         fx = addr // address.fx_addr_separator
         addr = addr % address.fx_addr_separator
         if fx > 2:
-            value = self.handle_float(value)
+            value = self.encode_float(value)
             self.store.setValues(fx, addr, value)
         else:
             self.store.setValues(fx, addr, [value])
@@ -78,25 +83,41 @@ class Battery:
         """
         fx = addr // address.fx_addr_separator
         addr = addr % address.fx_addr_separator
-        value = self.store.getValues(fx, addr, 1)[0]
-        if fx > 2:
-            value = self.store.getValues(fx, addr, 1)[0] / address.scaling_factor
+        if fx <= 2:
+            value = self.store.getValues(fx, addr, 1)[0]
+        elif fx > 2:
+            value = self.decode_float(fx, addr)
         return value
 
-    def handle_float(self, value):
+    def encode_float(self, value):
         """
-        handles float according to the way it is stored in registry
-        SCALE stands for multiplying/dividing by scaling factor method
-        COMB stands for storing the float in two registers
+        encodes float according to the way it is stored in registry
+        SCALE stands for multiplying/dividing by scaling factor method, I.E. 32bit int
+        COMB stands for storing the float in two registers, I.E. 32bit float
         :param value: float which should be handled
         :return: float rounded to integer
         """
+        self.builder.reset()
         if address.float_mode == "SCALE":
-            return [int(value * address.scaling_factor)]
-        # TODO: storing float in two registers
-        # elif address.float_mode == "COMB":
-        # temp = int(value * address.scaling_factor)
-        # return [int(value), int(temp % address.scaling_factor)]
+            self.builder.add_32bit_int(round(value*address.scaling_factor))
+        elif address.float_mode == "COMB":
+            self.builder.add_32bit_float(value)
+
+        return self.builder.to_registers()
+
+    def decode_float(self, fx, addr):
+        """
+        decodes float value, the way specified in address
+        """
+        encoded_value = self.store.getValues(fx, addr, 2)
+        decoder = BinaryPayloadDecoder.fromRegisters(encoded_value, byteorder=address.byte_order, wordorder=address.word_order)
+        if address.float_mode == "SCALE":
+            value = decoder.decode_32bit_int() / address.scaling_factor
+        elif address.float_mode == "COMB":
+            value = decoder.decode_32bit_float()
+
+        return value
+
 
     def update(self):
         self.set_active_power_converter()
@@ -313,4 +334,4 @@ class Battery:
         """
         print("START")
         context = ModbusServerContext(slaves=self.store, single=True)
-        StartTcpServer(context, address=("localhost", 5030))
+        StartTcpServer(context, address=("localhost", 5050))
