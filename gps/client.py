@@ -12,7 +12,9 @@ class GreenerEye:
 
     def read_value(self, addr):
         fx = addr // address.fx_addr_separator
-        addr = addr % address.fx_addr_separator
+        # MIND THE OFFSET
+        addr =  1 + addr % address.fx_addr_separator
+        print(addr)
         if fx == 1:
             val = self.client.read_coils(addr).bits[0]
         elif fx == 2:
@@ -54,8 +56,6 @@ class GreenerEye:
         print("current I2 out: ", self.read_value(address.current_l2_out))
         print("current I3 out: ", self.read_value(address.current_l3_out))
         print("frequency out: ", self.read_value(address.frequency_out))
-
-        # PROBLEM HERE
         print("soc: ", self.read_value(address.soc))
         self.client.close()
 

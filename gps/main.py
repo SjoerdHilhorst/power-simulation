@@ -7,6 +7,8 @@ import config
 # user chooses the option for map
 
 #configuration = "CUSTOM"
+
+
 configuration = "DEFAULT"
 
 
@@ -25,7 +27,5 @@ if configuration == "CUSTOM":
 
 battery = Battery(60, 60, 30, 20, 1, 1, 1)
 battery.run()
-
-
 
 
