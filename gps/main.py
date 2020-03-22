@@ -1,6 +1,4 @@
-
 from battery import Battery
-
 import custom_config
 import config
 
@@ -10,7 +8,6 @@ import config
 
 
 configuration = "DEFAULT"
-
 
 # if it is custom user provides information and config is modified, here it is hardcoded for now
 if configuration == "CUSTOM":
@@ -25,7 +22,9 @@ if configuration == "CUSTOM":
     fx_addr_separator = 100
     custom_config.modify(float_mode, fx_addr_separator, scaling_factor, addresses)
 
-battery = Battery(60, 60, 30, 20, 1, 1, 1)
+battery = Battery(-300.69, 60, 30, 20, 1, 1, 1)
+battery.store.validate(3, 10, 1)
+battery.print_all_values()
 battery.run()
 
 
