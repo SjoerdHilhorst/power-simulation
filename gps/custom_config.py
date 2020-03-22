@@ -1,7 +1,7 @@
 import config as config
 
 
-def modify(float_mode, fx_addr_separator, scaling_factor, addresses):
+def modify(float_mode, fx_addr_separator, scaling_factor, word_order, byte_order, addresses):
     """
     changes the default configuration defined in config
     :param float_mode: "SCALE" or "COMB"
@@ -12,6 +12,8 @@ def modify(float_mode, fx_addr_separator, scaling_factor, addresses):
     config.float_mode = float_mode
     config.fx_addr_separator = fx_addr_separator
     config.scaling_factor = scaling_factor
+    config.word_order = word_order
+    config.byte_order = byte_order
 
     config.soc = addresses[0]  # float   dep
     config.active_power_in = addresses[1]  # float   in

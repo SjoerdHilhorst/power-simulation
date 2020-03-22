@@ -1,16 +1,16 @@
 import threading
-import time
+
 
 import numpy as np
 import math
 
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock, ModbusServerContext
-from pymodbus.server.sync import StartTcpServer, ModbusTcpServer
+from pymodbus.server.sync import  ModbusTcpServer
 
 from twisted.internet import reactor
 from twisted.internet.task import LoopingCall
 
-from pymodbus.server.sync import StartTcpServer
+
 from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
 import config as address
 
