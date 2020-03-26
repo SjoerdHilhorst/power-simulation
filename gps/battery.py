@@ -113,6 +113,7 @@ class Battery:
         self.set_current_I3_out()
         self.set_frequency_out()
         self.set_soc()
+        self.print_all_values()
 
     def print_all_values(self):
         print("active power in: ", self.get_value(address.active_power_in))
@@ -143,6 +144,7 @@ class Battery:
         print("current I2 out: ", self.get_value(address.current_l2_out))
         print("current I3 out: ", self.get_value(address.current_l3_out))
         print("frequency out: ", self.get_value(address.frequency_out))
+        print('----------------------------------')
 
     def random_gaussian_value(self, mu, sigma):
         return np.random.normal(mu, sigma)
@@ -215,7 +217,7 @@ class Battery:
         ap = self.get_value(address.active_power_in)
         voltage = self.get_value(address.voltage_l1_l2_in)
         pf = self.get_power_factor_in()
-        current = ap / (math.sqrt(3) * voltage * pf)
+        current = ap / (math.sqrt(3) * voltage * pf) * 1000  # from kW to W
         self.set_value(address.current_l1_in, current)
 
     def set_current_I2_in(self):
@@ -225,7 +227,7 @@ class Battery:
         ap = self.get_value(address.active_power_in)
         voltage = self.get_value(address.voltage_l2_l3_in)
         pf = self.get_power_factor_in()
-        current = ap / (math.sqrt(3) * voltage * pf)
+        current = ap / (math.sqrt(3) * voltage * pf) * 1000  # from kW to W
         self.set_value(address.current_l2_in, current)
 
     def set_current_I3_in(self):
@@ -235,7 +237,7 @@ class Battery:
         ap = self.get_value(address.active_power_in)
         voltage = self.get_value(address.voltage_l3_l1_in)
         pf = self.get_power_factor_in()
-        current = ap / (math.sqrt(3) * voltage * pf)
+        current = ap / (math.sqrt(3) * voltage * pf) * 1000  # from kW to W
         self.set_value(address.current_l3_in, current)
 
     def set_frequency_in(self):
@@ -273,7 +275,7 @@ class Battery:
         ap = self.get_value(address.active_power_out)
         voltage = self.get_value(address.voltage_l1_l2_out)
         pf = self.get_power_factor_out()
-        current = ap / (math.sqrt(3) * voltage * pf)
+        current = ap / (math.sqrt(3) * voltage * pf) * 1000  # from kW to W
         self.set_value(address.current_l1_out, current)
 
     def set_current_I2_out(self):
@@ -283,7 +285,7 @@ class Battery:
         ap = self.get_value(address.active_power_out)
         voltage = self.get_value(address.voltage_l2_l3_out)
         pf = self.get_power_factor_out()
-        current = ap / (math.sqrt(3) * voltage * pf)
+        current = ap / (math.sqrt(3) * voltage * pf) * 1000  # from kW to W
         self.set_value(address.current_l2_out, current)
 
     def set_current_I3_out(self):
@@ -293,7 +295,7 @@ class Battery:
         ap = self.get_value(address.active_power_out)
         voltage = self.get_value(address.voltage_l3_l1_out)
         pf = self.get_power_factor_out()
-        current = ap / (math.sqrt(3) * voltage * pf)
+        current = ap / (math.sqrt(3) * voltage * pf) * 1000  # from kW to W
         self.set_value(address.current_l3_out, current)
 
     def set_frequency_out(self):

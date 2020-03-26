@@ -2,7 +2,6 @@ from pymodbus.constants import Endian
 
 from battery import Battery
 import custom_config
-import config
 
 # Uncomment the option you want to test
 
@@ -12,7 +11,7 @@ configuration = "CUSTOM"
 # if it is custom user provides information and config is modified, here it is hardcoded for now
 if configuration == "CUSTOM":
     float_mode = "SCALE"  # uncomment if user wants to store float using scaling and one register
-    #float_mode = "COMB"  # uncomment if user wants to store float in IEEE  754 format
+    # float_mode = "COMB"  # uncomment if user wants to store float in IEEE  754 format
     endian = Endian.Big
     scaling_factor = 100
     addresses = list(range(310, 355, 2)) + list(range(110, 114))
@@ -36,8 +35,5 @@ battery.connect_power_out(125, -7)
 # fill in all dependent fields
 battery.update()
 
-#battery.store.validate(3, 10, 1)
-
-battery.print_all_values()
 # at this point battery starts to update its state
 battery.run()
