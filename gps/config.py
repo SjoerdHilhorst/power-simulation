@@ -25,7 +25,6 @@ fx_addr_separator = 100
 means that floats are stored as ints multiplied by scaling_factor
 """
 float_mode = "SCALE"        #
-# float_mode = "COMB"       # uncomment if user wants to store float in IEEE  754 format
 word_order = Endian.Big     # define endianness of byte in word
 byte_order = Endian.Big     # define endianness of bits in byte
 scaling_factor = 100        # scaling factor for floats precision, only needed if float_mode = "SCALE"

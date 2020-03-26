@@ -1,25 +1,47 @@
+import threading
+
+
 import numpy as np
 import math
 
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock, ModbusServerContext
-from pymodbus.server.sync import StartTcpServer
+from pymodbus.server.sync import  ModbusTcpServer
+
+from twisted.internet import reactor
+from twisted.internet.task import LoopingCall
+
+
 from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
 import config as address
-
 
 """
 Battery represents the Server/Slave
 """
+
+
 class Battery:
     max_capacity = 330
     """
-    Initialize the store
+    Initialize the store and the context
     """
     store = ModbusSlaveContext(
         di=ModbusSequentialDataBlock.create(),  # discrete input (1 bit, read-only)
         co=ModbusSequentialDataBlock.create(),  # coils (1 bit, read-write)
         hr=ModbusSequentialDataBlock.create(),  # holding registers (16 bit, read-write)
         ir=ModbusSequentialDataBlock.create())  # input registers (16 bit, read-only)
+
+    context = ModbusServerContext(slaves=store, single=True)
+
+    """
+    Initialize the server with provided address
+    """
+    server = ModbusTcpServer(context, address=("localhost", 5030))
+
+    """
+    Create a thread on which server runs
+    """
+    t = threading.Thread(target=server.serve_forever, daemon=True)
+
 
     """
     constructor
@@ -122,7 +144,6 @@ class Battery:
     def update(self):
         self.set_active_power_converter()
         self.set_reactive_power_converter()
-        self.set_soc()
         self.set_voltage_I1_I2_in()
         self.set_voltage_I2_I3_in()
         self.set_voltage_I3_I1_in()
@@ -137,6 +158,7 @@ class Battery:
         self.set_current_I2_out()
         self.set_current_I3_out()
         self.set_frequency_out()
+        self.set_soc()
 
     def print_all_values(self):
 
@@ -331,7 +353,14 @@ class Battery:
     def run(self):
         """
         starts the servers with filled in context
+        runs in separate thread
         """
-        print("START")
-        context = ModbusServerContext(slaves=self.store, single=True)
-        StartTcpServer(context, address=("localhost", 5050))
+
+        self.t.start()  # start the thread
+        print("SERVER: is running")
+
+        # update each 2 secs
+        interval = 2  # interval with which update happens, in that case every 2 seconds
+        loop = LoopingCall(f=self.update)
+        loop.start(interval, now=True)
+        reactor.run()
