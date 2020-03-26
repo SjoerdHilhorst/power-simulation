@@ -55,6 +55,8 @@ class Battery:
         self.set_value(address.system_status, system_status)
         self.set_value(address.system_mode, system_mode)
         self.set_value(address.accept_values, accept_values)
+        # assume initial charge was 100%
+        self.set_value(address.soc, 100)
 
     def connect_power_in(self, active_power_in, reactive_power_in, input_connected=1):
         self.set_value(address.active_power_in, active_power_in)
@@ -186,7 +188,9 @@ class Battery:
         """
         prev_soc = self.get_value(address.soc)
         apc = self.get_value(address.active_power_converter)
-        new_soc = prev_soc + (apc / self.max_capacity) * 3600
+
+        # multiply by 1000 to convert from kWh
+        new_soc = prev_soc + (apc / (self.max_capacity*1000)) * 3600
         self.set_value(address.soc, new_soc)
 
     def set_voltage_I1_I2_in(self):
