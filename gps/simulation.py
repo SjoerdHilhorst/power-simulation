@@ -12,7 +12,7 @@ configuration = "CUSTOM"
 # if it is custom user provides information and config is modified, here it is hardcoded for now
 if configuration == "CUSTOM":
     float_mode = "SCALE"  # uncomment if user wants to store float using scaling and one register
-    # float_mode = "COMB"  # uncomment if user wants to store float in IEEE  754 format
+    #float_mode = "COMB"  # uncomment if user wants to store float in IEEE  754 format
     endian = Endian.Big
     scaling_factor = 100
     addresses = list(range(310, 355, 2)) + list(range(110, 114))
