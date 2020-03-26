@@ -1,17 +1,15 @@
 import threading
 
-
 import numpy as np
 import math
 
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock, ModbusServerContext
-from pymodbus.server.sync import  ModbusTcpServer
+from pymodbus.server.sync import ModbusTcpServer
 
 from twisted.internet import reactor
 from twisted.internet.task import LoopingCall
+from handlers import FloatHandler
 
-
-from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
 import config as address
 
 """
@@ -33,54 +31,40 @@ class Battery:
     context = ModbusServerContext(slaves=store, single=True)
 
     """
-    Initialize the server with provided address
+    constructor, only constants are initialized here
     """
-    server = ModbusTcpServer(context, address=("localhost", 5030))
 
-    """
-    Create a thread on which server runs
-    """
-    t = threading.Thread(target=server.serve_forever, daemon=True)
-
-
-    """
-    constructor
-    """
-    def __init__(self,
-                 active_power_in,
-                 reactive_power_in,
-                 active_power_out,
-                 reactive_power_out,
-                 converter_started,
-                 input_connected,
-                 system_on_backup_battery,
-                 system_status=1,
-                 system_mode=5,
-                 accept_values=1,
-                 ):
-
-        # initialize payload builder, this converts floats, negative values to
-        # IEEE-754 hex format before writing in to the datastore
-        self.builder = BinaryPayloadBuilder(byteorder=address.byte_order, wordorder=address.word_order)
+    def __init__(self, id, addr, system_status, system_mode, system_on_backup_battery, accept_values):
+        self.id = id
 
         """
-        fill modbus server with initial data
+        Initialize the server with provided address
         """
-        self.set_value(address.active_power_in, active_power_in)
-        self.set_value(address.reactive_power_in, reactive_power_in)
-        self.set_value(address.active_power_out, active_power_out)
-        self.set_value(address.reactive_power_out, reactive_power_out)
-        self.set_value(address.converter_started, converter_started)
-        self.set_value(address.active_power_out, active_power_out)
-        self.set_value(address.input_connected, input_connected)
+        self.server = ModbusTcpServer(self.context, address=addr)
+
+        """
+        initialize payload builder, this converts floats, negative values to
+        IEEE-754 hex format before writing in to the datastore
+        """
+        self.float_handler = FloatHandler(address.byte_order, address.word_order, address.float_mode,
+                                          address.scaling_factor, self.store)
+        """
+        fill modbus server with initial data 
+        """
         self.set_value(address.system_on_backup_battery, system_on_backup_battery)
         self.set_value(address.system_status, system_status)
         self.set_value(address.system_mode, system_mode)
         self.set_value(address.accept_values, accept_values)
-        """
-        fill relational fields
-        """
-        self.update()
+
+    def connect_power_in(self, active_power_in, reactive_power_in, input_connected=1):
+        self.set_value(address.active_power_in, active_power_in)
+        self.set_value(address.reactive_power_in, reactive_power_in)
+        self.set_value(address.input_connected, input_connected)
+
+    def connect_power_out(self, active_power_out, reactive_power_out, converter_started=1):
+        self.set_value(address.active_power_out, active_power_out)
+        self.set_value(address.reactive_power_out, reactive_power_out)
+        self.set_value(address.converter_started, converter_started)
 
     def set_value(self, addr, value):
         """
@@ -92,7 +76,7 @@ class Battery:
         fx = addr // address.fx_addr_separator
         addr = addr % address.fx_addr_separator
         if fx > 2:
-            value = self.encode_float(value)
+            value = self.float_handler.encode_float(value)
             self.store.setValues(fx, addr, value)
         else:
             self.store.setValues(fx, addr, [value])
@@ -108,38 +92,8 @@ class Battery:
         if fx <= 2:
             value = self.store.getValues(fx, addr, 1)[0]
         elif fx > 2:
-            value = self.decode_float(fx, addr)
+            value = self.float_handler.decode_float(fx, addr)
         return value
-
-    def encode_float(self, value):
-        """
-        encodes float according to the way it is stored in registry
-        SCALE stands for multiplying/dividing by scaling factor method, I.E. 32bit int
-        COMB stands for storing the float in two registers, I.E. 32bit float
-        :param value: float which should be handled
-        :return: float rounded to integer
-        """
-        self.builder.reset()
-        if address.float_mode == "SCALE":
-            self.builder.add_32bit_int(round(value*address.scaling_factor))
-        elif address.float_mode == "COMB":
-            self.builder.add_32bit_float(value)
-
-        return self.builder.to_registers()
-
-    def decode_float(self, fx, addr):
-        """
-        decodes float value, the way specified in address
-        """
-        encoded_value = self.store.getValues(fx, addr, 2)
-        decoder = BinaryPayloadDecoder.fromRegisters(encoded_value, byteorder=address.byte_order, wordorder=address.word_order)
-        if address.float_mode == "SCALE":
-            value = decoder.decode_32bit_int() / address.scaling_factor
-        elif address.float_mode == "COMB":
-            value = decoder.decode_32bit_float()
-
-        return value
-
 
     def update(self):
         self.set_active_power_converter()
@@ -161,7 +115,6 @@ class Battery:
         self.set_soc()
 
     def print_all_values(self):
-
         print("active power in: ", self.get_value(address.active_power_in))
         print("reactive power in: ", self.get_value(address.reactive_power_in))
         print("active power out: ", self.get_value(address.active_power_out))
@@ -355,10 +308,9 @@ class Battery:
         starts the servers with filled in context
         runs in separate thread
         """
-
-        self.t.start()  # start the thread
+        t = threading.Thread(target=self.server.serve_forever, daemon=True)
+        t.start()  # start the thread
         print("SERVER: is running")
-
         # update each 2 secs
         interval = 2  # interval with which update happens, in that case every 2 seconds
         loop = LoopingCall(f=self.update)

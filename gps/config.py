@@ -60,3 +60,5 @@ accept_values = 110  # bool   const
 converter_started = 111  # bool   in
 input_connected = 112  # bool   in
 system_on_backup_battery = 113  # bool   in
+
+
