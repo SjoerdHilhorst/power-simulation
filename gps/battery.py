@@ -55,18 +55,42 @@ class Battery:
         self.set_value(address.system_status, system_status)
         self.set_value(address.system_mode, system_mode)
         self.set_value(address.accept_values, accept_values)
-        # assume initial charge was 100%
+        # assume initial charge was 100% (?)
         self.set_value(address.soc, 100)
 
-    def connect_power_in(self, active_power_in, reactive_power_in, input_connected=1):
-        self.set_value(address.active_power_in, active_power_in)
-        self.set_value(address.reactive_power_in, reactive_power_in)
+        """
+        initialize power source and load
+        """
+        self.power_source = None
+        self.power_load = None
+
+    def connect_power_in(self, power_source, input_connected=1):
+        """
+        Literally connect the source and set the initial value of active/reactive power_in
+        :param power_source: power_source to connect
+        :param input_connected: set boolean to True
+        """
+        self.power_source = power_source
+        self.set_value(address.active_power_in, self.power_source.get_active_power())
+        self.set_value(address.reactive_power_in, self.power_source.get_reactive_power())
         self.set_value(address.input_connected, input_connected)
 
-    def connect_power_out(self, active_power_out, reactive_power_out, converter_started=1):
-        self.set_value(address.active_power_out, active_power_out)
-        self.set_value(address.reactive_power_out, reactive_power_out)
+    def connect_power_out(self, power_load, converter_started=1):
+        """
+        Literally connect the load and set the initial value of active/reactive power_out
+        :param power_load: load to connect to
+        :param converter_started:  set boolean to True
+        """
+        self.power_load = power_load
+        self.set_value(address.active_power_out, self.power_load.get_active_power())
+        self.set_value(address.reactive_power_out, self.power_load.get_reactive_power())
         self.set_value(address.converter_started, converter_started)
+
+    def update_powers(self):
+        self.set_value(address.active_power_in, self.power_source.get_active_power())
+        self.set_value(address.reactive_power_in, self.power_source.get_reactive_power())
+        self.set_value(address.active_power_out, self.power_load.get_active_power())
+        self.set_value(address.reactive_power_out, self.power_load.get_reactive_power())
 
     def set_value(self, addr, value):
         """
@@ -98,6 +122,7 @@ class Battery:
         return value
 
     def update(self):
+        self.update_powers()
         self.set_active_power_converter()
         self.set_reactive_power_converter()
         self.set_voltage_I1_I2_in()
@@ -190,7 +215,7 @@ class Battery:
         apc = self.get_value(address.active_power_converter)
 
         # multiply by 1000 to convert from kWh
-        new_soc = prev_soc + (apc / (self.max_capacity*1000)) * 3600
+        new_soc = prev_soc + (apc / (self.max_capacity * 1000)) * 3600
         self.set_value(address.soc, new_soc)
 
     def set_voltage_I1_I2_in(self):

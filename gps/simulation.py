@@ -2,7 +2,7 @@ from pymodbus.constants import Endian
 
 from battery import Battery
 import custom_config
-
+from powers import *
 # Uncomment the option you want to test
 
 configuration = "CUSTOM"
@@ -26,11 +26,14 @@ id = "GREENER_001"
 # battery is instantiated, only constants are in the input
 battery = Battery(id, address, 1, 5, 1, 1)
 
+power_source = PowerIn((0, 200), (-65, 185))
+power_load = PowerOut((-11, 25), (-15, 25))
+
 # connect battery to the power
-battery.connect_power_in(97, -3)
+battery.connect_power_in(power_source)
 
 # connect battery to the load
-battery.connect_power_out(125, -7)
+battery.connect_power_out(power_load)
 
 # fill in all dependent fields
 battery.update()
