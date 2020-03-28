@@ -1,6 +1,5 @@
 import threading
 
-
 import numpy as np
 import math
 
@@ -13,6 +12,8 @@ from twisted.internet.task import LoopingCall
 
 from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
 import config as address
+
+from gps.power_load import PowerFeed
 
 """
 Battery represents the Server/Slave
@@ -142,6 +143,7 @@ class Battery:
 
 
     def update(self):
+        self.set_power_load()
         self.set_active_power_converter()
         self.set_reactive_power_converter()
         self.set_voltage_I1_I2_in()
@@ -193,6 +195,13 @@ class Battery:
 
     def random_gaussian_value(self, mu, sigma):
         return np.random.normal(mu, sigma)
+
+    def set_power_load(self):
+        powerFeed = PowerFeed()
+        self.set_value(address.active_power_in, powerFeed.active_power_in())
+        self.set_value(address.reactive_power_in, powerFeed.reactive_power_in())
+        self.set_value(address.active_power_out, powerFeed.active_power_out())
+        self.set_value(address.reactive_power_out, powerFeed.reactive_power_out())
 
     def get_power_factor_in(self):
         """
