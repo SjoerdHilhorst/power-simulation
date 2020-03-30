@@ -3,12 +3,13 @@ import threading
 import numpy as np
 import math
 
+
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock, ModbusServerContext
 from pymodbus.server.sync import ModbusTcpServer
 
 from twisted.internet import reactor
 from twisted.internet.task import LoopingCall
-from handlers import FloatHandler
+from util import FloatHandler
 
 import config as address
 
@@ -56,7 +57,7 @@ class Battery:
         self.set_value(address.system_mode, system_mode)
         self.set_value(address.accept_values, accept_values)
         # assume initial charge was 100% (?)
-        self.set_value(address.soc, 100)
+        self.set_value(address.soc, 0)
 
         """
         initialize power source and load
@@ -143,7 +144,8 @@ class Battery:
         self.print_all_values()
 
     def print_all_values(self):
-        print("active power in: ", self.get_value(address.active_power_in))
+
+        '''print("active power in: ", self.get_value(address.active_power_in))
         print("reactive power in: ", self.get_value(address.reactive_power_in))
         print("active power out: ", self.get_value(address.active_power_out))
         print("reactive power out: ", self.get_value(address.reactive_power_out))
@@ -156,7 +158,6 @@ class Battery:
         print("accept values: ", self.get_value(address.accept_values))
         print("active power converter: ", self.get_value(address.active_power_converter))
         print("reactive power converter: ", self.get_value(address.reactive_power_converter))
-        print("soc: ", self.get_value(address.soc))
         print("voltage I1 I2 in: ", self.get_value(address.voltage_l1_l2_in))
         print("voltage I2 I3 in: ", self.get_value(address.voltage_l2_l3_in))
         print("voltage I3 I1 in: ", self.get_value(address.voltage_l3_l1_in))
@@ -170,7 +171,8 @@ class Battery:
         print("current I1 out: ", self.get_value(address.current_l1_out))
         print("current I2 out: ", self.get_value(address.current_l2_out))
         print("current I3 out: ", self.get_value(address.current_l3_out))
-        print("frequency out: ", self.get_value(address.frequency_out))
+        print("frequency out: ", self.get_value(address.frequency_out))'''
+        print("soc: ", self.get_value(address.soc))
         print('----------------------------------')
 
     def random_gaussian_value(self, mu, sigma):
