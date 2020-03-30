@@ -38,10 +38,8 @@ class Battery:
     """
 
     def __init__(self, id, addr, system_status, system_mode, system_on_backup_battery, accept_values,config):
-        print(config)
         global address
         address = json_config.get_data(config)
-        print(address)
         self.id = id
 
         """
