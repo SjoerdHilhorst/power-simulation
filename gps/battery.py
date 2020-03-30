@@ -38,11 +38,10 @@ class Battery:
     constructor, only constants are initialized here
     """
 
-    def __init__(self, id, addr, system_status, system_mode, system_on_backup_battery, accept_values,config):
+    def __init__(self, id, addr,  config, system_status, system_mode, system_on_backup_battery, accept_values):
         global address
         address = json_config.get_data(config)
         self.id = id
-
         """
         Initialize the server with provided address
         """
@@ -62,7 +61,7 @@ class Battery:
         self.set_value(address['system_mode'], system_mode)
         self.set_value(address['accept_values'], accept_values)
         # assume initial charge was 100% (?)
-        self.set_value(address['soc'], 100)
+        self.set_value(address['soc'], 0)
 
         """
         initialize power source and load
