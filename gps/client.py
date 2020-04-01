@@ -1,40 +1,105 @@
-""" Client == master == GreenerEye """
+""" Client == master == GreenerEye
+This is a simple client example
+for testing if the battery server works
+"""
 
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
-from battery import Battery as battery
+from pymodbus.payload import BinaryPayloadDecoder, Endian
+import json_config
 
-import logging
-
-logging.basicConfig()
-log = logging.getLogger()
-log.setLevel(logging.DEBUG)
-
-client = ModbusClient('localhost', port=5030)
-client.connect()
+#use get_data() for default
+address = json_config.get_data()
 
 
-def read_value(addr):
-    fx = addr // 100
-    address = addr % 100
+class GreenerEye:
+    def __init__(self):
+        self.client = ModbusClient('localhost', port=5030)
 
-    if fx == 1:
-        val = client.read_coils(address).bits
-    elif fx == 2:
-        val = client.read_discrete_inputs(address).bits
-    elif fx == 3:
-        val = client.read_holding_registers(address).registers
-    else:
-        val = client.read_input_registers(address).registers
-    return val
+    def read_value(self, addr):
+        fx = addr // address['fx_addr_separator']
+        addr = addr % address['fx_addr_separator']
 
-#examples
-print(read_value(battery.active_power_out))
-print(read_value(battery.reactive_power_in))
+        if fx == 1:
+            val = self.client.read_coils(addr).bits[0]
+        elif fx == 2:
+            val = self.client.read_discrete_inputs(addr).bits[0]
+        elif fx == 3:
+            val = self.client.read_holding_registers(addr, 2).registers
+        else:
+            val = self.client.read_input_registers(addr, 2).registers
+        return val
 
-#currently do not work because values are not integers!!!
-print(read_value(battery.current_l1_in))
-print(read_value(battery.voltage_l1_l2_out))
-print(read_value(battery.frequency_out))
+    def scale_float_example(self):
+        r = self.client.read_holding_registers(10, 46, unit=1)
+        d = BinaryPayloadDecoder.fromRegisters(r.registers, byteorder=Endian.Big, wordorder=Endian.Big)
+
+        # this will print address 310 to 354, IE. all float registers
+
+        
+        for x in range(0, 22):
+            print(d.decode_32bit_int() / address['scaling_factor'])
+
+        # examples, reading a single value
+        r = self.read_value(address['active_power_in'])
+        d = BinaryPayloadDecoder.fromRegisters(r, byteorder=address['byte_order'], wordorder=address['word_order'])
+        print(d.decode_32bit_int() / address['scaling_factor'])
+
+        r = self.read_value(address['reactive_power_in'])
+        d = BinaryPayloadDecoder.fromRegisters(r, byteorder=address['byte_order'], wordorder=address['word_order'])
+        print(d.decode_32bit_int() / address['scaling_factor'])
+
+        r = self.read_value(address['current_l1_in'])
+        d = BinaryPayloadDecoder.fromRegisters(r, byteorder=address['byte_order'], wordorder=address['word_order'])
+        print(d.decode_32bit_int() / address['scaling_factor'])
+
+        r = self.read_value(address['voltage_l1_l2_out'])
+        d = BinaryPayloadDecoder.fromRegisters(r, byteorder=address['byte_order'], wordorder=address['word_order'])
+        print(d.decode_32bit_int() / address['scaling_factor'])
+
+        r = self.read_value(address['frequency_out'])
+        d = BinaryPayloadDecoder.fromRegisters(r, byteorder=address['byte_order'], wordorder=address['word_order'])
+        print(d.decode_32bit_int() / address['scaling_factor'])
+
+    def comb_float_example(self):
+        r = self.client.read_holding_registers(10, 46, unit=1)
+        d = BinaryPayloadDecoder.fromRegisters(r.registers, byteorder=Endian.Big, wordorder=Endian.Big)
+
+        # this will print address 310 to 354, IE. all float registers
+        for x in range(0, 22):
+            print(d.decode_32bit_float())
+
+            # examples, reading a single value
+        r = self.read_value(address.active_power_in)
+        d = BinaryPayloadDecoder.fromRegisters(r, byteorder=address['byte_order'], wordorder=address['word_order'])
+        print(d.decode_32bit_float())
+
+        r = self.read_value(address.reactive_power_in)
+        d = BinaryPayloadDecoder.fromRegisters(r, byteorder=address['byte_order'], wordorder=address['word_order'])
+
+        print(d.decode_32bit_float())
+
+        r = self.read_value(address.current_l1_in)
+        d = BinaryPayloadDecoder.fromRegisters(r, byteorder=address['byte_order'], wordorder=address['word_order'])
+        print(d.decode_32bit_float())
+
+        r = self.read_value(address.voltage_l1_l2_out)
+        d = BinaryPayloadDecoder.fromRegisters(r, byteorder=address['byte_order'], wordorder=address['word_order'])
+        print(d.decode_32bit_float())
+
+        r = self.read_value(address.frequency_out)
+        d = BinaryPayloadDecoder.fromRegisters(r, byteorder=address['byte_order'], wordorder=address['word_order'])
+        print(d.decode_32bit_float())
 
 
-client.close()
+# uncomment the needed in correspondence with main module
+    def run(self):
+        self.client.connect()
+        print("CLIENT: is running")
+        self.scale_float_example()  # works with "DEFAULT" and "CUSTOM" + "SCALE"
+        #self.comb_float_example() # works with "CUSTOM" + "COMB"
+        self.client.close()
+
+
+eye = GreenerEye()
+eye.run()
+
