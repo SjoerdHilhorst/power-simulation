@@ -1,8 +1,6 @@
 import random
 
 
-# I know it seems kinda redundant to have to classes. But i guess in future they might have different behaviour
-
 class PowerIn:
     def __init__(self, range_active, range_reactive):
         self.range_active = range_active
