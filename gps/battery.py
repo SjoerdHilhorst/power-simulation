@@ -11,15 +11,12 @@ from twisted.internet import reactor
 from twisted.internet.task import LoopingCall
 from util import FloatHandler
 
-import json_config
-
 
 """
 Battery represents the Server/Slave
 """
 
 address = {}
-
 
 class Battery:
     max_capacity = 330
@@ -38,36 +35,37 @@ class Battery:
     constructor, only constants are initialized here
     """
 
-    def __init__(self, id, addr,  config, system_status, system_mode, system_on_backup_battery, accept_values):
-        global address
-        address = json_config.get_data(config)
-        self.id = id
-        """
-        Initialize the server with provided address
-        """
-        self.server = ModbusTcpServer(self.context, address=addr)
+    def __init__(self, env, system_status, system_mode, system_on_backup_battery, accept_values):
+            global address
+            address = env["address"]
+            self.id = env["id"]
+            self.addr_separator = env['fx_addr_separator']
+            """
+            Initialize the server with provided address
+            """
+            self.server = ModbusTcpServer(self.context, address=tuple(env["server_address"]))
 
-        """
-        initialize payload builder, this converts floats, negative values to
-        IEEE-754 hex format before writing in to the datastore
-        """
-        self.float_handler = FloatHandler(address['byte_order'], address['word_order'], address['float_mode'],
-                                          address['scaling_factor'], self.store)
-        """
-        fill modbus server with initial data 
-        """
-        self.set_value(address['system_on_backup_battery'], system_on_backup_battery)
-        self.set_value(address['system_status'], system_status)
-        self.set_value(address['system_mode'], system_mode)
-        self.set_value(address['accept_values'], accept_values)
-        # assume initial charge was 100% (?)
-        self.set_value(address['soc'], 0)
+            """
+            initialize payload builder, this converts floats, negative values to
+            IEEE-754 hex format before writing in to the datastore
+            """
+            self.float_handler = FloatHandler(env['byte_order'], env['word_order'], env['float_mode'],
+                                              env['scaling_factor'], self.store)
+            """
+            fill modbus server with initial data 
+            """
+            self.set_value(address['system_on_backup_battery'], system_on_backup_battery)
+            self.set_value(address['system_status'], system_status)
+            self.set_value(address['system_mode'], system_mode)
+            self.set_value(address['accept_values'], accept_values)
+            # assume initial charge was 100% (?)
+            self.set_value(address['soc'], 0)
 
-        """
-        initialize power source and load
-        """
-        self.power_source = None
-        self.power_load = None
+            """
+            initialize power source and load
+            """
+            self.power_source = None
+            self.power_load = None
 
     def connect_power_in(self, power_source, input_connected=1):
         """
@@ -104,8 +102,8 @@ class Battery:
         :param addr: address where first digit stands for reg type
         :param value: value to set
         """
-        fx = addr // address['fx_addr_separator']
-        addr = addr % address['fx_addr_separator']
+        fx = addr // self.addr_separator
+        addr = addr % self.addr_separator
         if fx > 2:
             value = self.float_handler.encode_float(value)
             self.store.setValues(fx, addr, value)
@@ -118,8 +116,8 @@ class Battery:
         :param addr: address where first digit stands for reg type
         :return: value from the given address
         """
-        fx = addr // address['fx_addr_separator']
-        addr = addr % address['fx_addr_separator']
+        fx = addr // self.addr_separator
+        addr = addr % self.addr_separator
         if fx <= 2:
             value = self.store.getValues(fx, addr, 1)[0]
         elif fx > 2:
@@ -345,7 +343,7 @@ class Battery:
         runs in separate thread
         """
         t = threading.Thread(target=self.server.serve_forever, daemon=True)
-        t.start()  # start the thread
+        t.start()
         print("SERVER: is running")
         # update each 2 secs
         interval = 2  # interval with which update happens, in that case every 2 seconds
