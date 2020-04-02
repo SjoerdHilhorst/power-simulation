@@ -8,6 +8,8 @@ from pymodbus.payload import BinaryPayloadDecoder, Endian
 import json_config
 
 
+# address = json_config.get_data("custom")
+
 class GreenerEye:
     def __init__(self, env):
         self.address = env['address']
@@ -36,7 +38,6 @@ class GreenerEye:
 
         # this will print address 310 to 354, IE. all float registers
 
-        
         for x in range(0, 22):
             print(d.decode_32bit_int() / self.scaling_factor)
 
@@ -91,8 +92,7 @@ class GreenerEye:
         d = BinaryPayloadDecoder.fromRegisters(r, byteorder=env['byte_order'], wordorder=env['word_order'])
         print(d.decode_32bit_float())
 
-
-# uncomment the needed in correspondence with main module
+    # uncomment the needed in correspondence with main module
     def run(self):
         self.client.connect()
         print("CLIENT: is running")
