@@ -68,7 +68,7 @@ class GreenerEye:
         for x in range(0, 22):
             print(d.decode_32bit_float())
 
-            # examples, reading a single value
+        # examples, reading a single value
         r = self.read_value(address.active_power_in)
         d = BinaryPayloadDecoder.fromRegisters(r, byteorder=address['byte_order'], wordorder=address['word_order'])
         print(d.decode_32bit_float())

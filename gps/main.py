@@ -2,7 +2,7 @@ from pymodbus.constants import Endian
 
 from battery import Battery
 import json_config
-from powers import *
+from models import historic_sim, random_sim, sim
 
 
 address = ("localhost", 5030)
@@ -23,17 +23,12 @@ if __name__ == "__main__":
     # battery is instantiated, only constants are in the input, "custom" or None is for accessing the json
     battery = Battery(env, 1, 5, 1, 1)
 
-    power_source = PowerIn((0, 200), (-65, 185))
-    power_load = PowerOut((-11, 25), (-15, 25))
+    sim_type = env["simulation_type"]
+    if sim_type == "random":
+        random_sim.random_simulation(battery)
+    if sim_type == "historic":
+        historic_sim.historic_simulation(battery)
+    if sim_type == "simulation":
+        sim.simulation(battery)
 
-    # connect battery to the power
-    battery.connect_power_in(power_source)
 
-    # connect battery to the load
-    battery.connect_power_out(power_load)
-
-    # fill in all dependent fields
-    battery.update()
-
-    # at this point battery starts to update its state
-    battery.run()

@@ -3,7 +3,6 @@ import threading
 import numpy as np
 import math
 
-
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock, ModbusServerContext
 from pymodbus.server.sync import ModbusTcpServer
 
