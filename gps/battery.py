@@ -59,7 +59,6 @@ class Battery:
         :param power_source: power_source to connect
         :param input_connected: set boolean to True
         """
-
         self.power_source = power_source
         self.update_powers()
         self.set_value(self.address['input_connected'], input_connected)

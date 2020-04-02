@@ -1,4 +1,4 @@
-from gps.models.simulationClass import PowerSimulation
+from gps.simulations.simulationSuperClass import PowerSimulation
 import random
 
 
