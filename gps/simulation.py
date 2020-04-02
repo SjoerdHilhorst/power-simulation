@@ -14,7 +14,7 @@ filename = "custom"  # it can be any name provided by user, new JSON will be cre
 # if it is custom user provides information and config is modified, here it is hardcoded for now
 if configuration is not None:
     float_mode = "SCALE"  # uncomment if user wants to store float using scaling and one register
-    # float_mode = "COMB"  # uncomment if user wants to store float in IEEE  754 format
+    #float_mode = "COMB"  # uncomment if user wants to store float in IEEE  754 format
     endian = Endian.Big
     scaling_factor = 100
     addresses = list(range(310, 355, 2)) + list(range(110, 114))
@@ -34,9 +34,7 @@ power_source = PowerIn((0, 200), (-65, 185))
 power_load = PowerOut((-11, 25), (-15, 25))
 
 battery.connect_power_in(power_source)
-
 battery.connect_power_out(power_load)
 
 battery.update()
-
 battery.run()

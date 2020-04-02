@@ -32,7 +32,7 @@ class GreenerEye:
         return val
 
     def scale_float_example(self):
-        r = self.client.read_holding_registers(1000, 46, unit=1)
+        r = self.client.read_holding_registers(10, 46, unit=1)
         d = BinaryPayloadDecoder.fromRegisters(r.registers, byteorder=Endian.Big, wordorder=Endian.Big)
 
         # this will print address 310 to 354, IE. all float registers
@@ -62,7 +62,7 @@ class GreenerEye:
         print(d.decode_32bit_int() / address['scaling_factor'])
 
     def comb_float_example(self):
-        r = self.client.read_holding_registers(1000, 46, unit=1)
+        r = self.client.read_holding_registers(10, 46, unit=1)
         d = BinaryPayloadDecoder.fromRegisters(r.registers, byteorder=Endian.Big, wordorder=Endian.Big)
 
         # this will print address 310 to 354, IE. all float registers
