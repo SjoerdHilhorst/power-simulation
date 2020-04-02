@@ -1,4 +1,8 @@
+
 from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
+
+
+
 
 
 class FloatHandler:
@@ -20,7 +24,7 @@ class FloatHandler:
         """
         self.builder.reset()
         if self.float_mode == "SCALE":
-            self.builder.add_32bit_int(round(value*self.scaling_factor))
+            self.builder.add_32bit_int(round(value * self.scaling_factor))
         elif self.float_mode == "COMB":
             self.builder.add_32bit_float(value)
         return self.builder.to_registers()
@@ -30,9 +34,11 @@ class FloatHandler:
         decodes float value, the way specified in address
         """
         encoded_value = self.battery_store.getValues(fx, addr, 2)
-        decoder = BinaryPayloadDecoder.fromRegisters(encoded_value, byteorder=self.byte_order, wordorder=self.word_order)
+        decoder = BinaryPayloadDecoder.fromRegisters(encoded_value, byteorder=self.byte_order,
+                                                     wordorder=self.word_order)
         if self.float_mode == "SCALE":
             value = decoder.decode_32bit_int() / self.scaling_factor
         elif self.float_mode == "COMB":
             value = decoder.decode_32bit_float()
         return value
+

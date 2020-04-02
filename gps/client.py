@@ -7,9 +7,11 @@ from pymodbus.client.sync import ModbusTcpClient as ModbusClient
 from pymodbus.payload import BinaryPayloadDecoder, Endian
 import json_config
 
-#use get_data() for default
+# use get_data() for default
 address = json_config.get_data()
 
+
+# address = json_config.get_data("custom")
 
 class GreenerEye:
     def __init__(self):
@@ -35,7 +37,6 @@ class GreenerEye:
 
         # this will print address 310 to 354, IE. all float registers
 
-        
         for x in range(0, 22):
             print(d.decode_32bit_int() / address['scaling_factor'])
 
@@ -48,11 +49,11 @@ class GreenerEye:
         d = BinaryPayloadDecoder.fromRegisters(r, byteorder=address['byte_order'], wordorder=address['word_order'])
         print(d.decode_32bit_int() / address['scaling_factor'])
 
-        r = self.read_value(address['current_l1_in'])
+        r = self.read_value(address['current_I1_in'])
         d = BinaryPayloadDecoder.fromRegisters(r, byteorder=address['byte_order'], wordorder=address['word_order'])
         print(d.decode_32bit_int() / address['scaling_factor'])
 
-        r = self.read_value(address['voltage_l1_l2_out'])
+        r = self.read_value(address['voltage_I1_I2_out'])
         d = BinaryPayloadDecoder.fromRegisters(r, byteorder=address['byte_order'], wordorder=address['word_order'])
         print(d.decode_32bit_int() / address['scaling_factor'])
 
@@ -90,16 +91,14 @@ class GreenerEye:
         d = BinaryPayloadDecoder.fromRegisters(r, byteorder=address['byte_order'], wordorder=address['word_order'])
         print(d.decode_32bit_float())
 
-
-# uncomment the needed in correspondence with main module
+    # uncomment the needed in correspondence with main module
     def run(self):
         self.client.connect()
         print("CLIENT: is running")
         self.scale_float_example()  # works with "DEFAULT" and "CUSTOM" + "SCALE"
-        #self.comb_float_example() # works with "CUSTOM" + "COMB"
+        # self.comb_float_example() # works with "CUSTOM" + "COMB"
         self.client.close()
 
 
 eye = GreenerEye()
 eye.run()
-
