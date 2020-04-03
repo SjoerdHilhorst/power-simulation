@@ -30,5 +30,5 @@ python3 main.py
 * [Sjoerd](https://github.com/SjoerdHilhorst)
 
 ## Acknowledgements
-Huge thanks to Jasper Clarijs from Greener Power Solutions for setting us up with the project and answering all our project
+Huge thanks to Jasper Clarijs from Greener Power Solutions for setting us up with the project and answering questions
 and [Alex Tutea](https://github.com/alextutea) our TA For guiding us through the software engineering course.
