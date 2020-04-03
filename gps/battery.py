@@ -8,11 +8,11 @@ from twisted.internet.task import LoopingCall
 from util import *
 from math_engine import MathEngine
 
-
-
 """
 Battery represents the Server/Slave
 """
+
+
 class Battery:
     max_capacity = 330
     """
@@ -49,21 +49,20 @@ class Battery:
         self.set_value(self.address['active_power_out'], start_val['active_power_out'])
         self.set_value(self.address['reactive_power_out'], start_val['reactive_power_out'])
 
-        self.power_source = None
-        self.power_load = None
+        self.power = None
 
-    def connect_power(self, power_source, input_connected=1, converter_started=1):
+    def connect_power(self, power):
         """
         Literally connect the source and set the initial value of active/reactive power_in
-        :param power_source: power_source to connect
+        :param power: power_source to connect
         """
-        self.power_source = power_source
+        self.power = power
         self.update_powers()
-        self.set_value(self.address['input_connected'], input_connected)
-        self.set_value(self.address['converter_started'], converter_started)
+        self.set_value(self.address['input_connected'], 1)
+        self.set_value(self.address['converter_started'], 1)
 
     def update_powers(self):
-        api, rpi, apo, rpo = self.power_source.get_power()
+        api, rpi, apo, rpo = self.power.get_power()
         self.set_value(self.address['active_power_in'], api)
         self.set_value(self.address['reactive_power_in'], rpi)
         self.set_value(self.address['active_power_out'], rpi)

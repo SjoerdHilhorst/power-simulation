@@ -96,8 +96,8 @@ class GreenerEye:
     def run(self):
         self.client.connect()
         print("CLIENT: is running")
-        #self.scale_float_example()  # works with "DEFAULT" and "CUSTOM" + "SCALE"
-        self.comb_float_example() # works with "CUSTOM" + "COMB"
+        self.scale_float_example()  # works with "DEFAULT" and "CUSTOM" + "SCALE"
+        #self.comb_float_example() # works with "CUSTOM" + "COMB"
         self.client.close()
 
 

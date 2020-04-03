@@ -1,5 +1,4 @@
-from gps.simulations.simulationSuperClass import PowerSimulation
-import random
+from simulations.simulationSuperClass import PowerSimulation
 
 
 class Simulation(PowerSimulation):
