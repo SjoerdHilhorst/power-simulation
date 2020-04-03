@@ -22,6 +22,7 @@ class FloatHandler:
         :param value: float which should be handled
         :return: float rounded to integer
         """
+
         self.builder.reset()
         if self.float_mode == "SCALE":
             self.builder.add_32bit_int(round(value * self.scaling_factor))

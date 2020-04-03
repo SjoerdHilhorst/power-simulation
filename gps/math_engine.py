@@ -1,15 +1,10 @@
-import json_config
 import numpy as np
-
-address = {}
-
 
 class MathEngine:
 
-    def __init__(self, battery):
+    def __init__(self, battery, address):
         self.battery = battery
-        global address
-        address = json_config.get_data(battery.config)
+        self.address = address
 
     def random_gaussian_value(self, mu, sigma):
         return np.random.normal(mu, sigma)
@@ -18,31 +13,31 @@ class MathEngine:
         """
         :return: active_power_in / sqrt(active_power_in^2 + reactive_power_in^2)
         """
-        ap = self.battery.get_value(address['active_power_in'])
-        rp = self.battery.get_value(address['reactive_power_in'])
+        ap = self.battery.get_value(self.address['active_power_in'])
+        rp = self.battery.get_value(self.address['reactive_power_in'])
         return ap / np.math.sqrt(ap * ap + rp * rp)
 
     def get_power_factor_out(self):
         """
         :return: active_power_out / sqrt(active_power_out^2 + reactive_power_out^2)
         """
-        ap = self.battery.get_value(address['active_power_out'])
-        rp = self.battery.get_value(address['reactive_power_out'])
+        ap = self.battery.get_value(self.address['active_power_out'])
+        rp = self.battery.get_value(self.address['reactive_power_out'])
         return ap / np.math.sqrt(ap * ap + rp * rp)
 
     def get_active_power_converter(self):
         """
         :return: active_power_in - active_power_out
         """
-        apc = self.battery.get_value(address['active_power_in']) - self.battery.get_value(address['active_power_out'])
+        apc = self.battery.get_value(self.address['active_power_in']) - self.battery.get_value(self.address['active_power_out'])
         return apc
 
     def get_reactive_power_converter(self):
         """
         :return: reactive_power_in - reactive_power_out
         """
-        rpc = self.battery.get_value(address['reactive_power_in']) - self.battery.get_value(
-            address['reactive_power_out'])
+        rpc = self.battery.get_value(self.address['reactive_power_in']) - self.battery.get_value(
+            self.address['reactive_power_out'])
         return rpc
 
     def get_soc(self):
@@ -50,8 +45,8 @@ class MathEngine:
         :return: previous SoC + [(active_power_converter) /
                 (Some configurable max battery capacity, say 330 kWh)] * 3600.
         """
-        prev_soc = self.battery.get_value(address['soc'])
-        apc = self.battery.get_value(address['active_power_converter'])
+        prev_soc = self.battery.get_value(self.address['soc'])
+        apc = self.battery.get_value(self.address['active_power_converter'])
 
         # multiply by 1000 to convert from kWh
         new_soc = prev_soc + (apc / (self.battery.max_capacity * 1000)) * 3600
@@ -82,8 +77,8 @@ class MathEngine:
         """
         :return: active_power_in / (sqrt(3) * voltage_l1_l2_in * power_factor_in)
         """
-        ap = self.battery.get_value(address['active_power_in'])
-        voltage = self.battery.get_value(address['voltage_I1_I2_in'])
+        ap = self.battery.get_value(self.address['active_power_in'])
+        voltage = self.battery.get_value(self.address['voltage_l1_l2_in'])
         pf = self.get_power_factor_in()
         current = ap / (np.math.sqrt(3) * voltage * pf) * 1000  # from kW to W
         return current
@@ -92,8 +87,8 @@ class MathEngine:
         """
         :return: active_power_in / (sqrt(3) * voltage_l2_l3_in * power_factor_in)
         """
-        ap = self.battery.get_value(address['active_power_in'])
-        voltage = self.battery.get_value(address['voltage_I2_I3_in'])
+        ap = self.battery.get_value(self.address['active_power_in'])
+        voltage = self.battery.get_value(self.address['voltage_l2_l3_in'])
         pf = self.get_power_factor_in()
         current = ap / (np.math.sqrt(3) * voltage * pf) * 1000  # from kW to W
         return current
@@ -102,8 +97,8 @@ class MathEngine:
         """
         :return: active_power_in / (sqrt(3) * voltage_l3_l1_in * power_factor_in)
         """
-        ap = self.battery.get_value(address['active_power_in'])
-        voltage = self.battery.get_value(address['voltage_I3_I1_in'])
+        ap = self.battery.get_value(self.address['active_power_in'])
+        voltage = self.battery.get_value(self.address['voltage_l3_l1_in'])
         pf = self.get_power_factor_in()
         current = ap / (np.math.sqrt(3) * voltage * pf) * 1000  # from kW to W
         return current
@@ -140,8 +135,8 @@ class MathEngine:
         """
         :return: active_power_out / (sqrt(3) * voltage_l1_l2_out * power_factor_out)
         """
-        ap = self.battery.get_value(address['active_power_out'])
-        voltage = self.battery.get_value(address['voltage_I1_I2_out'])
+        ap = self.battery.get_value(self.address['active_power_out'])
+        voltage = self.battery.get_value(self.address['voltage_l1_l2_out'])
         pf = self.get_power_factor_out()
         current = ap / (np.math.sqrt(3) * voltage * pf) * 1000  # from kW to W
         return current
@@ -150,8 +145,8 @@ class MathEngine:
         """
         :return: active_power_out / (sqrt(3) * voltage_l2_l3_out * power_factor_out)
         """
-        ap = self.battery.get_value(address['active_power_out'])
-        voltage = self.battery.get_value(address['voltage_I2_I3_out'])
+        ap = self.battery.get_value(self.address['active_power_out'])
+        voltage = self.battery.get_value(self.address['voltage_l2_l3_out'])
         pf = self.get_power_factor_out()
         current = ap / (np.math.sqrt(3) * voltage * pf) * 1000  # from kW to W
         return current
@@ -160,8 +155,8 @@ class MathEngine:
         """
         :return: active_power_out / (sqrt(3) * voltage_l3_l1_out * power_factor_out)
         """
-        ap = self.battery.get_value(address['active_power_out'])
-        voltage = self.battery.get_value(address['voltage_I3_I1_out'])
+        ap = self.battery.get_value(self.address['active_power_out'])
+        voltage = self.battery.get_value(self.address['voltage_l3_l1_out'])
         pf = self.get_power_factor_out()
         current = ap / (np.math.sqrt(3) * voltage * pf) * 1000  # from kW to W
         return current
