@@ -1,4 +1,4 @@
-from simulations.simulationSuperClass import PowerSimulation
+from simulations.simulation import PowerSimulation
 
 
 class Simulation(PowerSimulation):

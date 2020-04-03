@@ -1,5 +1,5 @@
-from .historicSimulation import HistoricSimulation
-from .randomSimulation import RandomSimulation
-from .simulationModel import Simulation
+from .historic_simulation import HistoricSimulation
+from .random_simulation import RandomSimulation
+from .simulation_model import Simulation
 
 
