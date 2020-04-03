@@ -14,7 +14,7 @@
     "fx_addr_separator": 100,
 
     "initial_values": {
-        "soc": 100,
+        "soc": 70,
         "active_power_in": 0,
         "reactive_power_in": 0,
         "active_power_out": 0,
