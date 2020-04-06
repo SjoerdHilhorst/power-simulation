@@ -2,9 +2,6 @@
 from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
 
 
-
-
-
 class FloatHandler:
     def __init__(self, byte_order, word_order, float_mode, scaling_factor, store):
         self.builder = BinaryPayloadBuilder(byteorder=byte_order, wordorder=word_order)
