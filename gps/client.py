@@ -15,12 +15,11 @@ class GreenerEye:
         self.address = env['address']
         server_address = env['server_address']
         self.client = ModbusClient(server_address[0], server_address[1])
-        self.addr_separator = env['fx_addr_separator']
         self.scaling_factor = env['scaling_factor']
 
     def read_value(self, addr):
-        fx = addr // self.addr_separator
-        addr = addr % self.addr_separator
+        fx = addr[0]
+        addr = addr[1]
 
         if fx == 1:
             val = self.client.read_coils(addr).bits[0]
