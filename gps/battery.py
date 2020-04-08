@@ -29,7 +29,6 @@ class Battery:
     def __init__(self, env):
         self.address = env['address']
         self.id = env['id']
-        self.addr_separator = env['fx_addr_separator']
         self.server = ModbusTcpServer(self.context, address=tuple(env['server_address']))
         self.math_engine = MathEngine(self, self.address)
 
@@ -76,8 +75,8 @@ class Battery:
         :param value: value to set
         """
 
-        fx = addr // self.addr_separator
-        addr = addr % self.addr_separator
+        fx = addr[0]
+        addr = addr[1]
         if fx > 2:
             value = self.float_handler.encode_float(value)
             self.store.setValues(fx, addr, value)
@@ -90,8 +89,8 @@ class Battery:
         :param addr: address where first digit stands for reg type
         :return: value from the given address
         """
-        fx = addr // self.addr_separator
-        addr = addr % self.addr_separator
+        fx = addr[0]
+        addr = addr[1]
         if fx <= 2:
             value = self.store.getValues(fx, addr, 1)[0]
         elif fx > 2:
