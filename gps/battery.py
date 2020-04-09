@@ -143,5 +143,7 @@ class Battery:
         log = {}
         for field in address:
             log[field] = self.get_value(address[field])
-        print("----- Interval: ", self.interval, "------")
-        print(json.dumps(log, indent=4))
+        if self.interval % 100 == 0:
+            #print(self.get_value(address["active power converter"], ",", self.get_value(address["soc"])))
+            print("----- Interval: ", self.interval, "------")
+            print(json.dumps(log, indent=4))

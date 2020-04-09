@@ -32,8 +32,8 @@ class HistoricSimulation(PowerSimulation):
             self.reactive_power_out = self.rpo_list.pop(0)
             soc = self.soc_list.pop(0)
 
-            print("update api",  self.active_power_in, "rpi", self.reactive_power_in, "apo", self.active_power_out, "rpo", self.reactive_power_out)
-            print("SOC: ", soc)
+            #print("update api",  self.active_power_in, "rpi", self.reactive_power_in, "apo", self.active_power_out, "rpo", self.reactive_power_out)
+            #print("SOC: ", soc)
         except IndexError:
             print("historic file is empty, simulation done")
             exit(0)
