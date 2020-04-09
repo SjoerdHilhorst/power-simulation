@@ -2,6 +2,7 @@ from simulations.simulation import PowerSimulation
 import pandas as pd
 
 
+
 def open_csv(csv_name):
     csv_name = "../" + csv_name + ".csv"
     file = pd.read_csv(csv_name)
