@@ -1,17 +1,20 @@
 {
     "server_address": ["localhost", 5030],
     "id":"GREENER_001",
-    "simulation_type": "random",
+    "simulation_type": "historic",
+    "update_delay": 0,
 
-    "float_mode": "SCALE",
+    "historic_csv_name" : "historic_battery_data",
+    "start_index" : 0,
+
+    "float_mode": "COMB",
     "word_order": ">",
     "byte_order": ">",
     "scaling_factor": 100,
 
 
-
     "initial_values": {
-        "soc": 70,
+        "soc": 72.2,
         "active_power_in": 0,
         "reactive_power_in": 0,
         "active_power_out": 0,
