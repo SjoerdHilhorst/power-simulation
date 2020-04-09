@@ -119,8 +119,8 @@ class Battery:
         self.set_value(address["frequency_out"], self.math_engine.get_frequency_out())
         self.set_value(address["soc"], self.math_engine.get_soc())
         self.update_powers()
-        #self.print_all_values()
-        print("----- Interval: ", self.interval, "------")
+        self.print_all_values()
+
         self.interval += 1
 
     def run(self):

@@ -49,7 +49,7 @@ class MathEngine:
         apc = self.battery.get_value(self.address['active_power_converter'])
 
         # multiply by 1000 to convert from kWh
-        new_soc = prev_soc + (apc / (self.battery.max_capacity )) * 3600
+        new_soc = prev_soc + (apc / (self.battery.max_capacity *1000)) * 3600
         if new_soc > 100:
             new_soc = 100
         elif new_soc < 0:
