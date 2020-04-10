@@ -120,6 +120,7 @@ class Battery:
         self.set_value(address["soc"], self.math_engine.get_soc())
         self.update_powers()
         self.print_all_values()
+        #print("----- Interval: ", self.interval, "------")
         self.interval += 1
 
     def run(self):
@@ -144,6 +145,7 @@ class Battery:
         for field in address:
             log[field] = self.get_value(address[field])
         if self.interval % 100 == 0:
-            #print(self.get_value(address["active power converter"], ",", self.get_value(address["soc"])))
-            print("----- Interval: ", self.interval, "------")
-            print(json.dumps(log, indent=4))
+            print("sim_apc", self.get_value(address["active_power_converter"]), ", sim_soc", self.get_value(address["soc"]))
+            print("hist_soc", self.power.soc_list[0])
+            #print("----- Interval: ", self.interval, "------")
+            #print(json.dumps(log, indent=4))

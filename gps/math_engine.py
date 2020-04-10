@@ -43,13 +43,13 @@ class MathEngine:
     def get_soc(self):
         """
         :return: previous SoC + [(active_power_converter) /
-                (Some configurable max battery capacity, say 330 kWh)] * 3600.
+                max battery capacity * 3600.
         """
         prev_soc = self.battery.get_value(self.address['soc'])
         apc = self.battery.get_value(self.address['active_power_converter'])
 
         # multiply by 1000 to convert from kWh
-        new_soc = prev_soc + (apc / (self.battery.max_capacity * 1000)) * 3600
+        new_soc = prev_soc + (apc / (self.battery.max_capacity * 3600)) * 100
         if new_soc > 100:
             new_soc = 100
         elif new_soc < 0:
