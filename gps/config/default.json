@@ -1,17 +1,25 @@
 {
     "server_address": ["localhost", 5030],
     "id":"GREENER_001",
-    "simulation_type": "historic",
+    "simulation_type": "random",
     "update_delay": 0,
+    "battery_capacity" : 330,
 
-    "historic_csv_name" : "historic_battery_data",
-    "start_index" : 0,
-
-    "float_mode": "COMB",
+    "float_mode": "SCALE",
     "word_order": ">",
     "byte_order": ">",
     "scaling_factor": 100,
 
+    "random_ranges" : {
+        "start_soc": 50.0,
+        "range_active_power_in": [0, 200],
+        "range_reactive_power_in": [-65, 185],
+        "range_active_power_out": [0, 200],
+        "range_reactive_power_out": [-65, 185]
+    },
+
+    "historic_csv_name" : "historic_battery_data",
+    "start_index" : 0,
 
     "initial_values": {
         "soc": 72.2,

@@ -1,5 +1,6 @@
 import numpy as np
 
+
 class MathEngine:
 
     def __init__(self, battery, address):
