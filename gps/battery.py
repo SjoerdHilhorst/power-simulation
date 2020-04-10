@@ -42,12 +42,6 @@ class Battery:
         self.set_value(self.address['system_status'], start_val['system_status'])
         self.set_value(self.address['system_mode'], start_val['system_mode'])
         self.set_value(self.address['accept_values'], start_val['accept_values'])
-        self.set_value(self.address['soc'], start_val['soc'])
-
-        self.set_value(self.address['active_power_in'], start_val['active_power_in'])
-        self.set_value(self.address['reactive_power_in'], start_val['reactive_power_in'])
-        self.set_value(self.address['active_power_out'], start_val['active_power_out'])
-        self.set_value(self.address['reactive_power_out'], start_val['reactive_power_out'])
 
         self.interval = 1
         self.power = None
@@ -55,10 +49,12 @@ class Battery:
     def connect_power(self, power):
         """
         Literally connect the source and set the initial value of active/reactive power_in
+        and soc
         :param power: power_source to connect
         """
         self.power = power
         self.update_powers()
+        self.set_value(self.address['soc'], self.power.start_soc)
         self.set_value(self.address['input_connected'], 1)
         self.set_value(self.address['converter_started'], 1)
 
@@ -146,6 +142,6 @@ class Battery:
             log[field] = self.get_value(address[field])
         if self.interval % 100 == 0:
             print("sim_apc", self.get_value(address["active_power_converter"]), ", sim_soc", self.get_value(address["soc"]))
-            print("hist_soc", self.power.soc_list[0])
+            #print("hist_soc", self.power.soc_list[0])
             #print("----- Interval: ", self.interval, "------")
             #print(json.dumps(log, indent=4))
