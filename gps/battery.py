@@ -14,7 +14,6 @@ Battery represents the Server/Slave
 
 
 class Battery:
-    max_capacity = 330
     """
     Initialize the store and the context
     """
@@ -30,6 +29,8 @@ class Battery:
         self.address = env['address']
         self.id = env['id']
         self.server = ModbusTcpServer(self.context, address=tuple(env['server_address']))
+        self.update_delay = env['update_delay']
+        self.max_capacity = env['battery_capacity']
         self.math_engine = MathEngine(self, self.address)
 
         # initialize payload builder, this converts floats, negative values to
@@ -41,22 +42,19 @@ class Battery:
         self.set_value(self.address['system_status'], start_val['system_status'])
         self.set_value(self.address['system_mode'], start_val['system_mode'])
         self.set_value(self.address['accept_values'], start_val['accept_values'])
-        self.set_value(self.address['soc'], start_val['soc'])
 
-        self.set_value(self.address['active_power_in'], start_val['active_power_in'])
-        self.set_value(self.address['reactive_power_in'], start_val['reactive_power_in'])
-        self.set_value(self.address['active_power_out'], start_val['active_power_out'])
-        self.set_value(self.address['reactive_power_out'], start_val['reactive_power_out'])
-
+        self.interval = 1
         self.power = None
 
     def connect_power(self, power):
         """
         Literally connect the source and set the initial value of active/reactive power_in
+        and soc
         :param power: power_source to connect
         """
         self.power = power
         self.update_powers()
+        self.set_value(self.address['soc'], self.power.start_soc)
         self.set_value(self.address['input_connected'], 1)
         self.set_value(self.address['converter_started'], 1)
 
@@ -64,7 +62,7 @@ class Battery:
         api, rpi, apo, rpo = self.power.get_power()
         self.set_value(self.address['active_power_in'], api)
         self.set_value(self.address['reactive_power_in'], rpi)
-        self.set_value(self.address['active_power_out'], rpi)
+        self.set_value(self.address['active_power_out'], apo)
         self.set_value(self.address['reactive_power_out'], rpo)
 
     def set_value(self, addr, value):
@@ -99,7 +97,6 @@ class Battery:
 
     def update(self):
         address = self.address
-        self.update_powers()
         self.set_value(address["active_power_converter"], self.math_engine.get_active_power_converter())
         self.set_value(address["reactive_power_converter"], self.math_engine.get_reactive_power_converter())
         self.set_value(address["voltage_l1_l2_in"], self.math_engine.get_voltage_I1_I2_in())
@@ -118,6 +115,8 @@ class Battery:
         self.set_value(address["frequency_out"], self.math_engine.get_frequency_out())
         self.set_value(address["soc"], self.math_engine.get_soc())
         self.print_all_values()
+        self.update_powers()
+        self.interval += 1
 
     def run(self):
         """
@@ -127,10 +126,8 @@ class Battery:
         t = threading.Thread(target=self.server.serve_forever, daemon=True)
         t.start()  # start the thread
         print("SERVER: is running")
-        # update each 2 secs
-        interval = 2  # interval with which update happens, in that case every 2 seconds
         loop = LoopingCall(f=self.update)
-        loop.start(interval, now=True)
+        loop.start(self.update_delay, now=True)
         reactor.run()
 
     def print_all_values(self):
@@ -142,4 +139,6 @@ class Battery:
         log = {}
         for field in address:
             log[field] = self.get_value(address[field])
-        print(json.dumps(log, indent=4))
+            #print("hist_soc", self.power.soc_list[0])
+            print("----- Interval: ", self.interval, "------")
+            print(json.dumps(log, indent=4))

@@ -3,24 +3,31 @@ from battery import Battery
 import json_config
 import simulations
 
+json_file = 'env'
+
 
 if __name__ == "__main__":
-    #env = json_config.get_custom_json('env')
-    env = json_config.get_custom_json('default')
+    env = json_config.get_custom_json(json_file)
 
     battery = Battery(env)
 
     sim_type = env["simulation_type"]
     if sim_type == "random":
-        power_sim = simulations.RandomSimulation((0, 200), (-65, 185), (-11, 25), (-15, 25))
+        random_ranges = env["random_ranges"]
+        power_sim = simulations.RandomSimulation(random_ranges)
+
     elif sim_type == "historic":
-        power_sim = simulations.HistoricSimulation()
+        csv_name = env["historic_csv_name"]
+        start_index = env["start_index"]
+        power_sim = simulations.HistoricSimulation(csv_name, start_index)
+
     elif sim_type == "simulation":
         power_sim = simulations.Simulation()
 
-    battery.connect_power(power_sim)
+    else:
+        raise LookupError("This simulation type does not exist: ", sim_type)
 
-    battery.update()
+    battery.connect_power(power_sim)
     battery.run()
 
 

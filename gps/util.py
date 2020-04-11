@@ -1,8 +1,4 @@
-
 from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
-
-
-
 
 
 class FloatHandler:
