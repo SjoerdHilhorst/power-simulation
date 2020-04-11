@@ -2,6 +2,7 @@
 from battery import Battery
 import json_config
 import simulations
+from database import Database
 
 json_file = 'env'
 
@@ -11,6 +12,11 @@ if __name__ == "__main__":
 
     battery = Battery(env)
 
+    if env["database"]["enabled"]:
+        db_env = env["database"]
+        address = env["address"]
+        db = Database(db_env, address)
+        battery.db = db
     sim_type = env["simulation_type"]
     if sim_type == "random":
         random_ranges = env["random_ranges"]
@@ -22,7 +28,8 @@ if __name__ == "__main__":
         power_sim = simulations.HistoricSimulation(csv_name, start_index)
 
     elif sim_type == "simulation":
-        power_sim = simulations.Simulation()
+        initial_values = env["initial_values"]
+        power_sim = simulations.Simulation(initial_values)
 
     else:
         raise LookupError("This simulation type does not exist: ", sim_type)
