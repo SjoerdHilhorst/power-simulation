@@ -1,5 +1,5 @@
 import sqlite3
-from datetime import datetime
+
 
 class Database:
     def __init__(self, env, address):
@@ -20,7 +20,6 @@ class Database:
     def write(self, table, values):
         values = ",".join(str(value) for value in values)
         query = "INSERT INTO %s VALUES (%s, datetime('now'))" % (table, values)
-        print(query)
         self.c.execute(query)
         self.conn.commit()
 

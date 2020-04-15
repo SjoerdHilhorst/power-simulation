@@ -5,7 +5,7 @@ from pymodbus.server.sync import ModbusTcpServer
 
 from twisted.internet import reactor
 from twisted.internet.task import LoopingCall
-from battery.util import FloatHandler
+from battery.util import *
 from battery.math_engine import MathEngine
 
 """
@@ -32,11 +32,8 @@ class Battery:
         self.update_delay = env['update_delay']
         self.max_capacity = env['battery_capacity']
         self.math_engine = MathEngine(self, self.address)
+        self.float_handler = get_float_handler(env['float_store'], self.store)
 
-        # initialize payload builder, this converts floats, negative values to
-        # IEEE-754 hex format before writing in to the datastore
-        self.float_handler = FloatHandler(env['byte_order'], env['word_order'], env['float_mode'],
-                                          env['scaling_factor'], self.store)
         start_val = env['initial_values']
         self.set_value(self.address['system_on_backup_battery'], start_val['system_on_backup_battery'])
         self.set_value(self.address['system_status'], start_val['system_status'])

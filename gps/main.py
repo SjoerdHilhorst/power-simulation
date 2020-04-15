@@ -17,6 +17,7 @@ if __name__ == "__main__":
         address = env["address"]
         db = Database(db_env, address)
         battery.db = db
+
     sim_type = env["simulation_type"]
     if sim_type == "random":
         random_ranges = env["random_ranges"]
