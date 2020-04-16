@@ -5,14 +5,14 @@ env = {
     # address of modbus server
     'server_address': ['localhost', 5030],
     # simulation type must be 'historic' 'random' 'simulation'
-    'simulation_type': 'historic',
+    'simulation_type': 'simulation',
 
     # historic simulation will read I/O power from a user specified csv
     # random simulation will generate random I/O power from user defined ranges
     # simulation will generate I/O power from user defined functions
 
     # realtime delay in sec between iteration, set to 0 for no delay
-    'update_delay': 0,
+    'update_delay': 1,
     # max number of iterations before simulation stops, set to None if infinite iterations
     'max_iterations': 1000,
 

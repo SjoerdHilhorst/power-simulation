@@ -17,8 +17,8 @@ def open_csv(csv_name):
 class HistoricSimulation(PowerSimulation):
     """ Simulation where powers are fetched from csv file """
 
-    def __init__(self, env, battery, max_iter):
-        super().__init__(battery, max_iter)
+    def __init__(self, env, battery, max_iter, delay):
+        super().__init__(battery, max_iter, delay)
         start_index = env["start_index"]
         api, rpi, apo, rpo, soc = open_csv(env["csv_name"])
         self.api_list = api[start_index:]

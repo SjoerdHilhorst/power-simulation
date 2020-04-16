@@ -5,8 +5,8 @@ import random
 class RandomSimulation(PowerSimulation):
     """ Simulations where powers are simulated with random values """
 
-    def __init__(self, random_ranges, battery, max_iter):
-        super().__init__(battery, max_iter)
+    def __init__(self, random_ranges, battery, max_iter, delay):
+        super().__init__(battery, max_iter, delay)
         self.range_active_in = tuple(random_ranges["range_active_power_in"])
         self.range_reactive_in = tuple(random_ranges["range_reactive_power_in"])
         self.range_active_out = tuple(random_ranges["range_active_power_out"])

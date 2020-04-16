@@ -9,6 +9,7 @@ from config.env import env
 if __name__ == "__main__":
     battery = Battery(env)
     max_iter = env["max_iterations"]
+    delay = env["update_delay"]
 
     if env["database"]["enabled"]:
         db_env = env["database"]
@@ -19,15 +20,15 @@ if __name__ == "__main__":
     sim_type = env["simulation_type"]
     if sim_type == "random":
         random_ranges = env["random_simulation"]
-        power_sim = simulations.RandomSimulation(random_ranges, battery, max_iter)
+        power_sim = simulations.RandomSimulation(random_ranges, battery, max_iter, delay)
 
     elif sim_type == "historic":
         env = env["historic_simulation"]
-        power_sim = simulations.HistoricSimulation(env, battery, max_iter)
+        power_sim = simulations.HistoricSimulation(env, battery, max_iter, delay)
 
     elif sim_type == "simulation":
         env = env["simulation"]
-        power_sim = simulations.Simulation(env, battery, max_iter)
+        power_sim = simulations.Simulation(env, battery, max_iter, delay)
 
     else:
         raise LookupError("This simulation type does not exist: ", sim_type)

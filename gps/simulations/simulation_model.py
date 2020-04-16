@@ -5,8 +5,8 @@ class Simulation(PowerSimulation):
     """ Simulation where powers are updated based
         on functions defined in environment dictionary """
 
-    def __init__(self, env, battery, max_iter):
-        super().__init__(battery, max_iter)
+    def __init__(self, env, battery, max_iter, delay):
+        super().__init__(battery, max_iter, delay)
         self.t = 0
         self.start_soc = env["start_soc"]
         self.api_fun = env["active_power_in"]
