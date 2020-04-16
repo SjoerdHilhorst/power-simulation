@@ -5,7 +5,7 @@ env = {
     # address of modbus server
     'server_address': ['localhost', 5030],
     # simulation type must be 'historic' 'random' 'simulation'
-    'simulation_type': 'random',
+    'simulation_type': 'historic',
 
     # historic simulation will read I/O power from a user specified csv
     # random simulation will generate random I/O power from user defined ranges
@@ -14,7 +14,7 @@ env = {
     # realtime delay in sec between iteration, set to 0 for no delay
     'update_delay': 0,
     # max number of iterations before simulation stops, set to None if infinite iterations
-    'max_iterations': 100000,
+    'max_iterations': 1000,
 
     'battery_constants': {
         'system_status': 1,
@@ -27,7 +27,7 @@ env = {
 
     # for debugging purposes
     'database': {
-        'enabled': True,
+        'enabled': False,
         'db_name': 'power_simulation',
         'drop_table_on_start': True
     },
@@ -56,7 +56,7 @@ env = {
     # the csv_name is without .csv
     'historic_simulation': {
         'csv_name': 'historic_battery_data',
-        'start_index': 0,
+        'start_index': 60000,
     },
 
     # only used for simulation

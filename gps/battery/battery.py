@@ -2,9 +2,6 @@ import threading
 import json
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock, ModbusServerContext
 from pymodbus.server.sync import ModbusTcpServer
-
-from twisted.internet import reactor
-from twisted.internet.task import LoopingCall
 from battery.util import *
 from battery.math_engine import MathEngine
 
@@ -38,29 +35,8 @@ class Battery:
         self.set_value(self.address['system_status'], constants['system_status'])
         self.set_value(self.address['system_mode'], constants['system_mode'])
         self.set_value(self.address['accept_values'], constants['accept_values'])
-
-        self.interval = 1
-        self.power = None
         self.db = None
 
-    def connect_power(self, power):
-        """
-        Literally connect the source and set the initial value of active/reactive power_in
-        and soc
-        :param power: power_source to connect
-        """
-        self.power = power
-        self.update_powers()
-        self.set_value(self.address['soc'], self.power.start_soc)
-        self.set_value(self.address['input_connected'], 1)
-        self.set_value(self.address['converter_started'], 1)
-
-    def update_powers(self):
-        api, rpi, apo, rpo = self.power.get_power()
-        self.set_value(self.address['active_power_in'], api)
-        self.set_value(self.address['reactive_power_in'], rpi)
-        self.set_value(self.address['active_power_out'], apo)
-        self.set_value(self.address['reactive_power_out'], rpo)
 
     def set_value(self, addr, value):
         """
@@ -69,7 +45,6 @@ class Battery:
         :param addr: address where first digit stands for reg type
         :param value: value to set
         """
-
         fx = addr[0]
         addr = addr[1]
         if fx > 2:
@@ -92,7 +67,19 @@ class Battery:
             value = self.float_handler.decode_float(fx, addr)
         return value
 
-    def update(self):
+    def update(self, api, rpi, apo, rpo):
+        self.update_powers(api, rpi, apo, rpo)
+        self.update_relational()
+        #self.print_all_values()
+        if self.db: self.write_to_db()
+
+    def update_powers(self, api, rpi, apo, rpo):
+        self.set_value(self.address['active_power_in'], api)
+        self.set_value(self.address['reactive_power_in'], rpi)
+        self.set_value(self.address['active_power_out'], apo)
+        self.set_value(self.address['reactive_power_out'], rpo)
+
+    def update_relational(self):
         address = self.address
         self.set_value(address["active_power_converter"], self.math_engine.get_active_power_converter())
         self.set_value(address["reactive_power_converter"], self.math_engine.get_reactive_power_converter())
@@ -111,14 +98,8 @@ class Battery:
         self.set_value(address["current_l3_out"], self.math_engine.get_current_I3_out())
         self.set_value(address["frequency_out"], self.math_engine.get_frequency_out())
         self.set_value(address["soc"], self.math_engine.get_soc())
-        self.print_all_values()
-        if self.db: self.write_to_db()
-        self.update_powers()
-        self.interval += 1
 
-
-
-    def run(self):
+    def run_server(self):
         """
         starts the servers with filled in context
         runs in separate thread
@@ -126,11 +107,6 @@ class Battery:
         t = threading.Thread(target=self.server.serve_forever, daemon=True)
         t.start()  # start the thread
         print("SERVER: is running")
-        self.loop = LoopingCall(f=self.update)
-        self.loop.start(self.update_delay, now=True)
-        print("heyyyyyyyyyy")
-
-        reactor.run()
 
     def write_to_db(self):
         address = self.address
@@ -149,5 +125,4 @@ class Battery:
         for field in address:
             log[field] = self.get_value(address[field])
             # print("hist_soc", self.power.soc_list[0])
-            print("----- Interval: ", self.interval, "------")
             print(json.dumps(log, indent=4))
