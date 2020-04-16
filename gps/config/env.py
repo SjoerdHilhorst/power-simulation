@@ -34,7 +34,7 @@ env = {
 
     'float_store': {
         # COMB for 2 register float storage or SCALE for storing floats with scaling factor
-        'float_mode': 'COMB',
+        'float_mode': 'SCALE',
         # only used for SCALE, increase for more precision
         'scaling_factor': 100,
         # Defines Endianness in modbus register,  '>' is Big Endian, '<' is Little Endian
