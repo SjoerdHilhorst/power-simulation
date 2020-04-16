@@ -13,8 +13,12 @@ class RandomSimulation(PowerSimulation):
         self.start_soc = random_ranges["start_soc"]
         self.update()
 
+    def rand(self, range):
+        return round(random.uniform(*range), 1)
+
     def update(self):
-        self.reactive_power_in = round(random.uniform(*self.range_reactive_in), 1)
-        self.active_power_in = round(random.uniform(*self.range_active_in), 1)
-        self.reactive_power_out = round(random.uniform(*self.range_reactive_out), 1)
-        self.active_power_out = round(random.uniform(*self.range_active_out), 1)
+        self.reactive_power_in = self.rand(self.range_reactive_in)
+        self.active_power_in = self.rand(self.range_active_in)
+        self.reactive_power_out = self.rand(self.range_active_out)
+        self.active_power_out = self.rand(self.range_reactive_out)
+        self.t += 1

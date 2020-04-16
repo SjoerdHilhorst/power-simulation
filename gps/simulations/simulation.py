@@ -8,6 +8,7 @@ class PowerSimulation:
         self.active_power_out = None
         self.reactive_power_out = None
         self.start_soc = None
+        self.t = 0
 
     def get_power(self):
         api = self.active_power_in

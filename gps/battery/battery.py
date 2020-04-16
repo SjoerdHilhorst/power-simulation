@@ -26,19 +26,18 @@ class Battery:
     context = ModbusServerContext(slaves=store, single=True)
 
     def __init__(self, env):
+        constants = env['battery_constants']
         self.address = env['address']
-        self.id = env['id']
+        self.id = constants['id']
         self.server = ModbusTcpServer(self.context, address=tuple(env['server_address']))
         self.update_delay = env['update_delay']
-        self.max_capacity = env['battery_capacity']
+        self.max_capacity = constants['battery_capacity']
         self.math_engine = MathEngine(self, self.address)
         self.float_handler = get_float_handler(env['float_store'], self.store)
-
-        start_val = env['initial_values']
-        self.set_value(self.address['system_on_backup_battery'], start_val['system_on_backup_battery'])
-        self.set_value(self.address['system_status'], start_val['system_status'])
-        self.set_value(self.address['system_mode'], start_val['system_mode'])
-        self.set_value(self.address['accept_values'], start_val['accept_values'])
+        self.set_value(self.address['system_on_backup_battery'], constants['system_on_backup_battery'])
+        self.set_value(self.address['system_status'], constants['system_status'])
+        self.set_value(self.address['system_mode'], constants['system_mode'])
+        self.set_value(self.address['accept_values'], constants['accept_values'])
 
         self.interval = 1
         self.power = None
@@ -117,6 +116,8 @@ class Battery:
         self.update_powers()
         self.interval += 1
 
+
+
     def run(self):
         """
         starts the servers with filled in context
@@ -125,8 +126,10 @@ class Battery:
         t = threading.Thread(target=self.server.serve_forever, daemon=True)
         t.start()  # start the thread
         print("SERVER: is running")
-        loop = LoopingCall(f=self.update)
-        loop.start(self.update_delay, now=True)
+        self.loop = LoopingCall(f=self.update)
+        self.loop.start(self.update_delay, now=True)
+        print("heyyyyyyyyyy")
+
         reactor.run()
 
     def write_to_db(self):

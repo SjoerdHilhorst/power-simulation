@@ -15,8 +15,9 @@ def open_csv(csv_name):
 
 
 class HistoricSimulation(PowerSimulation):
-    def __init__(self, csv_name, start_index):
-        api, rpi, apo, rpo, soc = open_csv(csv_name)
+    def __init__(self, env):
+        start_index = env["start_index"]
+        api, rpi, apo, rpo, soc = open_csv(env["csv_name"])
         self.api_list = api[start_index:]
         self.rpi_list = rpi[start_index:]
         self.apo_list = apo[start_index:]
@@ -32,6 +33,7 @@ class HistoricSimulation(PowerSimulation):
             self.reactive_power_in = self.rpi_list.pop(0)
             self.active_power_out = self.apo_list.pop(0)
             self.reactive_power_out = self.rpo_list.pop(0)
+            self.t += 1
             soc = self.soc_list.pop(0)
         except IndexError:
             print("historic file is empty, simulation done")
