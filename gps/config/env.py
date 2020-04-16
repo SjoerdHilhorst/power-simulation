@@ -65,7 +65,7 @@ env = {
     # you can also define more complex functions in update_functions and import them here
     'simulation': {
         'start_soc': 72.2,
-        'active_power_in': lambda t: 2*t*t + 5*t + 10,
+        'active_power_in': lambda t: t * t,
         'reactive_power_in': lambda t: 200 * sin(t),
 
         # my_fun and sine are imported from update functions
