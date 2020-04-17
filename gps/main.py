@@ -1,16 +1,15 @@
-
 from battery import Battery
-import json_config
 import simulations
 from database import Database
 
-json_file = 'env'
+# define which environment you want to use
+from config.env import env
 
 
 if __name__ == "__main__":
-    env = json_config.get_custom_json(json_file)
-
     battery = Battery(env)
+    max_iter = env["max_iterations"]
+    delay = env["update_delay"]
 
     if env["database"]["enabled"]:
         db_env = env["database"]
@@ -20,22 +19,21 @@ if __name__ == "__main__":
 
     sim_type = env["simulation_type"]
     if sim_type == "random":
-        random_ranges = env["random_ranges"]
-        power_sim = simulations.RandomSimulation(random_ranges)
+        random_ranges = env["random_simulation"]
+        power_sim = simulations.RandomSimulation(random_ranges, battery, max_iter, delay)
 
     elif sim_type == "historic":
-        csv_name = env["historic_csv_name"]
-        start_index = env["start_index"]
-        power_sim = simulations.HistoricSimulation(csv_name, start_index)
+        env = env["historic_simulation"]
+        power_sim = simulations.HistoricSimulation(env, battery, max_iter, delay)
 
     elif sim_type == "simulation":
-        initial_values = env["initial_values"]
-        power_sim = simulations.Simulation(initial_values)
+        env = env["simulation"]
+        power_sim = simulations.Simulation(env, battery, max_iter, delay)
 
     else:
         raise LookupError("This simulation type does not exist: ", sim_type)
 
-    battery.connect_power(power_sim)
-    battery.run()
+    battery.run_server()
+    power_sim.run()
 
 
