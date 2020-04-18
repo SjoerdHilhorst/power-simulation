@@ -30,6 +30,8 @@ env = {
         'fields': [
             "active_power_in",
             "active_power_out",
+            "reactive_power_in",
+            "reactive_power_out",
             "soc"
         ]
     },
@@ -79,7 +81,7 @@ env = {
         'reactive_power_in': lambda t: 200 * sin(t),
 
         # my_fun and sine are imported from update functions
-        'active_power_out': my_fun,
+        'active_power_out': lambda t: 200 * sin(t),
         'reactive_power_out': lambda t: sine(1, 2, 3, t)
     },
 

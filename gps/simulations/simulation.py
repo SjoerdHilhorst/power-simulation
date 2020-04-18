@@ -1,4 +1,5 @@
 import time
+import threading
 
 
 class PowerSimulation:
@@ -15,7 +16,6 @@ class PowerSimulation:
         self.delay = delay
         self.max_iter = max_iter
         self.battery = battery
-        self.graph = None
 
     def get_power(self):
         api = self.active_power_in
@@ -31,14 +31,14 @@ class PowerSimulation:
         """
         raise NotImplementedError
 
-    def run(self):
+    def run_simulation(self):
         for i in range(0, self.max_iter):
             print(i)
             api, rpi, apo, rpo = self.get_power()
             self.battery.update(api, rpi, apo, rpo)
-            self.graph.api.append(api)
-            self.graph.t.append(i)
-            self.graph.apo.append(apo)
             time.sleep(self.delay)
 
-
+    def run_thread(self):
+        t = threading.Thread(target=self.run_simulation)
+        t.start()
+        print("heeyyyy")
