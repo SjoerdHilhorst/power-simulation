@@ -12,7 +12,7 @@ env = {
     # simulation will generate I/O power from user defined functions
 
     # realtime delay in sec between iteration, set to 0 for no delay
-    'update_delay': 1,
+    'update_delay': .05,
     # max number of iterations before simulation stops, set to None if infinite iterations
     'max_iterations': 1000,
 
@@ -25,8 +25,18 @@ env = {
         'id': 'GREENER_001',
     },
 
+    'graph': {
+        'enabled': True,
+        'fields': [
+            "active_power_in",
+            "active_power_out",
+            "soc"
+        ]
+    },
+
     # for debugging purposes
     'database': {
+        # disable for better performance
         'enabled': False,
         'db_name': 'power_simulation',
         'drop_table_on_start': True

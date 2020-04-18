@@ -1,7 +1,8 @@
 from battery import Battery
 import simulations
 from database import Database
-
+import threading
+import sys
 # define which environment you want to use
 from config.env import env
 
@@ -33,7 +34,20 @@ if __name__ == "__main__":
     else:
         raise LookupError("This simulation type does not exist: ", sim_type)
 
+    if True:
+        from graph import MainWindow
+        graph = MainWindow()
+
+    power_sim.graph = graph
+
     battery.run_server()
-    power_sim.run()
+    x = threading.Thread(target=power_sim.run)
+    x.start()
+    graph.run()
+
+
+
+
+
 
 

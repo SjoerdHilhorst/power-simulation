@@ -15,6 +15,7 @@ class PowerSimulation:
         self.delay = delay
         self.max_iter = max_iter
         self.battery = battery
+        self.graph = None
 
     def get_power(self):
         api = self.active_power_in
@@ -35,6 +36,9 @@ class PowerSimulation:
             print(i)
             api, rpi, apo, rpo = self.get_power()
             self.battery.update(api, rpi, apo, rpo)
+            self.graph.api.append(api)
+            self.graph.t.append(i)
+            self.graph.apo.append(apo)
             time.sleep(self.delay)
 
 
