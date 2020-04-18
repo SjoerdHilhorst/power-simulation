@@ -12,6 +12,7 @@ Install the required python packages with pip
 - twisted
 - pymodbus
 - pandas
+- pyqt, pyqtgraph
 
 ## Running
 first determine your enviromnent in a json file in config
