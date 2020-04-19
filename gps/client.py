@@ -5,6 +5,7 @@ for testing if the battery server works
 
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
 from pymodbus.payload import BinaryPayloadDecoder, Endian
+import json
 
 
 # address = json_config.get_data("custom")
@@ -12,8 +13,9 @@ from pymodbus.payload import BinaryPayloadDecoder, Endian
 class GreenerEye:
     def __init__(self, env):
         self.float_mode = env["float_store"]["float_mode"]
-        self.address = env['address']
-        server_address = env['server_address']
+        #Gets the currently used address
+        with open('./config/current_address.json') as json_file:
+            server_address = json.load(json_file)
         self.client = ModbusClient(server_address[0], server_address[1])
         self.scaling_factor = env["float_store"]['scaling_factor']
         self.byte_order = env["float_store"]["byte_order"]
@@ -36,74 +38,35 @@ class GreenerEye:
     def from_registers(self, r):
         return BinaryPayloadDecoder.fromRegisters(r.registers, byteorder=self.byte_order, wordorder=self.word_order)
 
-    def scale_float_example(self):
-        r = self.client.read_holding_registers(10, 46, unit=1)
-        d = self.from_registers(r)
+    # Prints from registers, as either comb or scale
+    def example_output(self, is_comb):
+        r = self.client.read_holding_registers(10,46,unit=1)
+        if is_comb:
+            d = BinaryPayloadDecoder.fromRegisters(r.registers, byteorder=self.byte_order, wordorder=self.word_order)
+        else:
+            d = self.from_registers(r)
 
-        # this will print address 310 to 354, IE. all float registers
+        results = []
 
-        for x in range(0, 22):
-            print(d.decode_32bit_int() / self.scaling_factor)
+        for x in range(0,22):
+            results.append(d.decode_32bit_float() if is_comb else d.decode_32bit_int() / self.scaling_factor)
+        print(results)
 
+        '''
         # examples, reading a single value
         r = self.read_value(self.address['active_power_in'])
         d = self.from_registers(r)
-        print(d.decode_32bit_int() / self.scaling_factor)
-
-        r = self.read_value(self.address['reactive_power_in'])
-        d = self.from_registers(r)
-        print(d.decode_32bit_int() / self.scaling_factor)
-
-        r = self.read_value(self.address['current_l1_in'])
-        d = self.from_registers(r)
-        print(d.decode_32bit_int() / self.scaling_factor)
-
-        r = self.read_value(self.address['voltage_l1_l2_out'])
-        d = self.from_registers(r)
-        print(d.decode_32bit_int() / self.scaling_factor)
-
-        r = self.read_value(self.address['frequency_out'])
-        d = self.from_registers(r)
-        print(d.decode_32bit_int() / self.scaling_factor)
-
-    def comb_float_example(self):
-        r = self.client.read_holding_registers(10, 46, unit=1)
-        d = BinaryPayloadDecoder.fromRegisters(r.registers, byteorder=self.byte_order, wordorder=self.word_order)
-
-        # this will print address 310 to 354, IE. all float registers
-        for x in range(0, 22):
-            print(d.decode_32bit_float())
-
-        # examples, reading a single value
-        r = self.read_value(self.address['active_power_in'])
-        d = self.from_registers(r)
-        print(d.decode_32bit_float())
-
-        r = self.read_value(self.address['reactive_power_in'])
-        d = self.from_registers(r)
-
-        print(d.decode_32bit_float())
-
-        r = self.read_value(self.address['current_l1_in'])
-        d = self.from_registers(r)
-        print(d.decode_32bit_float())
-
-        r = self.read_value(self.address['voltage_l1_l2_out'])
-        d = self.from_registers(r)
-        print(d.decode_32bit_float())
-
-        r = self.read_value(self.address['frequency_out'])
-        d = self.from_registers(r)
-        print(d.decode_32bit_float())
+        self.print(d.decode_32bit_float() if is_comb else d.decode_32bit_int() / self.scaling_factor)
+        '''
 
     # uncomment the needed in correspondence with main module
     def run(self):
         self.client.connect()
         print("CLIENT: is running")
         if self.float_mode == "COMB":
-            self.comb_float_example()
+            self.example_output(True)
         elif self.float_mode == "SCALE":
-            self.scale_float_example()
+            self.example_output(False)
         else:
             raise NotImplementedError("no such float mode: ", self.float_mode)
         self.client.close()

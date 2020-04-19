@@ -1,5 +1,7 @@
 from battery import Battery
 import simulations
+import socket
+import json
 from database import Database
 
 # define which environment you want to use
@@ -7,6 +9,17 @@ from config.env import env
 
 
 if __name__ == "__main__":
+
+    # finds an availabe port
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind(('localhost',0))
+    address = sock.getsockname()
+    env['server_address'] = address
+    # saves port for session (so client knows which port
+    with open('./config/current_address.json','w') as outfile:
+        json.dump(address,outfile)
+    sock.close()
+
     battery = Battery(env)
     max_iter = env["max_iterations"]
     delay = env["update_delay"]

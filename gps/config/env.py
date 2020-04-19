@@ -3,7 +3,7 @@ from config.update_functions import *
 
 env = {
     # address of modbus server
-    'server_address': ['localhost', 5030],
+    'server_address': ['0.0.0.0', 59909],
     # simulation type must be 'historic' 'random' 'simulation'
     'simulation_type': 'simulation',
 
