@@ -4,7 +4,7 @@ for testing if the battery server works
 """
 
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
-from pymodbus.payload import BinaryPayloadDecoder, Endian
+from pymodbus.payload import BinaryPayloadDecoder
 import json
 
 
@@ -39,17 +39,12 @@ class GreenerEye:
         return BinaryPayloadDecoder.fromRegisters(r.registers, byteorder=self.byte_order, wordorder=self.word_order)
 
     # Prints from registers, as either comb or scale
-    def example_output(self, is_comb):
+    def example_output(self, mode):
         r = self.client.read_holding_registers(10,46,unit=1)
-        if is_comb:
-            d = BinaryPayloadDecoder.fromRegisters(r.registers, byteorder=self.byte_order, wordorder=self.word_order)
-        else:
-            d = self.from_registers(r)
-
+        d = self.from_registers(r)
         results = []
-
         for x in range(0,22):
-            results.append(d.decode_32bit_float() if is_comb else d.decode_32bit_int() / self.scaling_factor)
+            results.append(d.decode_32bit_float() if mode == "COMB" else d.decode_32bit_int() / self.scaling_factor)
         print(results)
 
         '''
@@ -63,12 +58,7 @@ class GreenerEye:
     def run(self):
         self.client.connect()
         print("CLIENT: is running")
-        if self.float_mode == "COMB":
-            self.example_output(True)
-        elif self.float_mode == "SCALE":
-            self.example_output(False)
-        else:
-            raise NotImplementedError("no such float mode: ", self.float_mode)
+        self.example_output(self.float_mode)
         self.client.close()
 
 
