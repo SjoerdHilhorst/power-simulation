@@ -42,7 +42,9 @@ if __name__ == "__main__":
         raise LookupError("This simulation type does not exist: ", sim_type)
 
     battery.run_server()
+
     power_sim.run_thread()
+
     graph.run() if graph else None
 
 

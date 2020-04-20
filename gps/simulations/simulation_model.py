@@ -8,11 +8,12 @@ class Simulation(PowerSimulation):
     def __init__(self, env, battery, max_iter, delay):
         super().__init__(battery, max_iter, delay)
         self.t = 0
-        self.start_soc = env["start_soc"]
         self.api_fun = env["active_power_in"]
         self.rpi_fun = env["reactive_power_in"]
         self.apo_fun = env["active_power_out"]
         self.rpo_fun = env["reactive_power_out"]
+        self.start_soc = env["start_soc"]
+        battery.set_value(battery.address["start_soc"], self.start_soc)
         self.update()
 
     def update(self):
