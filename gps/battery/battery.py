@@ -1,7 +1,7 @@
 import threading
 import json
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock, ModbusServerContext
-from pymodbus.server.sync import ModbusTcpServer
+from pymodbus.server.asynchronous import StartTcpServer
 from battery.util import *
 from battery.math_engine import MathEngine
 
@@ -26,7 +26,7 @@ class Battery:
         constants = env['battery_constants']
         self.address = env['address']
         self.id = constants['id']
-        self.server = ModbusTcpServer(self.context, address=tuple(env['server_address']))
+        self.run_server(self.context, env['server_address'])
         self.update_delay = env['update_delay']
         self.max_capacity = constants['battery_capacity']
         self.math_engine = MathEngine(self, self.address)
@@ -101,12 +101,12 @@ class Battery:
         self.set_value(address["frequency_out"], self.math_engine.get_frequency_out())
         self.set_value(address["soc"], self.math_engine.get_soc())
 
-    def run_server(self):
+    def run_server(self, context, env):
         """
         starts the servers with filled in context
         runs in separate thread
         """
-        t = threading.Thread(target=self.server.serve_forever, daemon=True)
+        t = threading.Thread(target=StartTcpServer, kwargs={'context':context, 'address':tuple(env)}, daemon=True)        
         t.start()  # start the thread
         print("SERVER: is running")
 
