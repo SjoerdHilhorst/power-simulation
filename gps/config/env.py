@@ -13,9 +13,10 @@ env = {
 
     # realtime delay in sec between iteration, set to 0 for no delay
     'update_delay': 0.001,
+
     # max number of iterations before simulation stops, set to None if infinite iterations
     # overriden by number of rows for historic sim
-    'max_iterations': 1000,
+    'max_iterations': 50000,
 
     'battery_constants': {
         'system_status': 1,
@@ -27,6 +28,7 @@ env = {
     },
 
     # show a realtime graph of battery fields
+    # it is adviced to set update_delay to at least 0.01 for smoothness
     'graph': {
         'enabled': True,
         # define which fields you want to plot
@@ -35,6 +37,7 @@ env = {
             "active_power_out",
             "reactive_power_in",
             "reactive_power_out",
+            "frequency_in",
             "soc"
         ]
     },
@@ -46,6 +49,7 @@ env = {
         'db_name': 'power_simulation',
         'drop_table_on_start': True
     },
+
 
     'float_store': {
         # COMB for 2 register float storage or SCALE for storing floats with scaling factor
@@ -80,12 +84,12 @@ env = {
     # you can also define more complex functions in update_functions and import them here
     'simulation': {
         'start_soc': 72.2,
-        'active_power_in': lambda t: t * t,
+        'active_power_in': lambda t: 0.001*quadratic(1,2,3,t),
         'reactive_power_in': lambda t: 200 * sin(t),
 
         # my_fun and sine are imported from update functions
         'active_power_out': lambda t: 200 * sin(t),
-        'reactive_power_out': lambda t: sine(1, 2, 3, t)
+        'reactive_power_out': lambda t: quadratic(1,2,3, t)
     },
 
     # first index is function code, second index is address

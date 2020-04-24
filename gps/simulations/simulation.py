@@ -39,6 +39,5 @@ class PowerSimulation:
             time.sleep(self.delay)
 
     def run_thread(self):
-        t = threading.Thread(target=self.run_simulation)
+        t = threading.Thread(target=self.run_simulation, daemon=True)
         t.start()
-        print("heeyyyy")

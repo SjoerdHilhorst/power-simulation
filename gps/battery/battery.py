@@ -130,7 +130,9 @@ class Battery:
             print(json.dumps(log, indent=4))
 
     def write_to_graph(self):
+        self.graph.mutex.lock()
         for field in self.graph.graphs:
             value = self.get_value(self.address[field])
             self.graph.data[field].append(value)
         self.graph.data['t'] += 1
+        self.graph.mutex.unlock()
