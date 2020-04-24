@@ -5,7 +5,7 @@ from os.path import dirname, normpath, join
 
 def open_csv(csv_name):
     dirpath = normpath(join(dirname(__file__), "../../"))
-    csv_name = csv_name + ".cv"
+    csv_name = csv_name + ".csv"
     filepath = join(dirpath, csv_name)
     try:
         file = pd.read_csv(filepath)
