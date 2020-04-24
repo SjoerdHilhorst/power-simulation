@@ -2,7 +2,7 @@ import threading
 import json
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock, ModbusServerContext
 from pymodbus.server.sync import ModbusTcpServer
-from battery.util import *
+from battery.util import get_float_handler
 from battery.math_engine import MathEngine
 
 """

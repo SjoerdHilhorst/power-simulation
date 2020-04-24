@@ -1,5 +1,5 @@
 from battery import Battery
-import simulations
+from simulations import RandomSimulation, HistoricSimulation, Simulation
 from database import Database
 import threading
 
@@ -21,15 +21,15 @@ if __name__ == "__main__":
     sim_type = env["simulation_type"]
     if sim_type == "random":
         random_ranges = env["random_simulation"]
-        power_sim = simulations.RandomSimulation(random_ranges, battery, max_iter, delay)
+        power_sim = RandomSimulation(random_ranges, battery, max_iter, delay)
 
     elif sim_type == "historic":
         env_sim = env["historic_simulation"]
-        power_sim = simulations.HistoricSimulation(env_sim, battery, max_iter, delay)
+        power_sim = HistoricSimulation(env_sim, battery, max_iter, delay)
 
     elif sim_type == "simulation":
         env_sim = env["simulation"]
-        power_sim = simulations.Simulation(env_sim, battery, max_iter, delay)
+        power_sim = Simulation(env_sim, battery, max_iter, delay)
 
     else:
         raise LookupError("This simulation type does not exist: ", sim_type)

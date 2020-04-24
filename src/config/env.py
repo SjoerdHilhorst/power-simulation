@@ -5,7 +5,7 @@ env = {
     # address of modbus server
     'server_address': ['localhost', 5030],
     # simulation type must be 'historic' 'random' 'simulation'
-    'simulation_type': 'historic',
+    'simulation_type': 'simulation',
 
     # historic simulation will read I/O power from a user specified csv
     # random simulation will generate random I/O power from user defined ranges
