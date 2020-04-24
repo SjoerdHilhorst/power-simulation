@@ -10,7 +10,6 @@ from config.env import env
 if __name__ == "__main__":
     battery = Battery(env)
     max_iter = env["max_iterations"]
-    print(max_iter)
     delay = env["update_delay"]
 
     if env["database"]["enabled"]:
