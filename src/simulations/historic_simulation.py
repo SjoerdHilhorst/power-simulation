@@ -1,10 +1,17 @@
 from simulations.simulation import PowerSimulation
 import pandas as pd
+from os.path import dirname, normpath, join
 
 
 def open_csv(csv_name):
-    csv_name = "../" + csv_name + ".csv"
-    file = pd.read_csv(csv_name)
+    dirpath = normpath(join(dirname(__file__), "../../"))
+    csv_name = csv_name + ".cv"
+    filepath = join(dirpath, csv_name)
+    try:
+        file = pd.read_csv(filepath)
+    except FileNotFoundError:
+        print("FileNotFoundError: file %s not found in %s" %(csv_name, dirpath))
+        exit(1)
 
     api = file["active_power_in"].tolist()
     rpi = file["reactive_power_in"].tolist()

@@ -5,7 +5,7 @@ env = {
     # address of modbus server
     'server_address': ['localhost', 5030],
     # simulation type must be 'historic' 'random' 'simulation'
-    'simulation_type': 'simulation',
+    'simulation_type': 'historic',
 
     # historic simulation will read I/O power from a user specified csv
     # random simulation will generate random I/O power from user defined ranges
@@ -72,6 +72,7 @@ env = {
     },
 
     # only used for a historic simulation
+    # the csv must be located in the power-simulation folder
     # the csv_name is without .csv
     'historic_simulation': {
         'csv_name': 'historic_battery_data',
