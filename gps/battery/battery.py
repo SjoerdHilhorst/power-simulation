@@ -36,6 +36,7 @@ class Battery:
         self.set_value(self.address['system_mode'], constants['system_mode'])
         self.set_value(self.address['accept_values'], constants['accept_values'])
         self.db = None
+        self.graph = None
 
 
     def set_value(self, addr, value):
@@ -72,6 +73,7 @@ class Battery:
         self.update_relational()
         #self.print_all_values()
         if self.db: self.write_to_db()
+        if self.graph: self.write_to_graph()
 
     def update_powers(self, api, rpi, apo, rpo):
         self.set_value(self.address['active_power_in'], api)
@@ -126,3 +128,11 @@ class Battery:
             log[field] = self.get_value(address[field])
             # print("hist_soc", self.power.soc_list[0])
             print(json.dumps(log, indent=4))
+
+    def write_to_graph(self):
+        self.graph.mutex.lock()
+        for field in self.graph.graphs:
+            value = self.get_value(self.address[field])
+            self.graph.data[field].append(value)
+        self.graph.data['t'] += 1
+        self.graph.mutex.unlock()

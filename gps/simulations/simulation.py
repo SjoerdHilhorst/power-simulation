@@ -1,4 +1,5 @@
 import time
+import threading
 
 
 class PowerSimulation:
@@ -30,11 +31,13 @@ class PowerSimulation:
         """
         raise NotImplementedError
 
-    def run(self):
+    def run_simulation(self):
         for i in range(0, self.max_iter):
             print(i)
             api, rpi, apo, rpo = self.get_power()
             self.battery.update(api, rpi, apo, rpo)
             time.sleep(self.delay)
 
-
+    def run_thread(self):
+        t = threading.Thread(target=self.run_simulation, daemon=True)
+        t.start()
