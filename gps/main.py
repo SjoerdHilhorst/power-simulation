@@ -35,7 +35,6 @@ if __name__ == "__main__":
         raise LookupError("This simulation type does not exist: ", sim_type)
 
 
-
     
     
     if env["graph"]["enabled"]:
