@@ -96,7 +96,8 @@ env = {
         'reactive_power_out': lambda t: quadratic(1,2,3, t)
     },
 
-    # first index is function code, second index is address, third is type of float storage
+    # first index is function code, second index is address, third is type of float storage (applicable for holding
+    # and input registers)
     'fields': {
         'soc': [holding, 10, scale],
         'active_power_in': [holding, 12, scale],
