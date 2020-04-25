@@ -1,11 +1,6 @@
 from config.update_functions import *
+from config.var_names import *
 
-comb = "COMB"
-scale = "SCALE"
-coil = 1
-discrete = 2
-holding = 3
-input = 4
 
 env = {
     # address of modbus server
