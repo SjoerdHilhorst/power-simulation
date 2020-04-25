@@ -1,9 +1,8 @@
 from battery import Battery
 import simulations
 from database import Database
-import threading
 
-# define which environment you want to use
+
 from config.env import env
 
 

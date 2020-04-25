@@ -1,5 +1,4 @@
 import threading
-import json
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock, ModbusServerContext
 from pymodbus.server.sync import ModbusTcpServer
 from battery.util import *
@@ -128,7 +127,7 @@ class Battery:
         for field in address:
             log[field] = self.get_value(address[field])
             # print("hist_soc", self.power.soc_list[0])
-            print(json.dumps(log, indent=4))
+
 
     def write_to_graph(self):
         self.graph.mutex.lock()
