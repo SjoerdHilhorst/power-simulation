@@ -72,6 +72,7 @@ env = {
     },
 
     # only used for a historic simulation
+    # the csv must be located in the power-simulation folder
     # the csv_name is without .csv
     'historic_simulation': {
         'csv_name': 'historic_battery_data',
