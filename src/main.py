@@ -2,7 +2,6 @@ from battery import Battery
 from simulations import RandomSimulation, HistoricSimulation, Simulation
 from database import Database
 
-
 from config.env import env
 
 

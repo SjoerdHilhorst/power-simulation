@@ -4,6 +4,7 @@ for testing if the battery server works
 """
 
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
+
 from pymodbus.payload import BinaryPayloadDecoder
 
 
@@ -19,11 +20,13 @@ class GreenerEye:
     def read_value(self, field):
         fx = field[0]
         addr = field[1]
+
         if fx == 1:
             val = self.client.read_coils(addr).bits[0]
         elif fx == 2:
             val = self.client.read_discrete_inputs(addr).bits[0]
         elif fx == 3:
+
             mode = field[2]
             val = self.client.read_holding_registers(addr, 2)
         else:
@@ -37,8 +40,10 @@ class GreenerEye:
         else:
             return d
 
+
     def from_registers(self, r):
         return BinaryPayloadDecoder.fromRegisters(r.registers, byteorder=self.byte_order, wordorder=self.word_order)
+
 
     def read_float_example(self):
         # examples, reading a single value
@@ -61,6 +66,7 @@ class GreenerEye:
         self.client.connect()
         print("CLIENT: is running")
         self.read_float_example()
+
         self.client.close()
 
 
@@ -69,3 +75,4 @@ if __name__ == "__main__":
 
     eye = GreenerEye(env)
     eye.run()
+

@@ -1,5 +1,7 @@
+
 from config.update_functions import *
 from config.var_names import *
+
 
 
 env = {
@@ -53,6 +55,7 @@ env = {
 
 
     'float_store': {
+
         # only used for SCALE, increase for more precision
         'scaling_factor': 1000,
         # Defines Endianness in modbus register,  '>' is Big Endian, '<' is Little Endian
@@ -92,6 +95,7 @@ env = {
         'reactive_power_out': lambda t: quadratic(1,2,3, t)
     },
 
+
     # first index is function code, second index is address, third is type of float storage (applicable for holding
     # and input registers)
     'fields': {
@@ -123,4 +127,5 @@ env = {
         'converter_started': [coil, 11],
         'input_connected': [coil, 12],
         'system_on_backup_battery': [coil, 13]}
+
 }

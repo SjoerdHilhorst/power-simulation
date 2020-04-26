@@ -49,9 +49,11 @@ class Battery:
         if fx > 2:
             mode = field[2]
             value = self.float_handler.encode_float(value, mode)
+
             self.store.setValues(fx, addr, value)
         else:
             self.store.setValues(fx, addr, [value])
+
 
     def get_value(self, field):
         """
@@ -71,7 +73,6 @@ class Battery:
     def update(self, api, rpi, apo, rpo):
         self.update_powers(api, rpi, apo, rpo)
         self.update_relational()
-        # self.print_all_values()
         if self.db: self.write_to_db()
         if self.graph: self.write_to_graph()
 
