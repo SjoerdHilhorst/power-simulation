@@ -8,6 +8,7 @@ class FloatHandler:
     SCALE stands for multiplying/dividing by scaling factor method, I.E. 32bit int
     COMB stands for storing the float in two registers, I.E. 32bit float
     :param value: float which should be handled
+    """
 
     def __init__(self, env, store):
         self.byte_order = env["byte_order"]
