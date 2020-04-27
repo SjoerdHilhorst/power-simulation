@@ -1,5 +1,8 @@
-from math import sin
+
 from config.update_functions import *
+from config.var_names import *
+
+
 
 env = {
     # address of modbus server
@@ -52,8 +55,7 @@ env = {
 
 
     'float_store': {
-        # COMB for 2 register float storage or SCALE for storing floats with scaling factor
-        'float_mode': 'COMB',
+
         # only used for SCALE, increase for more precision
         'scaling_factor': 1000,
         # Defines Endianness in modbus register,  '>' is Big Endian, '<' is Little Endian
@@ -72,6 +74,7 @@ env = {
     },
 
     # only used for a historic simulation
+    # the csv must be located in the power-simulation folder
     # the csv_name is without .csv
     'historic_simulation': {
         'csv_name': 'historic_battery_data',
@@ -92,33 +95,37 @@ env = {
         'reactive_power_out': lambda t: quadratic(1,2,3, t)
     },
 
-    # first index is function code, second index is address
-    'address': {
-        'soc': [3, 10],
-        'active_power_in': [3, 12],
-        'reactive_power_in': [3, 14],
-        'current_l1_in': [3, 16],
-        'current_l2_in': [3, 18],
-        'current_l3_in': [3, 20],
-        'voltage_l1_l2_in': [3, 22],
-        'voltage_l2_l3_in': [3, 24],
-        'voltage_l3_l1_in': [3, 26],
-        'frequency_in': [3, 28],
-        'active_power_out': [3, 30],
-        'reactive_power_out': [3, 32],
-        'current_l1_out': [3, 34],
-        'current_l2_out': [3, 36],
-        'current_l3_out': [3, 38],
-        'voltage_l1_l2_out': [3, 40],
-        'voltage_l2_l3_out': [3, 42],
-        'voltage_l3_l1_out': [3, 44],
-        'frequency_out': [3, 46],
-        'active_power_converter': [3, 48],
-        'reactive_power_converter': [3, 50],
-        'system_status': [3, 52],
-        'system_mode': [3, 54],
-        'accept_values': [1, 10],
-        'converter_started': [1, 11],
-        'input_connected': [1, 12],
-        'system_on_backup_battery': [1, 13]}
+
+    # first index is function code, second index is address, third is type of float storage (applicable for holding
+    # and input registers)
+    'fields': {
+        'soc': [holding, 10, scale],
+        'active_power_in': [holding, 12, scale],
+        'reactive_power_in': [holding, 14, scale],
+        'current_l1_in': [holding, 16, comb],
+        'current_l2_in': [holding, 18, comb],
+        'current_l3_in': [holding, 20, scale],
+        'voltage_l1_l2_in': [holding, 22, comb],
+        'voltage_l2_l3_in': [holding, 24, comb],
+        'voltage_l3_l1_in': [holding, 26, scale],
+        'frequency_in': [holding, 28, scale],
+        'active_power_out': [holding, 30, scale],
+        'reactive_power_out': [holding, 32, comb],
+        'current_l1_out': [holding, 34, comb],
+        'current_l2_out': [holding, 36, scale],
+        'current_l3_out': [holding, 38, comb],
+        'voltage_l1_l2_out': [holding, 40, scale],
+        'voltage_l2_l3_out': [holding, 42, comb],
+        'voltage_l3_l1_out': [holding, 44, scale],
+        'frequency_out': [holding, 46, comb],
+        'active_power_converter': [holding, 48, scale],
+        'reactive_power_converter': [holding, 50, scale],
+
+        'system_status': [holding, 52, scale],
+        'system_mode': [holding, 54, scale],
+        'accept_values': [coil, 10],
+        'converter_started': [coil, 11],
+        'input_connected': [coil, 12],
+        'system_on_backup_battery': [coil, 13]}
+
 }

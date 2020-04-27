@@ -1,10 +1,17 @@
 from simulations.simulation import PowerSimulation
 import pandas as pd
+from os.path import dirname, normpath, join
 
 
 def open_csv(csv_name):
-    csv_name = "../" + csv_name + ".csv"
-    file = pd.read_csv(csv_name)
+    dirpath = normpath(join(dirname(__file__), "../../"))
+    csv_name = csv_name + ".csv"
+    filepath = join(dirpath, csv_name)
+    try:
+        file = pd.read_csv(filepath)
+    except FileNotFoundError:
+        print("FileNotFoundError: file %s not found in %s" %(csv_name, dirpath))
+        exit(1)
 
     api = file["active_power_in"].tolist()
     rpi = file["reactive_power_in"].tolist()
@@ -26,7 +33,9 @@ class HistoricSimulation(PowerSimulation):
         self.apo_list = apo[start_index:]
         self.rpo_list = rpo[start_index:]
         self.soc_list = soc[start_index:]
-        self.start_soc = battery.set_value(battery.address["soc"], soc[0])
+
+        self.start_soc = battery.set_value(battery.field["soc"], soc[0])
+
         self.max_iter = len(self.api_list)-1
         self.update()
 
