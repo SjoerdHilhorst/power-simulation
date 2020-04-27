@@ -30,7 +30,7 @@ if __name__ == "__main__":
         power_sim = Simulation(env_sim, battery, max_iter, delay)
 
     else:
-        raise LookupError("This simulation type does not exist: ", sim_type)  
+        raise LookupError("This simulation type does not exist: ", sim_type)
 
     
     if env["graph"]["enabled"]:
