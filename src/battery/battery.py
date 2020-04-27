@@ -1,12 +1,8 @@
 import threading
-import json
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock, ModbusServerContext
 from pymodbus.server.sync import ModbusTcpServer
-
-from twisted.internet import reactor
-from twisted.internet.task import LoopingCall
-from util import *
-from math_engine import MathEngine
+from battery.util import FloatHandler
+from battery.math_engine import MathEngine
 
 """
 Battery represents the Server/Slave
@@ -14,7 +10,6 @@ Battery represents the Server/Slave
 
 
 class Battery:
-    max_capacity = 330
     """
     Initialize the store and the context
     """
@@ -27,80 +22,68 @@ class Battery:
     context = ModbusServerContext(slaves=store, single=True)
 
     def __init__(self, env):
-        self.address = env['address']
-        self.id = env['id']
-        self.addr_separator = env['fx_addr_separator']
+        constants = env['battery_constants']
+        self.field = env['fields']
+        self.id = constants['id']
         self.server = ModbusTcpServer(self.context, address=tuple(env['server_address']))
-        self.math_engine = MathEngine(self, self.address)
+        self.update_delay = env['update_delay']
+        self.max_capacity = constants['battery_capacity']
+        self.math_engine = MathEngine(self, self.field)
+        self.float_handler = FloatHandler(env['float_store'], self.store)
+        self.set_value(self.field['system_on_backup_battery'], constants['system_on_backup_battery'])
+        self.set_value(self.field['system_status'], constants['system_status'])
+        self.set_value(self.field['system_mode'], constants['system_mode'])
+        self.set_value(self.field['accept_values'], constants['accept_values'])
+        self.db = None
+        self.graph = None
 
-        # initialize payload builder, this converts floats, negative values to
-        # IEEE-754 hex format before writing in to the datastore
-        self.float_handler = FloatHandler(env['byte_order'], env['word_order'], env['float_mode'],
-                                          env['scaling_factor'], self.store)
-        start_val = env['initial_values']
-        self.set_value(self.address['system_on_backup_battery'], start_val['system_on_backup_battery'])
-        self.set_value(self.address['system_status'], start_val['system_status'])
-        self.set_value(self.address['system_mode'], start_val['system_mode'])
-        self.set_value(self.address['accept_values'], start_val['accept_values'])
-        self.set_value(self.address['soc'], start_val['soc'])
-
-        self.set_value(self.address['active_power_in'], start_val['active_power_in'])
-        self.set_value(self.address['reactive_power_in'], start_val['reactive_power_in'])
-        self.set_value(self.address['active_power_out'], start_val['active_power_out'])
-        self.set_value(self.address['reactive_power_out'], start_val['reactive_power_out'])
-
-        self.power = None
-
-    def connect_power(self, power):
-        """
-        Literally connect the source and set the initial value of active/reactive power_in
-        :param power: power_source to connect
-        """
-        self.power = power
-        self.update_powers()
-        self.set_value(self.address['input_connected'], 1)
-        self.set_value(self.address['converter_started'], 1)
-
-    def update_powers(self):
-        api, rpi, apo, rpo = self.power.get_power()
-        self.set_value(self.address['active_power_in'], api)
-        self.set_value(self.address['reactive_power_in'], rpi)
-        self.set_value(self.address['active_power_out'], rpi)
-        self.set_value(self.address['reactive_power_out'], rpo)
-
-    def set_value(self, addr, value):
+    def set_value(self, field, value):
         """
         sets the value to the given address; ALL data which is assigned to  16-bit registers (meaning fx > 2) is
         multiplied by scaling factor and converted to integers first with the method handle_float()
-        :param addr: address where first digit stands for reg type
+        :param field:
         :param value: value to set
         """
-
-        fx = addr // self.addr_separator
-        addr = addr % self.addr_separator
+        fx = field[0]
+        addr = field[1]
         if fx > 2:
-            value = self.float_handler.encode_float(value)
+            mode = field[2]
+            value = self.float_handler.encode_float(value, mode)
+
             self.store.setValues(fx, addr, value)
         else:
             self.store.setValues(fx, addr, [value])
 
-    def get_value(self, addr):
+
+    def get_value(self, field):
         """
         gets the value from given address; ALL data from  16-bit registers (meaning fx > 2) is divided by scaling factor
-        :param addr: address where first digit stands for reg type
+        :param field:
         :return: value from the given address
         """
-        fx = addr // self.addr_separator
-        addr = addr % self.addr_separator
+        fx = field[0]
+        addr = field[1]
         if fx <= 2:
             value = self.store.getValues(fx, addr, 1)[0]
         elif fx > 2:
-            value = self.float_handler.decode_float(fx, addr)
+            mode = field[2]
+            value = self.float_handler.decode_float(fx, addr, mode)
         return value
 
-    def update(self):
-        address = self.address
-        self.update_powers()
+    def update(self, api, rpi, apo, rpo):
+        self.update_powers(api, rpi, apo, rpo)
+        self.update_relational()
+        if self.db: self.write_to_db()
+        if self.graph: self.write_to_graph()
+
+    def update_powers(self, api, rpi, apo, rpo):
+        self.set_value(self.field['active_power_in'], api)
+        self.set_value(self.field['reactive_power_in'], rpi)
+        self.set_value(self.field['active_power_out'], apo)
+        self.set_value(self.field['reactive_power_out'], rpo)
+
+    def update_relational(self):
+        address = self.field
         self.set_value(address["active_power_converter"], self.math_engine.get_active_power_converter())
         self.set_value(address["reactive_power_converter"], self.math_engine.get_reactive_power_converter())
         self.set_value(address["voltage_l1_l2_in"], self.math_engine.get_voltage_I1_I2_in())
@@ -118,9 +101,8 @@ class Battery:
         self.set_value(address["current_l3_out"], self.math_engine.get_current_I3_out())
         self.set_value(address["frequency_out"], self.math_engine.get_frequency_out())
         self.set_value(address["soc"], self.math_engine.get_soc())
-        self.print_all_values()
 
-    def run(self):
+    def run_server(self):
         """
         starts the servers with filled in context
         runs in separate thread
@@ -128,19 +110,30 @@ class Battery:
         t = threading.Thread(target=self.server.serve_forever, daemon=True)
         t.start()  # start the thread
         print("SERVER: is running")
-        # update each 2 secs
-        interval = 2  # interval with which update happens, in that case every 2 seconds
-        loop = LoopingCall(f=self.update)
-        loop.start(interval, now=True)
-        reactor.run()
+
+    def write_to_db(self):
+        address = self.field
+        values = []
+        for field in address:
+            values.append(self.get_value(address[field]))
+        self.db.write("battery", values)
 
     def print_all_values(self):
         """
         makes a dictionary and json.dumps it to output
         this way we can also save the output :)
         """
-        address = self.address
+        address = self.field
         log = {}
         for field in address:
             log[field] = self.get_value(address[field])
-        print(json.dumps(log, indent=4))
+            # print("hist_soc", self.power.soc_list[0])
+
+
+    def write_to_graph(self):
+        self.graph.mutex.lock()
+        for field in self.graph.graphs:
+            value = self.get_value(self.field[field])
+            self.graph.data[field].append(value)
+        self.graph.data['t'] += 1
+        self.graph.mutex.unlock()
