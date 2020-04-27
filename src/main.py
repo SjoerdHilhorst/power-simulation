@@ -32,8 +32,14 @@ if __name__ == "__main__":
     else:
         raise LookupError("This simulation type does not exist: ", sim_type)
 
+<<<<<<< HEAD:gps/main.py
+
+    
+    
+=======
     battery.run_server()
   
+>>>>>>> develop:src/main.py
     if env["graph"]["enabled"]:
         from graph import Graph
         graph_env = env["graph"]
