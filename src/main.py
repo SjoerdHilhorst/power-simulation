@@ -1,9 +1,7 @@
 from battery import Battery
 from simulations import RandomSimulation, HistoricSimulation, Simulation
 from database import Database
-import threading
 
-# define which environment you want to use
 from config.env import env
 
 
