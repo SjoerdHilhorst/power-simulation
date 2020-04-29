@@ -24,8 +24,6 @@ class MathEngine:
         return apo
     
     def get_reactive_power_out(self, rpo):
-        #if not self.battery.is_input_connected():
-            #rpo = 0
         return rpo
 
     def get_power_factor_in(self):
