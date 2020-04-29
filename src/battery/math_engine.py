@@ -48,7 +48,7 @@ class MathEngine:
         """
         :return: active_power_in - active_power_out
         """
-        if not self.battery.get_value(self.address['converter_started']):
+        if not self.battery.is_converter_started():
             apc = 0
         else:
             apc = self.battery.get_value(self.address['active_power_in']) - self.battery.get_value(self.address['active_power_out'])
@@ -70,6 +70,8 @@ class MathEngine:
         :return: previous SoC + [(active_power_converter) /
                 max battery capacity * 3600.
         """
+        if not self.battery.is_converter_started():
+            return self.battery.get_value(self.address['soc'])
         prev_soc = self.battery.get_value(self.address['soc'])
         apc = self.battery.get_value(self.address['active_power_converter'])
         new_soc = prev_soc + (apc / (self.battery.max_capacity * 3600)) * 100

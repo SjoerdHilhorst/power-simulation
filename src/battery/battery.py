@@ -107,6 +107,9 @@ class Battery:
     def is_input_connected(self):
         return self.field['input_connected']
 
+    def is_converter_started(self):
+        return self.field['converter_started']
+
     def run_server(self, context, env):
         """
         starts the servers with filled in context
