@@ -34,6 +34,8 @@ class Battery:
         self.set_value(self.field['system_status'], constants['system_status'])
         self.set_value(self.field['system_mode'], constants['system_mode'])
         self.set_value(self.field['accept_values'], constants['accept_values'])
+        self.set_value(self.field['converter_started'], constants['converter_started'])
+        self.set_value(self.field['input_connected'], constants['input_connected'])
         self.db = None
         self.graph = None
 
@@ -77,10 +79,11 @@ class Battery:
         if self.graph: self.write_to_graph()
 
     def update_powers(self, api, rpi, apo, rpo):
-        self.set_value(self.field['active_power_in'], api)
-        self.set_value(self.field['reactive_power_in'], rpi)
-        self.set_value(self.field['active_power_out'], apo)
-        self.set_value(self.field['reactive_power_out'], rpo)
+        address = self.field        
+        self.set_value(self.field['active_power_in'], self.math_engine.get_active_power_in(api))
+        self.set_value(self.field['reactive_power_in'], self.math_engine.get_reactive_power_in(rpi))
+        self.set_value(self.field['active_power_out'], self.math_engine.get_active_power_out(apo))
+        self.set_value(self.field['reactive_power_out'], self.math_engine.get_reactive_power_out(rpo))
 
     def update_relational(self):
         address = self.field

@@ -10,6 +10,28 @@ class MathEngine:
     def random_gaussian_value(self, mu, sigma):
         return np.random.normal(mu, sigma)
 
+    def get_active_power_in(self, api):
+        
+        if not self.battery.get_value(self.address['input_connected']):
+            api = 0
+        return api
+    
+    def get_reactive_power_in(self, rpi):
+        
+        if not self.battery.get_value(self.address['input_connected']):
+            rpi = 0
+        return rpi
+    
+    def get_active_power_out(self, apo):
+        
+        return apo
+    
+    def get_reactive_power_out(self, rpo):
+        
+        if not self.battery.get_value(self.address['input_connected']):
+            rpo = 0
+        return rpo
+
     def get_power_factor_in(self):
         """
         :return: active_power_in / sqrt(active_power_in^2 + reactive_power_in^2)
@@ -30,15 +52,21 @@ class MathEngine:
         """
         :return: active_power_in - active_power_out
         """
-        apc = self.battery.get_value(self.address['active_power_in']) - self.battery.get_value(self.address['active_power_out'])
+        if not self.battery.get_value(self.address['converter_started']):
+            apc = 0
+        else:
+            apc = self.battery.get_value(self.address['active_power_in']) - self.battery.get_value(self.address['active_power_out'])
         return apc
 
     def get_reactive_power_converter(self):
         """
         :return: reactive_power_in - reactive_power_out
         """
-        rpc = self.battery.get_value(self.address['reactive_power_in']) - self.battery.get_value(
-            self.address['reactive_power_out'])
+        if not self.battery.get_value(self.address['converter_started']):
+            rpc = 0
+        else:
+            rpc = self.battery.get_value(self.address['reactive_power_in']) - self.battery.get_value(
+                self.address['reactive_power_out'])
         return rpc
 
     def get_soc(self):

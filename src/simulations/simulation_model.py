@@ -13,7 +13,7 @@ class Simulation(PowerSimulation):
         self.apo_fun = env["active_power_out"]
         self.rpo_fun = env["reactive_power_out"]
         self.start_soc = env["start_soc"]
-        battery.set_value(battery.address["soc"], self.start_soc)
+        battery.set_value(battery.field["soc"], self.start_soc)
         self.update()
 
     def update(self):
