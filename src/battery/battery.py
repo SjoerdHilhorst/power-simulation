@@ -78,7 +78,6 @@ class Battery:
         if self.graph: self.write_to_graph()
 
     def update_powers(self, api, rpi, apo, rpo):
-        address = self.field
         self.set_value(self.field['active_power_in'], self.math_engine.get_active_power_in(api))
         self.set_value(self.field['reactive_power_in'], self.math_engine.get_reactive_power_in(rpi))
         self.set_value(self.field['active_power_out'], self.math_engine.get_active_power_out(apo))
@@ -105,10 +104,10 @@ class Battery:
         self.set_value(address["soc"], self.math_engine.get_soc())
 
     def is_input_connected(self):
-        return self.field['input_connected']
+        return self.get_value(self.field['input_connected'])
 
     def is_converter_started(self):
-        return self.field['converter_started']
+        return self.get_value(self.field['converter_started'])
 
     def run_server(self, context, env):
         """
@@ -135,7 +134,6 @@ class Battery:
         log = {}
         for field in address:
             log[field] = self.get_value(address[field])
-            # print("hist_soc", self.power.soc_list[0])
 
     def write_to_graph(self):
         self.graph.mutex.lock()
