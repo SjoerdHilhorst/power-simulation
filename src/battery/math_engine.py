@@ -24,8 +24,8 @@ class MathEngine:
         return apo
     
     def get_reactive_power_out(self, rpo):
-        if not self.battery.is_input_connected():
-            rpo = 0
+        #if not self.battery.is_input_connected():
+            #rpo = 0
         return rpo
 
     def get_power_factor_in(self):
@@ -58,7 +58,7 @@ class MathEngine:
         """
         :return: reactive_power_in - reactive_power_out
         """
-        if not self.battery.get_value(self.address['converter_started']):
+        if not self.battery.is_converter_started():
             rpc = 0
         else:
             rpc = self.battery.get_value(self.address['reactive_power_in']) - self.battery.get_value(
