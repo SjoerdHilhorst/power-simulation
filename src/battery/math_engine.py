@@ -11,24 +11,20 @@ class MathEngine:
         return np.random.normal(mu, sigma)
 
     def get_active_power_in(self, api):
-        
-        if not self.battery.get_value(self.address['input_connected']):
+        if not self.battery.is_input_connected():
             api = 0
         return api
     
     def get_reactive_power_in(self, rpi):
-        
-        if not self.battery.get_value(self.address['input_connected']):
+        if not self.battery.is_input_connected():
             rpi = 0
         return rpi
     
     def get_active_power_out(self, apo):
-        
         return apo
     
     def get_reactive_power_out(self, rpo):
-        
-        if not self.battery.get_value(self.address['input_connected']):
+        if not self.battery.is_input_connected():
             rpo = 0
         return rpo
 
@@ -76,8 +72,6 @@ class MathEngine:
         """
         prev_soc = self.battery.get_value(self.address['soc'])
         apc = self.battery.get_value(self.address['active_power_converter'])
-
-        # multiply by 1000 to convert from kWh
         new_soc = prev_soc + (apc / (self.battery.max_capacity * 3600)) * 100
         if new_soc > 100:
             new_soc = 100
@@ -110,6 +104,8 @@ class MathEngine:
         """
         :return: active_power_in / (sqrt(3) * voltage_l1_l2_in * power_factor_in)
         """
+        if not self.battery.is_input_connected():
+            return 0
         ap = self.battery.get_value(self.address['active_power_in'])
         voltage = self.battery.get_value(self.address['voltage_l1_l2_in'])
         pf = self.get_power_factor_in()
@@ -120,6 +116,8 @@ class MathEngine:
         """
         :return: active_power_in / (sqrt(3) * voltage_l2_l3_in * power_factor_in)
         """
+        if not self.battery.is_input_connected():
+            return 0
         ap = self.battery.get_value(self.address['active_power_in'])
         voltage = self.battery.get_value(self.address['voltage_l2_l3_in'])
         pf = self.get_power_factor_in()
@@ -130,6 +128,8 @@ class MathEngine:
         """
         :return: active_power_in / (sqrt(3) * voltage_l3_l1_in * power_factor_in)
         """
+        if not self.battery.is_input_connected():
+            return 0
         ap = self.battery.get_value(self.address['active_power_in'])
         voltage = self.battery.get_value(self.address['voltage_l3_l1_in'])
         pf = self.get_power_factor_in()
