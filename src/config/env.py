@@ -15,7 +15,7 @@ env = {
     # simulation will generate I/O power from user defined functions
 
     # realtime delay in sec between iteration, set to 0 for no delay
-    'update_delay': 0.001,
+    'update_delay': 0.5,
 
     # max number of iterations before simulation stops, set to None if infinite iterations
     # overriden by number of rows for historic sim
@@ -26,6 +26,10 @@ env = {
         'system_mode': 5,
         'system_on_backup_battery': 1,
         'accept_values': 1,
+        'converter_started': 0,
+        'input_connected' : 0,
+        
+        # capacity in KwH
         'battery_capacity': 330,
         'id': 'GREENER_001',
     },
@@ -40,7 +44,8 @@ env = {
             "active_power_out",
             "reactive_power_in",
             "reactive_power_out",
-            "frequency_in",
+            "active_power_converter",
+            "reactive_power_converter",
             "soc"
         ]
     },
@@ -126,6 +131,7 @@ env = {
         'accept_values': [coil, 10],
         'converter_started': [coil, 11],
         'input_connected': [coil, 12],
-        'system_on_backup_battery': [coil, 13]}
+        'system_on_backup_battery': [coil, 13]
+        }
 
 }

@@ -12,7 +12,7 @@ class RandomSimulation(PowerSimulation):
         self.range_active_out = tuple(random_ranges["range_active_power_out"])
         self.range_reactive_out = tuple(random_ranges["range_reactive_power_out"])
         self.start_soc = random_ranges["start_soc"]
-        battery.set_value(battery.address["soc"], self.start_soc)
+        battery.set_value(battery.field["soc"], self.start_soc)
         self.update()
 
     def rand(self, range):
