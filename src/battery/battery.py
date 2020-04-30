@@ -36,6 +36,8 @@ class Battery:
         self.set_value(self.field['accept_values'], constants['accept_values'])
         self.set_value(self.field['converter_started'], constants['converter_started'])
         self.set_value(self.field['input_connected'], constants['input_connected'])
+
+        self.set_value(self.field['soc'], env['soc'])
         self.db = None
         self.graph = None
 
