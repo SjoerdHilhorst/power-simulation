@@ -26,7 +26,7 @@ class Graph(pg.GraphicsWindow):
     def update_plot_data(self):
         self.mutex.lock()
         for key, graph in self.graphs.items():
-            graph.setData(list(range(self.data['t'])), self.data[key], pen=(255, 0, 0))
+            graph.setData(list(range(self.data['t'])), self.data[key], pen='g')
         self.mutex.unlock()
 
     def run(self):

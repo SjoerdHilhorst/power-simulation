@@ -31,20 +31,16 @@ class GreenerEye:
         else:
             mode = field[2]
             val = self.client.read_input_registers(addr, 2).registers
-        
-        d = self.from_registers(val)
 
+        d = self.from_registers(val)
 
         if mode == "SCALE":
             return d.decode_32bit_int() / self.scaling_factor
         elif mode == "COMB":
             return d.decode_32bit_float()
 
-
-
     def from_registers(self, r):
         return BinaryPayloadDecoder.fromRegisters(r.registers, byteorder=self.byte_order, wordorder=self.word_order)
-
 
     def read_float_example(self):
         # examples, reading a single value
@@ -65,7 +61,7 @@ class GreenerEye:
 
     def set_converter_started(self, bit):
         self.client.write_coil(self.field['converter_started'][1], bit)
-    
+
     def set_input_connected(self, bit):
         self.client.write_coil(self.field['input_connected'][1], bit)
 
@@ -73,10 +69,9 @@ class GreenerEye:
         self.client.connect()
         print("CLIENT: is running")
         self.read_float_example()
-        
+
         self.set_converter_started(False)
         self.set_input_connected(False)
-
 
 
 if __name__ == "__main__":
@@ -84,4 +79,3 @@ if __name__ == "__main__":
 
     eye = GreenerEye(env)
     eye.run()
-
