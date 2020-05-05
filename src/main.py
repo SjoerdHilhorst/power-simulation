@@ -1,9 +1,8 @@
 from battery import Battery
-from simulations import RandomSimulation, HistoricSimulation, Simulation
+from simulations import HistoricSimulation, Simulation
 from database import Database
 
 from config.env import env
-
 
 if __name__ == "__main__":
     battery = Battery(env)
@@ -17,11 +16,8 @@ if __name__ == "__main__":
         battery.db = db
 
     sim_type = env["simulation_type"]
-    if sim_type == "random":
-        random_ranges = env["random_simulation"]
-        power_sim = RandomSimulation(random_ranges, battery, max_iter, delay)
 
-    elif sim_type == "historic":
+    if sim_type == "historic":
         env_sim = env["historic_simulation"]
         power_sim = HistoricSimulation(env_sim, battery, max_iter, delay)
 
@@ -32,10 +28,9 @@ if __name__ == "__main__":
     else:
         raise LookupError("This simulation type does not exist: ", sim_type)
 
-    battery.run_server()
-  
     if env["graph"]["enabled"]:
         from graph import Graph
+
         graph_env = env["graph"]
         fields = graph_env["fields"]
         graph = Graph(fields)
@@ -44,4 +39,3 @@ if __name__ == "__main__":
         graph.run()
     else:
         power_sim.run_simulation()
-        

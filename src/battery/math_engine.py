@@ -10,6 +10,22 @@ class MathEngine:
     def random_gaussian_value(self, mu, sigma):
         return np.random.normal(mu, sigma)
 
+    def get_active_power_in(self, api):
+        if not self.battery.is_input_connected():
+            api = 0
+        return api
+    
+    def get_reactive_power_in(self, rpi):
+        if not self.battery.is_input_connected():
+            rpi = 0
+        return rpi
+    
+    def get_active_power_out(self, apo):
+        return apo
+    
+    def get_reactive_power_out(self, rpo):
+        return rpo
+
     def get_power_factor_in(self):
         """
         :return: active_power_in / sqrt(active_power_in^2 + reactive_power_in^2)
@@ -30,15 +46,21 @@ class MathEngine:
         """
         :return: active_power_in - active_power_out
         """
-        apc = self.battery.get_value(self.address['active_power_in']) - self.battery.get_value(self.address['active_power_out'])
+        if not self.battery.is_converter_started():
+            apc = 0
+        else:
+            apc = self.battery.get_value(self.address['active_power_in']) - self.battery.get_value(self.address['active_power_out'])
         return apc
 
     def get_reactive_power_converter(self):
         """
         :return: reactive_power_in - reactive_power_out
         """
-        rpc = self.battery.get_value(self.address['reactive_power_in']) - self.battery.get_value(
-            self.address['reactive_power_out'])
+        if not self.battery.is_converter_started():
+            rpc = 0
+        else:
+            rpc = self.battery.get_value(self.address['reactive_power_in']) - self.battery.get_value(
+                self.address['reactive_power_out'])
         return rpc
 
     def get_soc(self):
@@ -46,10 +68,10 @@ class MathEngine:
         :return: previous SoC + [(active_power_converter) /
                 max battery capacity * 3600.
         """
+        if not self.battery.is_converter_started():
+            return self.battery.get_value(self.address['soc'])
         prev_soc = self.battery.get_value(self.address['soc'])
         apc = self.battery.get_value(self.address['active_power_converter'])
-
-        # multiply by 1000 to convert from kWh
         new_soc = prev_soc + (apc / (self.battery.max_capacity * 3600)) * 100
         if new_soc > 100:
             new_soc = 100
@@ -82,6 +104,8 @@ class MathEngine:
         """
         :return: active_power_in / (sqrt(3) * voltage_l1_l2_in * power_factor_in)
         """
+        if not self.battery.is_input_connected():
+            return 0
         ap = self.battery.get_value(self.address['active_power_in'])
         voltage = self.battery.get_value(self.address['voltage_l1_l2_in'])
         pf = self.get_power_factor_in()
@@ -92,6 +116,8 @@ class MathEngine:
         """
         :return: active_power_in / (sqrt(3) * voltage_l2_l3_in * power_factor_in)
         """
+        if not self.battery.is_input_connected():
+            return 0
         ap = self.battery.get_value(self.address['active_power_in'])
         voltage = self.battery.get_value(self.address['voltage_l2_l3_in'])
         pf = self.get_power_factor_in()
@@ -102,6 +128,8 @@ class MathEngine:
         """
         :return: active_power_in / (sqrt(3) * voltage_l3_l1_in * power_factor_in)
         """
+        if not self.battery.is_input_connected():
+            return 0
         ap = self.battery.get_value(self.address['active_power_in'])
         voltage = self.battery.get_value(self.address['voltage_l3_l1_in'])
         pf = self.get_power_factor_in()

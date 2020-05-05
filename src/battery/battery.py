@@ -34,6 +34,10 @@ class Battery:
         self.set_value(self.field['system_status'], constants['system_status'])
         self.set_value(self.field['system_mode'], constants['system_mode'])
         self.set_value(self.field['accept_values'], constants['accept_values'])
+        self.set_value(self.field['converter_started'], constants['converter_started'])
+        self.set_value(self.field['input_connected'], constants['input_connected'])
+
+        self.set_value(self.field['soc'], env['soc'])
         self.db = None
         self.graph = None
 
@@ -53,7 +57,6 @@ class Battery:
             self.store.setValues(fx, addr, value)
         else:
             self.store.setValues(fx, addr, [value])
-
 
     def get_value(self, field):
         """
@@ -77,10 +80,10 @@ class Battery:
         if self.graph: self.write_to_graph()
 
     def update_powers(self, api, rpi, apo, rpo):
-        self.set_value(self.field['active_power_in'], api)
-        self.set_value(self.field['reactive_power_in'], rpi)
-        self.set_value(self.field['active_power_out'], apo)
-        self.set_value(self.field['reactive_power_out'], rpo)
+        self.set_value(self.field['active_power_in'], self.math_engine.get_active_power_in(api))
+        self.set_value(self.field['reactive_power_in'], self.math_engine.get_reactive_power_in(rpi))
+        self.set_value(self.field['active_power_out'], self.math_engine.get_active_power_out(apo))
+        self.set_value(self.field['reactive_power_out'], self.math_engine.get_reactive_power_out(rpo))
 
     def update_relational(self):
         address = self.field
@@ -102,12 +105,18 @@ class Battery:
         self.set_value(address["frequency_out"], self.math_engine.get_frequency_out())
         self.set_value(address["soc"], self.math_engine.get_soc())
 
-    def run_server(self):
+    def is_input_connected(self):
+        return self.get_value(self.field['input_connected'])
+
+    def is_converter_started(self):
+        return self.get_value(self.field['converter_started'])
+
+    def run_server(self, context, env):
         """
         starts the servers with filled in context
         runs in separate thread
         """
-        t = threading.Thread(target=self.server.serve_forever, daemon=True)
+        t = threading.Thread(target=StartTcpServer, kwargs={'context': context, 'address': tuple(env)}, daemon=True)
         t.start()  # start the thread
         print("SERVER: is running")
 
@@ -127,8 +136,6 @@ class Battery:
         log = {}
         for field in address:
             log[field] = self.get_value(address[field])
-            # print("hist_soc", self.power.soc_list[0])
-
 
     def write_to_graph(self):
         self.graph.mutex.lock()
