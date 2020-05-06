@@ -4,7 +4,7 @@ import random
 from numpy.ma import sin
 
 from csv_reader import CSVReader
-from simulations.simulation_super import SimulationSuper
+from simulations.simulation_model import SimulationSuper
 
 """A class where a client can override any functions or specify that he wants a value from csv. At least methods of 
 re(active)_power_in/out  HAS TO BE PROVIDED """
