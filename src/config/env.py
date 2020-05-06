@@ -1,4 +1,3 @@
-from config.update_functions import *
 from config.var_names import *
 
 env = {
@@ -60,10 +59,11 @@ env = {
     # initial soc
     'soc': 72.2,
 
-    # simulation type must be 'historic' or 'simulation'
-    # historic simulation will read I/O power from a user specified csv
-    # simulation will generate I/O power from user defined functions
-    'simulation_type': 'historic',
+    # a pair should be provided in a format field_name: csv_name (csv is stores in folders csvs)
+    'from_csv':{
+        'active_power_in': 'historic_battery_data2',
+        'reactive_power_out': 'historic_battery_data'
+    },
 
     # realtime delay in sec between iteration, set to 0 for no delay
     'update_delay': 0.1,
@@ -72,27 +72,6 @@ env = {
     # overridden by number of rows for historic sim
     'max_iterations': 50000,
 
-    # only used for a historic simulation
-    # the csv must be located in the power-simulation folder
-    # the csv_name is without .csv
-    'historic_simulation': {
-        'csv_name': 'historic_battery_data',
-        'start_index': 0,
-    },
-
-    # only used for simulation
-    # define update functions for user inputs as lambda function, always have one argument (t)
-    # for example to do a constant: lambda t: 400
-    # you can also define more complex functions in update_functions and import them here
-    'simulation': {
-        'start_soc': 72.2,
-        'active_power_in': lambda t: 0.001 * quadratic(1, 2, 3, t),
-        'reactive_power_in': lambda t: 200 * sin(t),
-
-        # my_fun and sine are imported from update functions
-        'active_power_out': lambda t: 200 * sin(t),
-        'reactive_power_out': lambda t: quadratic(1, 2, 3, t)
-    },
 
     # show a realtime graph of battery fields
     # it is advised to set update_delay to at least 0.01 for smoothness

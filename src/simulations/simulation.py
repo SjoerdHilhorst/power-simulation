@@ -1,43 +1,41 @@
-import time
-import threading
+import random
 
 
-class PowerSimulation:
-    """
-    abstract class, in where rand, historical, sim should be implemented
-    """
-    def __init__(self, battery, max_iter, delay):
-        self.active_power_in = None
-        self.reactive_power_in = None
-        self.active_power_out = None
-        self.reactive_power_out = None
-        self.start_soc = None
-        self.t = 0
-        self.delay = delay
-        self.max_iter = max_iter
-        self.battery = battery
+from numpy.ma import sin
 
-    def get_power(self):
-        api = self.active_power_in
-        rpi = self.reactive_power_in
-        apo = self.active_power_out
-        rpo = self.reactive_power_out
-        self.update()
-        return api, rpi, apo, rpo
+from csv_reader import CSVReader
+from simulations.simulation_super import SimulationSuper
 
-    def update(self):
-        """
-        should be implemented by subclass
-        """
-        raise NotImplementedError
+"""A class where a client can override any functions or specify that he wants a value from csv. At least methods of 
+re(active)_power_in/out  HAS TO BE PROVIDED """
 
-    def run_simulation(self):
-        for i in range(0, self.max_iter):
-            print(i)
-            api, rpi, apo, rpo = self.get_power()
-            self.battery.update(api, rpi, apo, rpo)
-            time.sleep(self.delay)
 
-    def run_thread(self):
-        t = threading.Thread(target=self.run_simulation, daemon=True)
-        t.start()
+class Simulation(SimulationSuper):
+
+    def __init__(self, battery, address):
+        super().__init__(battery, address)
+        self.csv_reader = CSVReader(self.env['from_csv'])
+
+# examples
+    def get_active_power_in(self):
+        api = self.csv_reader.get_from_csv('active_power_in')
+        if not self.battery.is_input_connected():
+            api = 0
+        return api
+
+    def get_reactive_power_in(self):
+        rpi = 59
+        if not self.battery.is_input_connected():
+            rpi = 0
+        return rpi
+
+    def get_active_power_out(self):
+        apo = random.randint(1,3) * sin(self.t + random.randint(0,15)) + random.randint(1,40)
+        return float(apo)
+
+    def get_reactive_power_out(self):
+        rpo = self.csv_reader.get_from_csv('reactive_power_out')
+        return rpo
+
+    def get_current_I1_in(self):
+        return 200
