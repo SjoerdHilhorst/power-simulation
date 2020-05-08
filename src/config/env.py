@@ -7,34 +7,34 @@ env = {
     # first index is function code, second index is address, third is type of float storage (applicable for holding
     # and input registers)
     'fields': {
-        'soc': [holding, 10, scale],
-        'active_power_in': [holding, 12, scale],
-        'reactive_power_in': [holding, 14, scale],
-        'current_l1_in': [holding, 16, comb],
-        'current_l2_in': [holding, 18, comb],
-        'current_l3_in': [holding, 20, scale],
-        'voltage_l1_l2_in': [holding, 22, comb],
-        'voltage_l2_l3_in': [holding, 24, comb],
-        'voltage_l3_l1_in': [holding, 26, scale],
-        'frequency_in': [holding, 28, scale],
-        'active_power_out': [holding, 30, scale],
-        'reactive_power_out': [holding, 32, comb],
-        'current_l1_out': [holding, 34, comb],
-        'current_l2_out': [holding, 36, scale],
-        'current_l3_out': [holding, 38, comb],
-        'voltage_l1_l2_out': [holding, 40, scale],
-        'voltage_l2_l3_out': [holding, 42, comb],
-        'voltage_l3_l1_out': [holding, 44, scale],
-        'frequency_out': [holding, 46, comb],
-        'active_power_converter': [holding, 48, scale],
-        'reactive_power_converter': [holding, 50, scale],
+        'soc': {'reg_type': holding, 'address': 10, 'encode': [scale, INT32]},
+        'active_power_in': {'reg_type': holding, 'address': 12, 'encode': [scale, FLOAT32]},
+        'reactive_power_in': {'reg_type': holding, 'address': 14, 'encode': [scale, FLOAT32]},
+        'current_l1_in': {'reg_type': holding, 'address': 16, 'encode': [comb, FLOAT32]},
+        'current_l2_in': {'reg_type': holding, 'address': 18, 'encode': [comb, FLOAT32]},
+        'current_l3_in': {'reg_type': holding, 'address': 20, 'encode': [scale, FLOAT32]},
+        'voltage_l1_l2_in': {'reg_type': holding, 'address': 22, 'encode': [comb, FLOAT32]},
+        'voltage_l2_l3_in': {'reg_type': holding, 'address': 24, 'encode': [comb, FLOAT32]},
+        'voltage_l3_l1_in': {'reg_type': holding, 'address': 26, 'encode': [scale, FLOAT32]},
+        'frequency_in': {'reg_type': holding, 'address': 28, 'encode': [scale, INT32]},
+        'active_power_out': {'reg_type': holding, 'address': 30, 'encode': [scale, FLOAT32]},
+        'reactive_power_out': {'reg_type': holding, 'address': 32, 'encode': [comb, FLOAT32]},
+        'current_l1_out': {'reg_type': holding, 'address': 34, 'encode': [comb, FLOAT32]},
+        'current_l2_out': {'reg_type': holding, 'address': 36, 'encode': [scale, FLOAT32]},
+        'current_l3_out': {'reg_type': holding, 'address': 38, 'encode': [comb, FLOAT32]},
+        'voltage_l1_l2_out': {'reg_type': holding, 'address': 40, 'encode': [scale, FLOAT32]},
+        'voltage_l2_l3_out': {'reg_type': holding, 'address': 42, 'encode': [comb, FLOAT32]},
+        'voltage_l3_l1_out': {'reg_type': holding, 'address': 44, 'encode': [scale, FLOAT32]},
+        'frequency_out': {'reg_type': holding, 'address': 46, 'encode': [comb, INT16]},
+        'active_power_converter': {'reg_type': holding, 'address': 48, 'encode': [scale, FLOAT32]},
+        'reactive_power_converter': {'reg_type': holding, 'address': 50, 'encode': [scale, FLOAT32]},
 
-        'system_status': [holding, 52, scale],
-        'system_mode': [holding, 54, scale],
-        'accept_values': [coil, 10],
-        'converter_started': [coil, 11],
-        'input_connected': [coil, 12],
-        'system_on_backup_battery': [coil, 13]
+        'system_status': {'reg_type': holding, 'address': 52, 'encode': [scale, INT16]},
+        'system_mode': {'reg_type': holding, 'address': 54, 'encode': [scale, INT16]},
+        'accept_values': {'reg_type': holding, 'address': 10, 'encode': [scale, INT8]},
+        'converter_started': {'reg_type': coil, 'address': 11, 'encode': [scale, INT8]},
+        'input_connected': {'reg_type': coil, 'address': 12, 'encode': [scale, INT8]},
+        'system_on_backup_battery': {'reg_type': coil, 'address': 13, 'encode': [scale, INT8]}
     },
 
     'float_store': {
@@ -60,7 +60,7 @@ env = {
     'soc': 72.2,
 
     # a pair should be provided in a format field_name: csv_name (csv is stores in folders csvs)
-    'from_csv':{
+    'from_csv': {
         'active_power_in': 'historic_battery_data2',
         'reactive_power_out': 'historic_battery_data'
     },
@@ -71,7 +71,6 @@ env = {
     # max number of iterations before simulation stops, set to None if infinite iterations
     # overridden by number of rows for historic sim
     'max_iterations': 50000,
-
 
     # show a realtime graph of battery fields
     # it is advised to set update_delay to at least 0.01 for smoothness

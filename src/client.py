@@ -18,18 +18,18 @@ class GreenerEye:
         self.word_order = env["float_store"]["word_order"]
 
     def read_value(self, field):
-        fx = field[0]
-        addr = field[1]
+        fx = field['reg_type']
+        addr = field['address']
 
         if fx == 1:
             return self.client.read_coils(addr).bits[0]
         elif fx == 2:
             return self.client.read_discrete_inputs(addr).bits[0]
         elif fx == 3:
-            mode = field[2]
+            mode = field['encode'][0]
             val = self.client.read_holding_registers(addr, 2)
         else:
-            mode = field[2]
+            mode = field['encode'][0]
             val = self.client.read_input_registers(addr, 2).registers
 
         d = self.from_registers(val)
@@ -59,6 +59,9 @@ class GreenerEye:
         r = self.read_value(self.field['frequency_out'])
         print(r)
 
+        r = self.read_value(self.field['system_mode'])
+        print(r)
+
     def set_converter_started(self, bit):
         self.client.write_coil(self.field['converter_started'][1], bit)
 
@@ -70,8 +73,8 @@ class GreenerEye:
         print("CLIENT: is running")
         self.read_float_example()
 
-        self.set_converter_started(False)
-        self.set_input_connected(False)
+        #self.set_converter_started(False)
+        #self.set_input_connected(False)
 
 
 if __name__ == "__main__":
