@@ -82,13 +82,11 @@ class SimulationSuper:
         self.db.write("battery", values)
 
     def write_to_graph(self):
-        self.graph.mutex.lock()
         for field in self.graph.graphs:
             value = self.battery.get_value(self.fields[field])
             self.graph.data[field].append(value)
         self.graph.data['t'] += 1
-        self.graph.mutex.unlock()
-
+        
     def random_gaussian_value(self, mu, sigma):
         return np.random.normal(mu, sigma)
 
