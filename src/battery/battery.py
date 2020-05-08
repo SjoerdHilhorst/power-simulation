@@ -47,12 +47,11 @@ class Battery:
         :param field:
         :param value: value to set
         """
-        fx = field[0]
-        addr = field[1]
+        fx = field['reg_type']
+        addr = field['address']
         if fx > 2:
-            mode = field[2]
+            mode = field['encode']
             value = self.float_handler.encode_float(value, mode)
-
             self.store.setValues(fx, addr, value)
         else:
             self.store.setValues(fx, addr, [value])
@@ -63,12 +62,12 @@ class Battery:
         :param field:
         :return: value from the given address
         """
-        fx = field[0]
-        addr = field[1]
+        fx = field['reg_type']
+        addr = field['address']
         if fx <= 2:
             value = self.store.getValues(fx, addr, 1)[0]
         elif fx > 2:
-            mode = field[2]
+            mode = field['encode']
             value = self.float_handler.decode_float(fx, addr, mode)
         return value
 

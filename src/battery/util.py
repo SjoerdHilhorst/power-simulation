@@ -17,7 +17,7 @@ class FloatHandler:
 
     def encode_float(self, value, mode):
         self.builder.reset()
-        if mode == "SCALE":
+        if mode[0] == "SCALE":
             self.builder.add_32bit_int((round(value * self.scaling_factor)))
         else:
             self.builder.add_32bit_float(value)
@@ -27,7 +27,7 @@ class FloatHandler:
         encoded_value = self.battery_store.getValues(fx, addr, 2)
         decoder = BinaryPayloadDecoder.fromRegisters(encoded_value, byteorder=self.byte_order,
                                                      wordorder=self.word_order)
-        if mode == "SCALE":
+        if mode[0] == "SCALE":
             return decoder.decode_32bit_int() / self.scaling_factor
         else:
             return decoder.decode_32bit_float()
