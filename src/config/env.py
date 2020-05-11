@@ -34,8 +34,13 @@ env = {
         'accept_values': {'reg_type': holding, 'address': 10, 'encode': [scale, INT8]},
         'converter_started': {'reg_type': coil, 'address': 11, 'encode': [scale, INT8]},
         'input_connected': {'reg_type': coil, 'address': 12, 'encode': [scale, INT8]},
-        'system_on_backup_battery': {'reg_type': coil, 'address': 13, 'encode': [scale, INT8]}
+        'system_on_backup_battery': {'reg_type': coil, 'address': 13, 'encode': [scale, INT8]},
+
+        'custom': {'reg_type': holding, 'address': 58, 'encode': [comb, INT32]},
+        'custom1': {'reg_type': holding, 'address': 70, 'encode': [comb, INT32]},
+
     },
+
 
     'float_store': {
         # only used for SCALE, increase for more precision
@@ -82,9 +87,9 @@ env = {
             "active_power_out",
             "reactive_power_in",
             "reactive_power_out",
-            "active_power_converter",
-            "reactive_power_converter",
-            "soc"
+            "soc",
+            "custom",
+            "custom1"
         ]
     },
 
