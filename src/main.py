@@ -12,9 +12,9 @@ if __name__ == "__main__":
 
     if env["database"]["enabled"]:
         db_env = env["database"]
-        address = env["address"]
-        db = Database(db_env, address)
-        battery.db = db
+        fields = env["fields"]
+        db = Database(db_env, fields)
+        simulation.db = db
 
     if env["graph"]["enabled"]:
         from graph import Graph
