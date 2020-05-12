@@ -17,17 +17,35 @@ class FloatHandler:
 
     def encode_float(self, value, mode):
         self.builder.reset()
-        if mode[0] == "SCALE":
-            self.builder.add_32bit_int((round(value * self.scaling_factor)))
+        encode_type = {
+            'int8': lambda x: self.builder.add_8bit_int(x),
+            'uint8': lambda x: self.builder.add_8bit_uint(x),
+            'int16': lambda x: self.builder.add_16bit_int(x),
+            'uint16': lambda x: self.builder.add_16bit_uint(x),
+            'int32': lambda x: self.builder.add_32bit_int(x),
+            'uint32': lambda x: self.builder.add_32bit_uint(x),
+            'float32': lambda x: self.builder.add_32bit_float(x),
+        }
+        if mode[0] == "SCALE" and mode[1] != 'int8':
+            encode_type[mode[1]](round(value * self.scaling_factor))
         else:
-            self.builder.add_32bit_float(value)
+            encode_type[mode[1]](value)
         return self.builder.to_registers()
 
     def decode_float(self, fx, addr, mode):
         encoded_value = self.battery_store.getValues(fx, addr, 2)
         decoder = BinaryPayloadDecoder.fromRegisters(encoded_value, byteorder=self.byte_order,
                                                      wordorder=self.word_order)
-        if mode[0] == "SCALE":
-            return decoder.decode_32bit_int() / self.scaling_factor
+        decode_type = {
+            'int8': lambda: decoder.decode_8bit_int(),
+            'uint8': lambda: decoder.decode_8bit_uint(),
+            'int16': lambda: decoder.decode_16bit_int(),
+            'uint16': lambda: decoder.decode_16bit_uint(),
+            'int32': lambda: decoder.decode_32bit_int(),
+            'uint32': lambda: decoder.decode_32bit_uint(),
+            'float32': lambda: decoder.decode_32bit_float(),
+        }
+        if mode[0] == "SCALE" and mode[1] != 'int8':
+            return decode_type[mode[1]]() / self.scaling_factor
         else:
-            return decoder.decode_32bit_float()
+            return decode_type[mode[1]]()
