@@ -23,22 +23,13 @@ class Battery:
     context = ModbusServerContext(slaves=store, single=True)
 
     def __init__(self, env):
-        constants = env['battery_constants']
-        self.field = env['fields']
-        self.id = constants['id']
-        self.run_server(self.context, env['server_address'])
-        self.update_delay = env['update_delay']
-        self.max_capacity = constants['battery_capacity']
-
+        self.fields = env['fields']
+        self.id = env['id']
+        self.max_capacity = env['battery_capacity']
         self.float_handler = FloatHandler(env['float_store'], self.store)
-        self.set_value(self.field['system_on_backup_battery'], constants['system_on_backup_battery'])
-        self.set_value(self.field['system_status'], constants['system_status'])
-        self.set_value(self.field['system_mode'], constants['system_mode'])
-        self.set_value(self.field['accept_values'], constants['accept_values'])
-        self.set_value(self.field['converter_started'], constants['converter_started'])
-        self.set_value(self.field['input_connected'], constants['input_connected'])
-
-        self.set_value(self.field['soc'], env['soc'])
+        for field_name in self.fields:
+            if 'init' in self.fields[field_name]:
+                self.set_value(self.fields[field_name], self.fields[field_name]['init'])
 
     def set_value(self, field, value):
         """
@@ -72,10 +63,10 @@ class Battery:
         return value
 
     def is_input_connected(self):
-        return self.get_value(self.field['input_connected'])
+        return self.get_value(self.fields['input_connected'])
 
     def is_converter_started(self):
-        return self.get_value(self.field['converter_started'])
+        return self.get_value(self.fields['converter_started'])
 
     def run_server(self, context, env):
         """

@@ -3,11 +3,14 @@ from config.var_names import *
 env = {
     # address of modbus server
     'server_address': ['localhost', 5030],
+    'id': 'GREENER_001',
+    'battery_capacity': 330,
+
 
     # first index is function code, second index is address, third is type of float storage (applicable for holding
     # and input registers)
     'fields': {
-        'soc': {'reg_type': holding, 'address': 10, 'encode': [scale, INT32]},
+        'soc': {'reg_type': holding, 'address': 10, 'encode': [scale, INT32], 'init': 72.2},
         'active_power_in': {'reg_type': holding, 'address': 12, 'encode': [scale, FLOAT32]},
         'reactive_power_in': {'reg_type': holding, 'address': 14, 'encode': [scale, FLOAT32]},
         'current_l1_in': {'reg_type': holding, 'address': 16, 'encode': [comb, FLOAT32]},
@@ -29,18 +32,17 @@ env = {
         'active_power_converter': {'reg_type': holding, 'address': 48, 'encode': [scale, FLOAT32]},
         'reactive_power_converter': {'reg_type': holding, 'address': 50, 'encode': [scale, FLOAT32]},
 
-        'system_status': {'reg_type': holding, 'address': 52, 'encode': [scale, INT16]},
-        'system_mode': {'reg_type': holding, 'address': 54, 'encode': [scale, INT16]},
-        'accept_values': {'reg_type': holding, 'address': 10, 'encode': [scale, INT8]},
-        'converter_started': {'reg_type': coil, 'address': 11, 'encode': [scale, INT8]},
-        'input_connected': {'reg_type': coil, 'address': 12, 'encode': [scale, INT8]},
-        'system_on_backup_battery': {'reg_type': coil, 'address': 13, 'encode': [scale, INT8]},
+        'system_status': {'reg_type': holding, 'address': 52, 'encode': [scale, INT16], 'init': 1},
+        'system_mode': {'reg_type': holding, 'address': 54, 'encode': [scale, INT16], 'init': 5},
+        'accept_values': {'reg_type': holding, 'address': 10, 'encode': [scale, INT8], 'init': 1},
+        'converter_started': {'reg_type': coil, 'address': 11, 'encode': [scale, INT8], 'init': 1},
+        'input_connected': {'reg_type': coil, 'address': 12, 'encode': [scale, INT8], 'init': 1},
+        'system_on_backup_battery': {'reg_type': coil, 'address': 13, 'encode': [scale, INT8], 'init': 1},
 
-        'custom': {'reg_type': holding, 'address': 58, 'encode': [comb, INT32]},
-        'custom1': {'reg_type': holding, 'address': 70, 'encode': [comb, INT32]},
+        'custom': {'reg_type': holding, 'address': 58, 'encode': [comb, INT32], 'init': 200},
+        'custom1': {'reg_type': holding, 'address': 70, 'encode': [comb, INT32], 'init': 100},
 
     },
-
 
     'float_store': {
         # only used for SCALE, increase for more precision
@@ -50,19 +52,7 @@ env = {
         'byte_order': '>',
     },
 
-    'battery_constants': {
-        'system_status': 1,
-        'system_mode': 5,
-        'system_on_backup_battery': 1,
-        'accept_values': 1,
-        'converter_started': 1,
-        'input_connected': 1,
-        'battery_capacity': 330,
-        'id': 'GREENER_001',
-    },
 
-    # initial soc
-    'soc': 72.2,
 
     # a pair should be provided in a format field_name: csv_name (csv is stores in folders csvs)
     'from_csv': {

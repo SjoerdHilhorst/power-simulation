@@ -13,7 +13,6 @@ class SimulationSuper:
 
     def __init__(self, battery, env):
         self.t = 0
-        self.env = env
         self.fields = env['fields']
         self.delay = env['update_delay']
         self.max_iter = env['max_iterations']
@@ -27,8 +26,6 @@ class SimulationSuper:
         self.update_custom()
         if self.db: self.write_to_db()
         if self.graph: self.write_to_graph()
-
-
 
     def update_powers(self):
         field = self.fields
@@ -65,7 +62,7 @@ class SimulationSuper:
 
     def run_simulation(self):
         for i in range(0, self.max_iter):
-            print(i)
+            # print(i)
             self.update()
             self.t += 1
             time.sleep(self.delay)
@@ -86,7 +83,9 @@ class SimulationSuper:
             value = self.battery.get_value(self.fields[field])
             self.graph.data[field].append(value)
         self.graph.data['t'] += 1
-        
+
+
+
     def random_gaussian_value(self, mu, sigma):
         return np.random.normal(mu, sigma)
 
