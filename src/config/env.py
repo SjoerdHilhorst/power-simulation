@@ -52,16 +52,7 @@ env = {
         'byte_order': '>',
     },
 
-    'battery_constants': {
-        'system_status': 1,
-        'system_mode': 5,
-        'system_on_backup_battery': 1,
-        'accept_values': 1,
-        'converter_started': 1,
-        'input_connected': 1,
-        'battery_capacity': 330,
-        'id': 'GREENER_001',
-    },
+
 
     # initial soc
     'soc': 72.2,
