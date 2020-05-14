@@ -10,7 +10,7 @@ env = {
     # first index is function code, second index is address, third is type of float storage (applicable for holding
     # and input registers)
     'fields': {
-        'soc': {'reg_type': holding, 'address': 10, 'encode': {'e_type': scale, 'd_type': INT32}},
+        'soc': {'reg_type': holding, 'address': 10, 'encode': {'e_type': scale, 'd_type': INT32}, 'init': 72.2},
         'active_power_in': {'reg_type': holding, 'address': 12, 'encode': {'e_type': scale, 'd_type': FLOAT32}},
         'reactive_power_in': {'reg_type': holding, 'address': 14, 'encode': {'e_type': scale, 'd_type': FLOAT32}},
         'current_l1_in': {'reg_type': holding, 'address': 16, 'encode': {'e_type': comb, 'd_type': FLOAT32}},
@@ -32,15 +32,15 @@ env = {
         'active_power_converter': {'reg_type': holding, 'address': 48, 'encode': {'e_type': scale, 'd_type': FLOAT32}},
         'reactive_power_converter': {'reg_type': holding, 'address': 50, 'encode': {'e_type': scale, 'd_type': FLOAT32}},
 
-        'system_status': {'reg_type': holding, 'address': 52, 'encode': {'e_type': scale, 'd_type': INT16}},
-        'system_mode': {'reg_type': holding, 'address': 54, 'encode': {'e_type': scale, 'd_type': INT16}},
-        'accept_values': {'reg_type': holding, 'address': 10, 'encode': {'e_type': scale, 's_factor': 1, 'd_type': INT8}},
-        'converter_started': {'reg_type': coil, 'address': 11, 'encode': {'e_type': scale, 's_factor': 1, 'd_type': INT8}},
-        'input_connected': {'reg_type': coil, 'address': 12, 'encode': {'e_type': scale, 's_factor': 1, 'd_type': INT8}},
-        'system_on_backup_battery': {'reg_type': coil, 'address': 13, 'encode': {'e_type': scale, 's_factor': 1, 'd_type': INT8}}
+        'system_status': {'reg_type': holding, 'address': 52, 'encode': {'e_type': scale, 'd_type': INT16}, 'init': 1},
+        'system_mode': {'reg_type': holding, 'address': 54, 'encode': {'e_type': scale, 'd_type': INT16}, 'init': 5},
+        'accept_values': {'reg_type': holding, 'address': 10, 'encode': {'e_type': scale, 's_factor': 1, 'd_type': INT8}, 'init': 1},
+        'converter_started': {'reg_type': coil, 'address': 11, 'encode': {'e_type': scale, 's_factor': 1, 'd_type': INT8}, 'init': 1},
+        'input_connected': {'reg_type': coil, 'address': 12, 'encode': {'e_type': scale, 's_factor': 1, 'd_type': INT8}, 'init': 1},
+        'system_on_backup_battery': {'reg_type': coil, 'address': 13, 'encode': {'e_type': scale, 's_factor': 1, 'd_type': INT8}, 'init': 1},
 
-        'custom': {'reg_type': holding, 'address': 58, 'encode': {'e_type': comb, 'd_type': FLOAT32}},
-        'custom1': {'reg_type': holding, 'address': 70, 'encode': {'e_type': comb, 'd_type': FLOAT32}},
+        'custom': {'reg_type': holding, 'address': 58, 'encode': {'e_type': comb, 'd_type': FLOAT32}, 'init': 200},
+        'custom1': {'reg_type': holding, 'address': 70, 'encode': {'e_type': comb, 'd_type': FLOAT32}, 'init': 100},
     },
 
 
