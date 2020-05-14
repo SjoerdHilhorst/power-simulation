@@ -11,9 +11,9 @@ re(active)_power_in/out  HAS TO BE PROVIDED """
 
 class Simulation(SimulationSuper):
 
-    def __init__(self, battery, address):
-        super().__init__(battery, address)
-        self.csv_reader = CSVReader(self.env['from_csv'])
+    def __init__(self, battery, env):
+        super().__init__(battery, env)
+        self.csv_reader = CSVReader(env['from_csv'])
 
     # examples
     def get_active_power_in(self):

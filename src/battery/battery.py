@@ -25,8 +25,6 @@ class Battery:
     def __init__(self, env):
         self.fields = env['fields']
         self.id = env['id']
-        self.run_server(self.context, env['server_address'])
-        self.update_delay = env['update_delay']
         self.max_capacity = env['battery_capacity']
         self.float_handler = FloatHandler(env['float_store'], self.store)
         for field_name in self.fields:
