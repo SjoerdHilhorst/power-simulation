@@ -24,8 +24,11 @@ class SimulationSuper:
     def update(self):
         self.update_powers()
         self.update_relational()
+        self.update_custom()
         if self.db: self.write_to_db()
         if self.graph: self.write_to_graph()
+
+
 
     def update_powers(self):
         field = self.fields
@@ -54,11 +57,17 @@ class SimulationSuper:
         self.battery.set_value(field["frequency_out"], self.get_frequency_out())
         self.battery.set_value(field["soc"], self.get_soc())
 
+    def update_custom(self):
+        '''
+        should be implemented by the subclass in case there are custom fields
+        '''
+        pass
+
     def run_simulation(self):
         for i in range(0, self.max_iter):
             print(i)
             self.update()
-            self.t +=1
+            self.t += 1
             time.sleep(self.delay)
 
     def run_thread(self):

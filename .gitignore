@@ -135,4 +135,7 @@ dmypy.json
 # project
 /gps/venv/
 /gps/.idea/
+lib64
+bin/
+*.cfg
 /.idea
