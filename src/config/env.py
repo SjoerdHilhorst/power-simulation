@@ -1,4 +1,4 @@
-from config.var_names import *
+from src.config.var_names import *
 
 env = {
     # address of modbus server
@@ -7,39 +7,39 @@ env = {
     # first index is function code, second index is address, third is type of float storage (applicable for holding
     # and input registers)
     'fields': {
-        'soc': {'reg_type': holding, 'address': 10, 'encode': [scale, INT32]},
-        'active_power_in': {'reg_type': holding, 'address': 12, 'encode': [scale, FLOAT32]},
-        'reactive_power_in': {'reg_type': holding, 'address': 14, 'encode': [scale, FLOAT32]},
-        'current_l1_in': {'reg_type': holding, 'address': 16, 'encode': [comb, FLOAT32]},
-        'current_l2_in': {'reg_type': holding, 'address': 18, 'encode': [comb, FLOAT32]},
-        'current_l3_in': {'reg_type': holding, 'address': 20, 'encode': [scale, FLOAT32]},
-        'voltage_l1_l2_in': {'reg_type': holding, 'address': 22, 'encode': [comb, FLOAT32]},
-        'voltage_l2_l3_in': {'reg_type': holding, 'address': 24, 'encode': [comb, FLOAT32]},
-        'voltage_l3_l1_in': {'reg_type': holding, 'address': 26, 'encode': [scale, FLOAT32]},
-        'frequency_in': {'reg_type': holding, 'address': 28, 'encode': [scale, INT32]},
-        'active_power_out': {'reg_type': holding, 'address': 30, 'encode': [scale, FLOAT32]},
-        'reactive_power_out': {'reg_type': holding, 'address': 32, 'encode': [comb, FLOAT32]},
-        'current_l1_out': {'reg_type': holding, 'address': 34, 'encode': [comb, FLOAT32]},
-        'current_l2_out': {'reg_type': holding, 'address': 36, 'encode': [scale, FLOAT32]},
-        'current_l3_out': {'reg_type': holding, 'address': 38, 'encode': [comb, FLOAT32]},
-        'voltage_l1_l2_out': {'reg_type': holding, 'address': 40, 'encode': [scale, FLOAT32]},
-        'voltage_l2_l3_out': {'reg_type': holding, 'address': 42, 'encode': [comb, FLOAT32]},
-        'voltage_l3_l1_out': {'reg_type': holding, 'address': 44, 'encode': [scale, FLOAT32]},
-        'frequency_out': {'reg_type': holding, 'address': 46, 'encode': [comb, INT16]},
-        'active_power_converter': {'reg_type': holding, 'address': 48, 'encode': [scale, FLOAT32]},
-        'reactive_power_converter': {'reg_type': holding, 'address': 50, 'encode': [scale, FLOAT32]},
+        'soc': {'reg_type': holding, 'address': 10, 'encode': {'e_type': scale, 'd_type': INT32}},
+        'active_power_in': {'reg_type': holding, 'address': 12, 'encode': {'e_type': scale, 'd_type': FLOAT32}},
+        'reactive_power_in': {'reg_type': holding, 'address': 14, 'encode': {'e_type': scale, 'd_type': FLOAT32}},
+        'current_l1_in': {'reg_type': holding, 'address': 16, 'encode': {'e_type': comb, 'd_type': FLOAT32}},
+        'current_l2_in': {'reg_type': holding, 'address': 18, 'encode': {'e_type': comb, 'd_type': FLOAT32}},
+        'current_l3_in': {'reg_type': holding, 'address': 20, 'encode': {'e_type': scale, 'd_type': FLOAT32}},
+        'voltage_l1_l2_in': {'reg_type': holding, 'address': 22, 'encode': {'e_type': comb, 'd_type': FLOAT32}},
+        'voltage_l2_l3_in': {'reg_type': holding, 'address': 24, 'encode': {'e_type': comb, 'd_type': FLOAT32}},
+        'voltage_l3_l1_in': {'reg_type': holding, 'address': 26, 'encode': {'e_type': scale, 'd_type': FLOAT32}},
+        'frequency_in': {'reg_type': holding, 'address': 28, 'encode': {'e_type': scale, 'd_type': INT32}},
+        'active_power_out': {'reg_type': holding, 'address': 30, 'encode': {'e_type': scale, 'd_type': FLOAT32}},
+        'reactive_power_out': {'reg_type': holding, 'address': 32, 'encode': {'e_type': comb, 'd_type': FLOAT32}},
+        'current_l1_out': {'reg_type': holding, 'address': 34, 'encode': {'e_type': comb, 'd_type': FLOAT32}},
+        'current_l2_out': {'reg_type': holding, 'address': 36, 'encode': {'e_type': scale, 'd_type': FLOAT32}},
+        'current_l3_out': {'reg_type': holding, 'address': 38, 'encode': {'e_type': comb, 'd_type': FLOAT32}},
+        'voltage_l1_l2_out': {'reg_type': holding, 'address': 40, 'encode': {'e_type': scale, 'd_type': FLOAT32}},
+        'voltage_l2_l3_out': {'reg_type': holding, 'address': 42, 'encode': {'e_type': comb, 'd_type': FLOAT32}},
+        'voltage_l3_l1_out': {'reg_type': holding, 'address': 44, 'encode': {'e_type': scale, 'd_type': FLOAT32}},
+        'frequency_out': {'reg_type': holding, 'address': 46, 'encode': {'e_type': comb, 'd_type': FLOAT32}},
+        'active_power_converter': {'reg_type': holding, 'address': 48, 'encode': {'e_type': scale, 'd_type': FLOAT32}},
+        'reactive_power_converter': {'reg_type': holding, 'address': 50, 'encode': {'e_type': scale, 'd_type': FLOAT32}},
 
-        'system_status': {'reg_type': holding, 'address': 52, 'encode': [scale, INT16]},
-        'system_mode': {'reg_type': holding, 'address': 54, 'encode': [scale, INT16]},
-        'accept_values': {'reg_type': holding, 'address': 10, 'encode': [scale, INT8]},
-        'converter_started': {'reg_type': coil, 'address': 11, 'encode': [scale, INT8]},
-        'input_connected': {'reg_type': coil, 'address': 12, 'encode': [scale, INT8]},
-        'system_on_backup_battery': {'reg_type': coil, 'address': 13, 'encode': [scale, INT8]}
+        'system_status': {'reg_type': holding, 'address': 52, 'encode': {'e_type': scale, 'd_type': INT16}},
+        'system_mode': {'reg_type': holding, 'address': 54, 'encode': {'e_type': scale, 'd_type': INT16}},
+        'accept_values': {'reg_type': holding, 'address': 10, 'encode': {'e_type': scale, 's_factor': 1, 'd_type': INT8}},
+        'converter_started': {'reg_type': coil, 'address': 11, 'encode': {'e_type': scale, 's_factor': 1, 'd_type': INT8}},
+        'input_connected': {'reg_type': coil, 'address': 12, 'encode': {'e_type': scale, 's_factor': 1, 'd_type': INT8}},
+        'system_on_backup_battery': {'reg_type': coil, 'address': 13, 'encode': {'e_type': scale, 's_factor': 1, 'd_type': INT8}}
     },
 
     'float_store': {
         # only used for SCALE, increase for more precision
-        'scaling_factor': 1000,
+        'default_scaling_factor': 1000,
         # Defines Endianness in modbus register,  '>' is Big Endian, '<' is Little Endian
         'word_order': '>',
         'byte_order': '>',
