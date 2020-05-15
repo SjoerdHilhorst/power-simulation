@@ -2,6 +2,7 @@ import matplotlib.pyplot as plt
 import matplotlib.animation as animation
 from matplotlib import style
 
+
 class Graph():
 
     def __init__(self, fields):
@@ -21,9 +22,7 @@ class Graph():
     def animate(self, i):
         for key, graph in self.graphs.items():
             graph.plot(list(range(self.data['t'])), self.data[key], color='green', linewidth=0.4)
-    
+
     def run(self):
         ani = animation.FuncAnimation(self.fig, self.animate, interval=100)
         plt.show()
-      
-

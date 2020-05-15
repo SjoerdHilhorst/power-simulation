@@ -14,7 +14,7 @@ env = {
 
     # max number of iterations before simulation stops (set to None for infinite iterations)
     # overridden by number of rows if csv is used
-    'max_iterations': 1,
+    'max_iterations': 5000,
 
 
     # Map of the registers of the form "field_name": configuration:
@@ -27,8 +27,6 @@ env = {
     #           * init: initial value (optional)
 
     'fields': {
-        'soc':
-            {'reg_type': HOLD_REG, 'address': 10, 'encode': {'e_type': SCALE, 'd_type': INT32}, 'init': 72.2},
         'active_power_in':
             {'reg_type': HOLD_REG, 'address': 12, 'encode': {'e_type': SCALE, 'd_type': FLOAT32}},
         'reactive_power_in':
@@ -88,6 +86,8 @@ env = {
             {'reg_type': HOLD_REG, 'address': 58, 'encode': {'e_type': COMB, 'd_type': FLOAT32}, 'init': 200},
         'custom1':
             {'reg_type': HOLD_REG, 'address': 70, 'encode': {'e_type': COMB, 'd_type': FLOAT32}, 'init': 100},
+        'soc':
+            {'reg_type': HOLD_REG, 'address': 10, 'encode': {'e_type': SCALE, 'd_type': INT32}, 'init': 72.2},
     },
 
     'float_store': {
@@ -100,8 +100,10 @@ env = {
 
     # a pair should be provided in a format field_name: csv_name (csv is stores in folders csvs)
     'from_csv': {
-        'active_power_in': 'historic_battery_data2',
-        'reactive_power_out': 'historic_battery_data'
+        'active_power_in': 'historic_battery_data',
+        'reactive_power_in': 'historic_battery_data',
+        'active_power_out': 'historic_battery_data',
+        'reactive_power_out': 'historic_battery_data',
     },
 
 
@@ -117,7 +119,6 @@ env = {
             "reactive_power_out",
             "soc",
             "custom",
-            "custom1"
         ]
     },
 

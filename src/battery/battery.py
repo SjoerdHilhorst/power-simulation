@@ -26,21 +26,11 @@ class Battery:
         self.fields = env['fields']
         self.id = env['id']
         self.max_capacity = env['battery_capacity']
-        self.float_handler = PayloadHandler(env['float_store'], self.store)
-
-        for field_name in self.fields: # for each field
-            if 'init' in self.fields[field_name]: # if this field has 'init' key
-                print('field: ', field_name) # print a name of field if it has 'init' key
-                print('to encode: ', self.fields[field_name]['init']) # print a value of 'init' key
-                self.set_value(self.fields[field_name], self.fields[field_name]['init']) # set this value to the field
-                print('encoded/decoded: ', self.get_value(self.fields[field_name])) # get and print  this value from registers
-                print('soc: ', self.get_value(self.fields['soc']))# get and print value of soc
-
-        print('soc: ', self.get_value(self.fields['soc']))
-
-
-
-
+        self.payload_handler = PayloadHandler(env['float_store'], self.store)
+        for field_name in self.fields:  # for each field
+            if 'init' in self.fields[field_name]:  # if this field has 'init' key
+                self.set_value(self.fields[field_name], self.fields[field_name]['init'])  # set this value to the field
+        self.run_server(self.context, env['server_address'])
 
     def set_value(self, field, value):
         """
@@ -54,7 +44,7 @@ class Battery:
         if fx > 2:
             mode = field['encode']
 
-            value = self.float_handler.encode(value, mode)
+            value = self.payload_handler.encode(value, mode)
             self.store.setValues(fx, addr, value)
         else:
             self.store.setValues(fx, addr, [value])
@@ -71,7 +61,7 @@ class Battery:
             value = self.store.getValues(fx, addr, 1)[0]
         elif fx > 2:
             mode = field['encode']
-            value = self.float_handler.decode(fx, addr, mode)
+            value = self.payload_handler.decode(fx, addr, mode)
 
         return value
 
