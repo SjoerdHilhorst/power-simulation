@@ -47,4 +47,4 @@ class Simulation(SimulationSuper):
 
     def update_custom(self):
         self.battery.set_value(self.fields['custom'], self.get_custom())
-        self.battery.set_value(self.fields['custom1'], self.get_custom1())
+        #self.battery.set_value(self.fields['custom1'], self.get_custom1())

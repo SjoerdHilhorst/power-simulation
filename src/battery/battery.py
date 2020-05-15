@@ -3,10 +3,10 @@ import threading
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock, ModbusServerContext
 from pymodbus.server.asynchronous import StartTcpServer
 
-from battery.util import FloatHandler
+from battery.payload_handler import PayloadHandler
 
 """
-Battery represents the Server/Slave. Basically is a modbus server wrapper
+Battery represents the Server/Slave. Basically is a modbus server wrapper.
 """
 
 
@@ -26,10 +26,18 @@ class Battery:
         self.fields = env['fields']
         self.id = env['id']
         self.max_capacity = env['battery_capacity']
-        self.float_handler = FloatHandler(env['float_store'], self.store)
-        for field_name in self.fields:
-            if 'init' in self.fields[field_name]:
-                self.set_value(self.fields[field_name], self.fields[field_name]['init'])
+        self.float_handler = PayloadHandler(env['float_store'], self.store)
+
+        for field_name in self.fields: #for each field
+            if 'init' in self.fields[field_name]: #if this field has 'init' key
+                print(field_name)
+                print(self.fields[field_name]['init'], 'to put')
+                self.set_value(self.fields[field_name], self.fields[field_name]['init']) #set this value to the field
+                print(self.get_value(self.fields[field_name]), 'encoded/decoded')
+                print(self.get_value(self.fields['soc']),'soc')
+
+
+
 
     def set_value(self, field, value):
         """
@@ -42,8 +50,10 @@ class Battery:
         addr = field['address']
         if fx > 2:
             mode = field['encode']
-            value = self.float_handler.encode_float(value, mode)
+
+            value = self.float_handler.encode(value, mode)
             self.store.setValues(fx, addr, value)
+            #print(value, 'encoded', addr)
         else:
             self.store.setValues(fx, addr, [value])
 
@@ -59,7 +69,8 @@ class Battery:
             value = self.store.getValues(fx, addr, 1)[0]
         elif fx > 2:
             mode = field['encode']
-            value = self.float_handler.decode_float(fx, addr, mode)
+            value = self.float_handler.decode(fx, addr, mode)
+
         return value
 
     def is_input_connected(self):

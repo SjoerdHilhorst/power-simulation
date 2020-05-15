@@ -24,6 +24,7 @@ class SimulationSuper:
         self.update_powers()
         self.update_relational()
         self.update_custom()
+
         if self.db: self.write_to_db()
         if self.graph: self.write_to_graph()
 
