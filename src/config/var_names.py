@@ -2,7 +2,7 @@ comb = "COMB"
 scale = "SCALE"
 
 INT8 = 'int8'
-UINT8 = 'int8'
+UINT8 = 'uint8'
 INT16 = 'int16'
 UINT16 = 'uint16'
 FLOAT32 = 'float32'
