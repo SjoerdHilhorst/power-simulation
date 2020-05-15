@@ -28,13 +28,16 @@ class Battery:
         self.max_capacity = env['battery_capacity']
         self.float_handler = PayloadHandler(env['float_store'], self.store)
 
-        for field_name in self.fields: #for each field
-            if 'init' in self.fields[field_name]: #if this field has 'init' key
-                print(field_name)
-                print(self.fields[field_name]['init'], 'to put')
-                self.set_value(self.fields[field_name], self.fields[field_name]['init']) #set this value to the field
-                print(self.get_value(self.fields[field_name]), 'encoded/decoded')
-                print(self.get_value(self.fields['soc']),'soc')
+        for field_name in self.fields: # for each field
+            if 'init' in self.fields[field_name]: # if this field has 'init' key
+                print('field: ', field_name) # print a name of field if it has 'init' key
+                print('to encode: ', self.fields[field_name]['init']) # print a value of 'init' key
+                self.set_value(self.fields[field_name], self.fields[field_name]['init']) # set this value to the field
+                print('encoded/decoded: ', self.get_value(self.fields[field_name])) # get and print  this value from registers
+                print('soc: ', self.get_value(self.fields['soc']))# get and print value of soc
+
+        print('soc: ', self.get_value(self.fields['soc']))
+
 
 
 
@@ -53,7 +56,6 @@ class Battery:
 
             value = self.float_handler.encode(value, mode)
             self.store.setValues(fx, addr, value)
-            #print(value, 'encoded', addr)
         else:
             self.store.setValues(fx, addr, [value])
 

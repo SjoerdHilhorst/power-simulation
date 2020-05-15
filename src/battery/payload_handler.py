@@ -31,6 +31,7 @@ class PayloadHandler:
             encode_type[mode['d_type']](round(value * mode.get('s_factor', self.d_s_factor)))
         else:
             encode_type[mode['d_type']](value)
+
         return self.builder.to_registers()
 
     def decode(self, fx, addr, mode):

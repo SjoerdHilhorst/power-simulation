@@ -14,7 +14,7 @@ env = {
 
     # max number of iterations before simulation stops (set to None for infinite iterations)
     # overridden by number of rows if csv is used
-    'max_iterations': 50000,
+    'max_iterations': 1,
 
 
     # Map of the registers of the form "field_name": configuration:
