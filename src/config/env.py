@@ -68,6 +68,7 @@ env = {
         'reactive_power_converter':
             {'reg_type': HOLD_REG, 'address': 50, 'encode': {'e_type': SCALE, 'd_type': FLOAT32}},
 
+
         'system_status':
             {'reg_type': HOLD_REG, 'address': 52, 'encode': {'e_type': SCALE, 'd_type': INT16}, 'init': 1},
         'system_mode':
@@ -81,13 +82,15 @@ env = {
             {'reg_type': COIL, 'address': 12, 'encode': {'e_type': SCALE, 's_factor': 1, 'd_type': INT8}, 'init': 1},
         'system_on_backup_battery':
             {'reg_type': COIL, 'address': 13, 'encode': {'e_type': SCALE, 's_factor': 1, 'd_type': INT8}, 'init': 1},
+        'soc':
+            {'reg_type': HOLD_REG, 'address': 10, 'encode': {'e_type': SCALE, 'd_type': INT32}, 'init': 72.2},
+
 
         'custom':
             {'reg_type': HOLD_REG, 'address': 58, 'encode': {'e_type': COMB, 'd_type': FLOAT32}, 'init': 200},
         'custom1':
             {'reg_type': HOLD_REG, 'address': 70, 'encode': {'e_type': COMB, 'd_type': FLOAT32}, 'init': 100},
-        'soc':
-            {'reg_type': HOLD_REG, 'address': 10, 'encode': {'e_type': SCALE, 'd_type': INT32}, 'init': 72.2},
+
     },
 
     'float_store': {
@@ -125,7 +128,7 @@ env = {
     # for debugging purposes
     'database': {
         # disable for better performance
-        'enabled': False,
+        'enabled': True,
         'db_name': 'power_simulation',
         'drop_table_on_start': True
     },

@@ -37,7 +37,10 @@ class Simulation(SimulationSuper):
         return rpo
 
     def get_custom(self):
-        return sin(self.t)
+        return sin(self.time_elapsed)
+
+
 
     def update_custom(self):
         self.battery.set_value(self.fields['custom'], self.get_custom())
+

@@ -12,7 +12,7 @@ with MathEngine, so it provides default implementations of formulas. SHOULD NOT 
 class SimulationSuper:
 
     def __init__(self, battery, env):
-        self.t = 0
+        self.time_elapsed = 0
         self.fields = env['fields']
         self.delay = env['update_delay']
         self.max_iter = env['max_iterations']
@@ -65,7 +65,7 @@ class SimulationSuper:
         for i in range(0, self.max_iter):
             # print(i)
             self.update()
-            self.t += 1
+            self.time_elapsed += 1
             time.sleep(self.delay)
 
     def run_thread(self):
