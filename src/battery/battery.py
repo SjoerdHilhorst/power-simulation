@@ -57,7 +57,7 @@ class Battery:
         fx = field['reg_type']
         addr = field['address']
         if fx <= 2:
-            value = self.store.getValues(fx, addr, 1)[0]
+            value = int(self.store.getValues(fx, addr, 1)[0])
         elif fx > 2:
             mode = field['encode']
             value = self.payload_handler.decode(fx, addr, mode)
