@@ -1,8 +1,7 @@
 
-
 from numpy.ma import sin
 
-from csv_reader import CSVReader
+from util.csv_reader import CSVReader
 from simulations.simulation_super import SimulationSuper
 
 """A class where a client can override any functions or specify that he wants a value from csv. At least methods of 
@@ -43,4 +42,3 @@ class Simulation(SimulationSuper):
 
     def update_custom(self):
         self.battery.set_value(self.fields['custom'], self.get_custom())
-

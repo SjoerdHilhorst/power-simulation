@@ -71,7 +71,7 @@ class GreenerEye:
     def run(self):
         self.client.connect()
         print("CLIENT: is running")
-        #self.read_float_example()
+        # self.read_float_example()
 
         self.set_converter_started(False)
         self.set_input_connected(False)

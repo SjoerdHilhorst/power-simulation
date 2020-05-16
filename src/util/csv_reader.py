@@ -30,7 +30,7 @@ class CSVReader:
         :param csv_name: name of the csv file
         :return: csv file
         """
-        dirpath = normpath(join(dirname(__file__), "../csvs"))
+        dirpath = normpath(join(dirname(__file__), "../../csvs"))
         csv_name = csv_name + ".csv"
         filepath = join(dirpath, csv_name)
         try:

@@ -3,7 +3,7 @@ import matplotlib.animation as animation
 from matplotlib import style
 
 
-class Graph():
+class Graph:
 
     def __init__(self, fields):
         style.use('ggplot')

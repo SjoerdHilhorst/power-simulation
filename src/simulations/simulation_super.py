@@ -29,41 +29,41 @@ class SimulationSuper:
         if self.graph: self.write_to_graph()
 
     def update_powers(self):
-        field = self.fields
-        self.battery.set_value(field['active_power_in'], self.get_active_power_in())
-        self.battery.set_value(field['reactive_power_in'], self.get_reactive_power_in())
-        self.battery.set_value(field['active_power_out'], self.get_active_power_out())
-        self.battery.set_value(field['reactive_power_out'], self.get_reactive_power_out())
+        fields = self.fields
+        self.battery.set_value(fields['active_power_in'], self.get_active_power_in())
+        self.battery.set_value(fields['reactive_power_in'], self.get_reactive_power_in())
+        self.battery.set_value(fields['active_power_out'], self.get_active_power_out())
+        self.battery.set_value(fields['reactive_power_out'], self.get_reactive_power_out())
 
     def update_relational(self):
-        field = self.fields
-        self.battery.set_value(field["active_power_converter"], self.get_active_power_converter())
-        self.battery.set_value(field["reactive_power_converter"], self.get_reactive_power_converter())
-        self.battery.set_value(field["voltage_l1_l2_in"], self.get_voltage_I1_I2_in())
-        self.battery.set_value(field["voltage_l2_l3_in"], self.get_voltage_I2_I3_in())
-        self.battery.set_value(field["voltage_l3_l1_in"], self.get_voltage_I3_I1_in())
-        self.battery.set_value(field["current_l1_in"], self.get_current_I1_in())
-        self.battery.set_value(field["current_l2_in"], self.get_current_I2_in())
-        self.battery.set_value(field["current_l3_in"], self.get_current_I3_in())
-        self.battery.set_value(field["frequency_in"], self.get_frequency_in())
-        self.battery.set_value(field["voltage_l1_l2_out"], self.get_voltage_I1_I2_out())
-        self.battery.set_value(field["voltage_l2_l3_out"], self.get_voltage_I2_I3_out())
-        self.battery.set_value(field["voltage_l3_l1_out"], self.get_voltage_I3_I1_out())
-        self.battery.set_value(field["current_l1_out"], self.get_current_I1_out())
-        self.battery.set_value(field["current_l2_out"], self.get_current_I2_out())
-        self.battery.set_value(field["current_l3_out"], self.get_current_I3_out())
-        self.battery.set_value(field["frequency_out"], self.get_frequency_out())
-        self.battery.set_value(field["soc"], self.get_soc())
+        fields = self.fields
+        self.battery.set_value(fields["active_power_converter"], self.get_active_power_converter())
+        self.battery.set_value(fields["reactive_power_converter"], self.get_reactive_power_converter())
+        self.battery.set_value(fields["voltage_l1_l2_in"], self.get_voltage_I1_I2_in())
+        self.battery.set_value(fields["voltage_l2_l3_in"], self.get_voltage_I2_I3_in())
+        self.battery.set_value(fields["voltage_l3_l1_in"], self.get_voltage_I3_I1_in())
+        self.battery.set_value(fields["current_l1_in"], self.get_current_I1_in())
+        self.battery.set_value(fields["current_l2_in"], self.get_current_I2_in())
+        self.battery.set_value(fields["current_l3_in"], self.get_current_I3_in())
+        self.battery.set_value(fields["frequency_in"], self.get_frequency_in())
+        self.battery.set_value(fields["voltage_l1_l2_out"], self.get_voltage_I1_I2_out())
+        self.battery.set_value(fields["voltage_l2_l3_out"], self.get_voltage_I2_I3_out())
+        self.battery.set_value(fields["voltage_l3_l1_out"], self.get_voltage_I3_I1_out())
+        self.battery.set_value(fields["current_l1_out"], self.get_current_I1_out())
+        self.battery.set_value(fields["current_l2_out"], self.get_current_I2_out())
+        self.battery.set_value(fields["current_l3_out"], self.get_current_I3_out())
+        self.battery.set_value(fields["frequency_out"], self.get_frequency_out())
+        self.battery.set_value(fields["soc"], self.get_soc())
 
     def update_custom(self):
-        '''
+        """
         should be implemented by the subclass in case there are custom fields
-        '''
+        """
         pass
 
     def run_simulation(self):
         for i in range(0, self.max_iter):
-            # print(i)
+            print(i)
             self.update()
             self.time_elapsed += 1
             time.sleep(self.delay)
@@ -73,19 +73,17 @@ class SimulationSuper:
         t.start()
 
     def write_to_db(self):
-        address = self.fields
+        fields = self.fields
         values = []
-        for field in address:
-            values.append(self.battery.get_value(address[field]))
+        for field_name in fields:
+            values.append(self.battery.get_value(fields[field_name]))
         self.db.write("battery", values)
 
     def write_to_graph(self):
-        for field in self.graph.graphs:
-            value = self.battery.get_value(self.fields[field])
-            self.graph.data[field].append(value)
+        for field_name in self.graph.graphs:
+            value = self.battery.get_value(self.fields[field_name])
+            self.graph.data[field_name].append(value)
         self.graph.data['t'] += 1
-
-
 
     def random_gaussian_value(self, mu, sigma):
         return np.random.normal(mu, sigma)

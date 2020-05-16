@@ -43,7 +43,6 @@ class Battery:
         addr = field['address']
         if fx > 2:
             mode = field['encode']
-
             value = self.payload_handler.encode(value, mode)
             self.store.setValues(fx, addr, value)
         else:
@@ -62,7 +61,6 @@ class Battery:
         elif fx > 2:
             mode = field['encode']
             value = self.payload_handler.decode(fx, addr, mode)
-
         return value
 
     def is_input_connected(self):

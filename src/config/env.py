@@ -7,6 +7,7 @@ env = {
     'id': 'GREENER_001',
     'battery_capacity': 330,
 
+
     # Simulation parameters
 
     # realtime delay in sec between iterations (set to 0 for no delay)
@@ -88,17 +89,7 @@ env = {
 
         'custom':
             {'reg_type': HOLD_REG, 'address': 58, 'encode': {'e_type': COMB, 'd_type': FLOAT32}, 'init': 200},
-        'custom1':
-            {'reg_type': HOLD_REG, 'address': 70, 'encode': {'e_type': COMB, 'd_type': FLOAT32}, 'init': 100},
 
-    },
-
-    'float_store': {
-        # only used for SCALE, increase for more precision
-        'default_scaling_factor': 1000,
-        # Defines Endianness in modbus register,  '>' is Big Endian, '<' is Little Endian
-        'word_order': '>',
-        'byte_order': '>',
     },
 
     # a pair should be provided in a format field_name: csv_name (csv is stores in folders csvs)
@@ -107,6 +98,14 @@ env = {
         'reactive_power_in': 'historic_battery_data',
         'active_power_out': 'historic_battery_data',
         'reactive_power_out': 'historic_battery_data',
+    },
+
+    'float_store': {
+        # only used for SCALE, increase for more precision
+        'default_scaling_factor': 1000,
+        # Defines Endianness in modbus register,  '>' is Big Endian, '<' is Little Endian
+        'word_order': '>',
+        'byte_order': '>',
     },
 
 
@@ -128,7 +127,7 @@ env = {
     # for debugging purposes
     'database': {
         # disable for better performance
-        'enabled': True,
+        'enabled': False,
         'db_name': 'power_simulation',
         'drop_table_on_start': True
     },
