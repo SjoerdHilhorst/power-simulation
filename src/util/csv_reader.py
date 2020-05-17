@@ -1,7 +1,6 @@
 from os.path import normpath, join, dirname
 
 import pandas as pd
-from numpy import infty
 
 
 class CSVReader:
