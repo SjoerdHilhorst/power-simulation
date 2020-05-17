@@ -1,6 +1,7 @@
 from os.path import normpath, join, dirname
 
 import pandas as pd
+from numpy import infty
 
 
 class CSVReader:
@@ -9,7 +10,8 @@ class CSVReader:
     in env.
     """
 
-    def __init__(self, from_csv):
+    def __init__(self, from_csv, max_iter):
+        self.min_len = max_iter
         self.lists = self.init_lists(from_csv)
 
     def init_lists(self, from_csv):
@@ -18,6 +20,7 @@ class CSVReader:
         :param from_csv: dictionary from env
         :return: dictionary of the form field_name: list derived from the column from .csv
         """
+
         lists = [None]
         fields = [None]
         for field in from_csv:
@@ -25,6 +28,7 @@ class CSVReader:
             field_list = csv_file[field].tolist()[0:]
             lists.append(field_list)
             fields.append(field)
+            self.min_len = min(len(field_list), self.min_len)
         return dict(zip(fields, lists))
 
     def open_csv(self, csv_name):

@@ -275,6 +275,7 @@ class SimulationSuper:
             self.update()
             self.time_elapsed += 1
             time.sleep(self.delay)
+        #TODO: save figure of graph
 
     def run_thread(self):
         t = threading.Thread(target=self.run_simulation, daemon=True)

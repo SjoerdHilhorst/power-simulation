@@ -10,7 +10,8 @@ class Simulation(SimulationSuper):
 
     def __init__(self, battery, env):
         super().__init__(battery, env)
-        self.csv_reader = CSVReader(env['from_csv'])
+        self.csv_reader = CSVReader(env['from_csv'], self.max_iter)
+        self.max_iter = self.csv_reader.min_len
 
     def get_active_power_in(self):
         api = self.csv_reader.get_from_csv('active_power_in')
