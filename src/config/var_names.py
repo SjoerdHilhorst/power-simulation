@@ -9,7 +9,7 @@ FLOAT32 = 'float32'
 INT32 = 'int32'
 UINT32 = 'uint32'
 
-COIL = 1
-DISCRETE = 2
-HOLD_REG = 3
-IN_REG = 4
+CO = 1  # coils (1 bit, read-write)
+DI = 2  # discrete input (1 bit, read-only)
+HR = 3  # holding registers (16 bit, read-write)
+IR = 4  # input registers (16 bit, read-only)

@@ -2,27 +2,30 @@ from os.path import normpath, join, dirname
 
 import pandas as pd
 
-"""
-This class is responsible for manipulations of csv files. It contains lists of historic data for all fields specified
-in env.
-"""
-
 
 class CSVReader:
+    """
+    This class is responsible for manipulations of csv files. It contains lists of historic data for all fields specified
+    in env.
+    """
+
     def __init__(self, from_csv):
+        self.lists = self.init_lists(from_csv)
+
+    def init_lists(self, from_csv):
+        """
+        Opens .csv for the corresponding field and makes a list of its column
+        :param from_csv: dictionary from env
+        :return: dictionary of the form field_name: list derived from the column from .csv
+        """
         lists = [None]
         fields = [None]
         for field in from_csv:
-            # open csv corresponding to the field which should be taken from the csv
             csv_file = self.open_csv(from_csv[field])
-            # create a list containing the column of the field
             field_list = csv_file[field].tolist()[0:]
-            # append the list to all others
             lists.append(field_list)
-            # append the field name
             fields.append(field)
-        # zip a dictionary with pairs (field_name: list)
-        self.lists = dict(zip(fields, lists))
+        return dict(zip(fields, lists))
 
     def open_csv(self, csv_name):
         """

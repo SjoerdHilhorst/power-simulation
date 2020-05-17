@@ -1,20 +1,17 @@
-
 from numpy.ma import sin
 
 from util.csv_reader import CSVReader
 from simulations.simulation_super import SimulationSuper
 
-"""A class where a client can override any functions or specify that he wants a value from csv. At least methods of 
-re(active)_power_in/out  HAS TO BE PROVIDED """
-
 
 class Simulation(SimulationSuper):
+    """A class where a user can override any function of SimulationSuper or specify that the value should be read  from csv.
+     At least methods of re(active)_power_in/out  HAVE TO BE PROVIDED """
 
     def __init__(self, battery, env):
         super().__init__(battery, env)
         self.csv_reader = CSVReader(env['from_csv'])
 
-    # examples
     def get_active_power_in(self):
         api = self.csv_reader.get_from_csv('active_power_in')
         if not self.battery.is_input_connected():
@@ -37,8 +34,6 @@ class Simulation(SimulationSuper):
 
     def get_custom(self):
         return sin(self.time_elapsed)
-
-
 
     def update_custom(self):
         self.battery.set_value(self.fields['custom'], self.get_custom())

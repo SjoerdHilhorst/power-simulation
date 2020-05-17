@@ -3,13 +3,10 @@ import time
 
 import numpy as np
 
-"""
-Superclass for simulation which is responsible for updating all fields, as it it IS the simulation in essence. Was merged
-with MathEngine, so it provides default implementations of formulas. SHOULD NOT BE MODIFIED BY CLIENT
-"""
-
 
 class SimulationSuper:
+    """Superclass for simulation which is responsible for updating all fields. It provides default implementations of
+    formulas for relational fields. Responsible for sharing the data with Database and Graph """
 
     def __init__(self, battery, env):
         self.time_elapsed = 0
@@ -21,6 +18,11 @@ class SimulationSuper:
         self.graph = None
 
     def update(self):
+        """
+        Main updating function which first updates (re)_active_power_in/out (which should be defined in Simulation)
+        then updates relational fields (could be overriden in Simulation by the user), finally updates all custom
+        fields (should be defined by a user in Simulation)
+        """
         self.update_powers()
         self.update_relational()
         self.update_custom()
@@ -61,29 +63,9 @@ class SimulationSuper:
         """
         pass
 
-    def run_simulation(self):
-        for i in range(0, self.max_iter):
-            print(i)
-            self.update()
-            self.time_elapsed += 1
-            time.sleep(self.delay)
-
-    def run_thread(self):
-        t = threading.Thread(target=self.run_simulation, daemon=True)
-        t.start()
-
-    def write_to_db(self):
-        fields = self.fields
-        values = []
-        for field_name in fields:
-            values.append(self.battery.get_value(fields[field_name]))
-        self.db.write("battery", values)
-
-    def write_to_graph(self):
-        for field_name in self.graph.graphs:
-            value = self.battery.get_value(self.fields[field_name])
-            self.graph.data[field_name].append(value)
-        self.graph.data['t'] += 1
+    """
+    Default implementation of functions
+    """
 
     def random_gaussian_value(self, mu, sigma):
         return np.random.normal(mu, sigma)
@@ -283,3 +265,30 @@ class SimulationSuper:
         """
         value = self.random_gaussian_value(50, 0.01)
         return value
+
+    """
+    Functions responsible for the simulation flow and communicating with database and graph
+    """
+
+    def run_simulation(self):
+        for i in range(0, self.max_iter):
+            self.update()
+            self.time_elapsed += 1
+            time.sleep(self.delay)
+
+    def run_thread(self):
+        t = threading.Thread(target=self.run_simulation, daemon=True)
+        t.start()
+
+    def write_to_db(self):
+        fields = self.fields
+        values = []
+        for field_name in fields:
+            values.append(self.battery.get_value(fields[field_name]))
+        self.db.write("battery", values)
+
+    def write_to_graph(self):
+        for field_name in self.graph.graphs:
+            value = self.battery.get_value(self.fields[field_name])
+            self.graph.data[field_name].append(value)
+        self.graph.data['t'] += 1
