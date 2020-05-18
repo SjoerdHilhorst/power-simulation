@@ -8,19 +8,19 @@ class Database:
 
     def create_battery_table(self, address, drop_table):
         with sqlite3.connect(self.db_name) as conn:
-            c =  conn.cursor()
+            c = conn.cursor()
             columns = " REAL, ".join(address) + "REAL, time timestamp"
-            tableName = "battery"
+            table_name = "battery"
 
             if drop_table:
-                c.execute("DROP TABLE IF EXISTS %s" % tableName)
+                c.execute("DROP TABLE IF EXISTS %s" % table_name)
 
-            c.execute("CREATE TABLE IF NOT EXISTS %s (%s)" % (tableName, columns))
+            c.execute("CREATE TABLE IF NOT EXISTS %s (%s)" % (table_name, columns))
             conn.commit()
 
     def write(self, table, values):
         with sqlite3.connect(self.db_name) as conn:
-            c =  conn.cursor()
+            c = conn.cursor()
             values = ",".join(str(value) for value in values)
             query = "INSERT INTO %s VALUES (%s, datetime('now'))" % (table, values)
             c.execute(query)
