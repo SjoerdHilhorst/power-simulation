@@ -1,41 +1,36 @@
 from battery import Battery
-from simulations import HistoricSimulation, Simulation
-from database import Database
 
+from database import Database
+from graph import Graph
 from config.env import env
+from simulations.simulation import Simulation
 
 if __name__ == "__main__":
-    battery = Battery(env)
-    max_iter = env["max_iterations"]
-    delay = env["update_delay"]
 
+    """
+    Instantiation of the device and a simulation
+    """
+    battery = Battery(env)
+    simulation = Simulation(battery, env)
+
+    """
+    Setting the database (if enabled in env)
+    """
     if env["database"]["enabled"]:
         db_env = env["database"]
-        address = env["address"]
-        db = Database(db_env, address)
-        battery.db = db
+        fields = env["fields"]
+        db = Database(db_env, fields)
+        simulation.db = db
 
-    sim_type = env["simulation_type"]
-
-    if sim_type == "historic":
-        env_sim = env["historic_simulation"]
-        power_sim = HistoricSimulation(env_sim, battery, max_iter, delay)
-
-    elif sim_type == "simulation":
-        env_sim = env["simulation"]
-        power_sim = Simulation(env_sim, battery, max_iter, delay)
-
-    else:
-        raise LookupError("This simulation type does not exist: ", sim_type)
-
+    """
+    Setting the graph (if enabled in env)
+    """
     if env["graph"]["enabled"]:
-        from graph import Graph
-
         graph_env = env["graph"]
         fields = graph_env["fields"]
         graph = Graph(fields)
-        battery.graph = graph
-        power_sim.run_thread()
+        simulation.graph = graph
+        simulation.run_thread()
         graph.run()
     else:
-        power_sim.run_simulation()
+        simulation.run_simulation()

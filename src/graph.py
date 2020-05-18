@@ -1,42 +1,28 @@
-from PyQt5 import QtCore, QtGui
-from PyQt5.Qt import QMutex
-import pyqtgraph as pg
-import sys
+import matplotlib.pyplot as plt
+import matplotlib.animation as animation
+from matplotlib import style
 
 
-class Graph(pg.GraphicsWindow):
+class Graph:
 
-    def __init__(self, fields, *args, **kwargs):
-        super().__init__(title="graph", *args, **kwargs)
-        self.app = QtGui.QApplication(sys.argv)
+    def __init__(self, fields):
+        style.use('ggplot')
+        self.fig = plt.figure()
         self.data = {'t': 0}
         self.graphs = {}
 
+        idx = 1
         for field in fields:
-            graph = self.addPlot(title=field)
-            self.graphs[field] = graph.plot()
-            self.nextRow()
+            subplot = self.fig.add_subplot(len(fields), 1, idx)
+            subplot.set_title(field, fontsize=10)
+            self.graphs[field] = subplot
             self.data[field] = []
+            idx += 1
 
-        self.mutex = QMutex()
-        self.timer = QtCore.QTimer()
-        self.show()
-        self.t = 0
-
-    def update_plot_data(self):
-        self.mutex.lock()
+    def animate(self, i):
         for key, graph in self.graphs.items():
-            graph.setData(list(range(self.data['t'])), self.data[key], pen='g')
-        self.mutex.unlock()
+            graph.plot(list(range(self.data['t'])), self.data[key], color='green', linewidth=0.4)
 
     def run(self):
-        self.timer.setInterval(50)
-        self.timer.timeout.connect(self.update_plot_data)
-        self.timer.start()
-        sys.exit(self.app.exec_())
-
-
-
-
-
-
+        ani = animation.FuncAnimation(self.fig, self.animate, interval=100)
+        plt.show()

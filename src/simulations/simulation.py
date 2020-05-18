@@ -1,43 +1,40 @@
-import time
-import threading
+from numpy.ma import sin
+
+from util.csv_reader import CSVReader
+from simulations.simulation_super import SimulationSuper
 
 
-class PowerSimulation:
-    """
-    abstract class, in where rand, historical, sim should be implemented
-    """
-    def __init__(self, battery, max_iter, delay):
-        self.active_power_in = None
-        self.reactive_power_in = None
-        self.active_power_out = None
-        self.reactive_power_out = None
-        self.start_soc = None
-        self.t = 0
-        self.delay = delay
-        self.max_iter = max_iter
-        self.battery = battery
+class Simulation(SimulationSuper):
+    """A class where a user can override any function of SimulationSuper or specify that the value should be read  from csv.
+     At least methods of re(active)_power_in/out  HAVE TO BE PROVIDED """
 
-    def get_power(self):
-        api = self.active_power_in
-        rpi = self.reactive_power_in
-        apo = self.active_power_out
-        rpo = self.reactive_power_out
-        self.update()
-        return api, rpi, apo, rpo
+    def __init__(self, battery, env):
+        super().__init__(battery, env)
+        self.csv_reader = CSVReader(env['from_csv'], self.max_iter)
+        self.max_iter = self.csv_reader.min_len
 
-    def update(self):
-        """
-        should be implemented by subclass
-        """
-        raise NotImplementedError
+    def get_active_power_in(self):
+        api = self.csv_reader.get_from_csv('active_power_in')
+        if not self.battery.is_input_connected():
+            api = 0
+        return api
 
-    def run_simulation(self):
-        for i in range(0, self.max_iter):
-            print(i)
-            api, rpi, apo, rpo = self.get_power()
-            self.battery.update(api, rpi, apo, rpo)
-            time.sleep(self.delay)
+    def get_reactive_power_in(self):
+        rpi = self.csv_reader.get_from_csv('reactive_power_in')
+        if not self.battery.is_input_connected():
+            rpi = 0
+        return rpi
 
-    def run_thread(self):
-        t = threading.Thread(target=self.run_simulation, daemon=True)
-        t.start()
+    def get_active_power_out(self):
+        apo = self.csv_reader.get_from_csv('active_power_out')
+        return apo
+
+    def get_reactive_power_out(self):
+        rpo = self.csv_reader.get_from_csv('reactive_power_out')
+        return rpo
+
+    def get_custom(self):
+        return sin(self.time_elapsed)
+
+    def update_custom(self):
+        self.battery.set_value(self.fields['custom'], self.get_custom())

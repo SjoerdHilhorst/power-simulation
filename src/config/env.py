@@ -1,112 +1,121 @@
-from config.update_functions import *
 from config.var_names import *
 
 env = {
-    # address of modbus server
+
+    # Device information
     'server_address': ['localhost', 5030],
+    'id': 'GREENER_001',
+    'battery_capacity': 330,
 
-    # first index is function code, second index is address, third is type of float storage (applicable for holding
-    # and input registers)
+    # Simulation parameters
+
+    # realtime delay in sec between iterations (set to 0 for no delay)
+    'update_delay': 0.1,
+
+    # max number of iterations before simulation stops (set to None for infinite iterations)
+    # overridden by number of rows if csv is used
+    'max_iterations': 5000,
+
+    # Map of the registers of the form "field_name": configuration:
+    #           * reg_type: type of the register (coil/discrete input/holding register/input register)
+    #           * address: actual address
+    #           * encode:
+    #               - e_type: encoding type (SCALE/COMB)
+    #               - s_factor: scaling factor (optional)
+    #               - d_type: data type ((U)INT8, (U)INT16, (U)INT32, FLOAT32)
+    #           * init: initial value (optional)
+
     'fields': {
-        'soc': [holding, 10, scale],
-        'active_power_in': [holding, 12, scale],
-        'reactive_power_in': [holding, 14, scale],
-        'current_l1_in': [holding, 16, comb],
-        'current_l2_in': [holding, 18, comb],
-        'current_l3_in': [holding, 20, scale],
-        'voltage_l1_l2_in': [holding, 22, comb],
-        'voltage_l2_l3_in': [holding, 24, comb],
-        'voltage_l3_l1_in': [holding, 26, scale],
-        'frequency_in': [holding, 28, scale],
-        'active_power_out': [holding, 30, scale],
-        'reactive_power_out': [holding, 32, comb],
-        'current_l1_out': [holding, 34, comb],
-        'current_l2_out': [holding, 36, scale],
-        'current_l3_out': [holding, 38, comb],
-        'voltage_l1_l2_out': [holding, 40, scale],
-        'voltage_l2_l3_out': [holding, 42, comb],
-        'voltage_l3_l1_out': [holding, 44, scale],
-        'frequency_out': [holding, 46, comb],
-        'active_power_converter': [holding, 48, scale],
-        'reactive_power_converter': [holding, 50, scale],
+        'active_power_in':
+            {'reg_type': HR, 'address': 12, 'encode': {'e_type': SCALE, 'd_type': FLOAT32}},
+        'reactive_power_in':
+            {'reg_type': HR, 'address': 14, 'encode': {'e_type': SCALE, 'd_type': FLOAT32}},
+        'current_l1_in':
+            {'reg_type': HR, 'address': 16, 'encode': {'e_type': COMB, 'd_type': FLOAT32}},
+        'current_l2_in':
+            {'reg_type': HR, 'address': 18, 'encode': {'e_type': COMB, 'd_type': FLOAT32}},
+        'current_l3_in':
+            {'reg_type': HR, 'address': 20, 'encode': {'e_type': SCALE, 'd_type': FLOAT32}},
+        'voltage_l1_l2_in':
+            {'reg_type': HR, 'address': 22, 'encode': {'e_type': COMB, 'd_type': FLOAT32}},
+        'voltage_l2_l3_in':
+            {'reg_type': HR, 'address': 24, 'encode': {'e_type': COMB, 'd_type': FLOAT32}},
+        'voltage_l3_l1_in':
+            {'reg_type': HR, 'address': 26, 'encode': {'e_type': SCALE, 'd_type': FLOAT32}},
+        'frequency_in':
+            {'reg_type': HR, 'address': 28, 'encode': {'e_type': SCALE, 'd_type': INT32}},
+        'active_power_out':
+            {'reg_type': HR, 'address': 30, 'encode': {'e_type': SCALE, 'd_type': FLOAT32}},
+        'reactive_power_out':
+            {'reg_type': HR, 'address': 32, 'encode': {'e_type': COMB, 'd_type': FLOAT32}},
+        'current_l1_out':
+            {'reg_type': HR, 'address': 34, 'encode': {'e_type': COMB, 'd_type': FLOAT32}},
+        'current_l2_out':
+            {'reg_type': HR, 'address': 36, 'encode': {'e_type': SCALE, 'd_type': FLOAT32}},
+        'current_l3_out':
+            {'reg_type': HR, 'address': 38, 'encode': {'e_type': COMB, 'd_type': FLOAT32}},
+        'voltage_l1_l2_out':
+            {'reg_type': HR, 'address': 40, 'encode': {'e_type': SCALE, 'd_type': FLOAT32}},
+        'voltage_l2_l3_out':
+            {'reg_type': HR, 'address': 42, 'encode': {'e_type': COMB, 'd_type': FLOAT32}},
+        'voltage_l3_l1_out':
+            {'reg_type': HR, 'address': 44, 'encode': {'e_type': SCALE, 'd_type': FLOAT32}},
+        'frequency_out':
+            {'reg_type': HR, 'address': 46, 'encode': {'e_type': COMB, 'd_type': FLOAT32}},
+        'active_power_converter':
+            {'reg_type': HR, 'address': 48, 'encode': {'e_type': SCALE, 'd_type': FLOAT32}},
+        'reactive_power_converter':
+            {'reg_type': HR, 'address': 50, 'encode': {'e_type': SCALE, 'd_type': FLOAT32}},
 
-        'system_status': [holding, 52, scale],
-        'system_mode': [holding, 54, scale],
-        'accept_values': [coil, 10],
-        'converter_started': [coil, 11],
-        'input_connected': [coil, 12],
-        'system_on_backup_battery': [coil, 13]
+        'system_status':
+            {'reg_type': HR, 'address': 52, 'encode': {'e_type': SCALE, 'd_type': INT16}, 'init': 1},
+        'system_mode':
+            {'reg_type': HR, 'address': 54, 'encode': {'e_type': SCALE, 'd_type': INT16}, 'init': 5},
+        'accept_values':
+            {'reg_type': HR, 'address': 10, 'encode': {'e_type': SCALE, 's_factor': 1, 'd_type': INT8},
+             'init': 1},
+        'converter_started':
+            {'reg_type': CO, 'address': 11, 'encode': {'e_type': SCALE, 's_factor': 1, 'd_type': INT8}, 'init': 1},
+        'input_connected':
+            {'reg_type': CO, 'address': 12, 'encode': {'e_type': SCALE, 's_factor': 1, 'd_type': INT8}, 'init': 1},
+        'system_on_backup_battery':
+            {'reg_type': CO, 'address': 13, 'encode': {'e_type': SCALE, 's_factor': 1, 'd_type': INT8}, 'init': 1},
+
+        'soc':
+            {'reg_type': HR, 'address': 10, 'encode': {'e_type': SCALE, 'd_type': INT32}, 'init': 72.2},
+
+        'custom':
+            {'reg_type': HR, 'address': 58, 'encode': {'e_type': COMB, 'd_type': FLOAT32}, 'init': 200},
+
+    },
+
+    # a pair should be provided in a format field_name: csv_name (csv is stores in folders csvs)
+    'from_csv': {
+        'active_power_in': 'historic_battery_data',
+        'reactive_power_in': 'historic_battery_data',
+        'active_power_out': 'historic_battery_data',
+        'reactive_power_out': 'historic_battery_data',
     },
 
     'float_store': {
         # only used for SCALE, increase for more precision
-        'scaling_factor': 1000,
+        'default_scaling_factor': 1000,
         # Defines Endianness in modbus register,  '>' is Big Endian, '<' is Little Endian
         'word_order': '>',
         'byte_order': '>',
     },
 
-    'battery_constants': {
-        'system_status': 1,
-        'system_mode': 5,
-        'system_on_backup_battery': 1,
-        'accept_values': 1,
-        'converter_started': 1,
-        'input_connected': 1,
-        'battery_capacity': 330,
-        'id': 'GREENER_001',
-    },
-
-    # initial soc
-    'soc': 72.2,
-
-    # simulation type must be 'historic' or 'simulation'
-    # historic simulation will read I/O power from a user specified csv
-    # simulation will generate I/O power from user defined functions
-    'simulation_type': 'historic',
-
-    # realtime delay in sec between iteration, set to 0 for no delay
-    'update_delay': 0.1,
-
-    # max number of iterations before simulation stops, set to None if infinite iterations
-    # overridden by number of rows for historic sim
-    'max_iterations': 50000,
-
-    # only used for a historic simulation
-    # the csv must be located in the power-simulation folder
-    # the csv_name is without .csv
-    'historic_simulation': {
-        'csv_name': 'historic_battery_data',
-        'start_index': 0,
-    },
-
-    # only used for simulation
-    # define update functions for user inputs as lambda function, always have one argument (t)
-    # for example to do a constant: lambda t: 400
-    # you can also define more complex functions in update_functions and import them here
-    'simulation': {
-        'start_soc': 72.2,
-        'active_power_in': lambda t: 0.001 * quadratic(1, 2, 3, t),
-        'reactive_power_in': lambda t: 200 * sin(t),
-
-        # my_fun and sine are imported from update functions
-        'active_power_out': lambda t: 200 * sin(t),
-        'reactive_power_out': lambda t: quadratic(1, 2, 3, t)
-    },
-
     # show a realtime graph of battery fields
-    # it is advised to set update_delay to at least 0.01 for smoothness
     'graph': {
         'enabled': True,
-        # define which fields you want to plot
+        # define which fields to plot
         'fields': [
             "active_power_in",
             "active_power_out",
             "reactive_power_in",
             "reactive_power_out",
-            "active_power_converter",
-            "reactive_power_converter",
-            "soc"
+            "soc",
+            "custom",
         ]
     },
 
