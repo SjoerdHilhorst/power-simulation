@@ -1,7 +1,5 @@
 from battery import Battery
-
 from database import Database
-
 from config.env import env
 from simulations.simulation import Simulation
 
