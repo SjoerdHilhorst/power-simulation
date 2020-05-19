@@ -3,22 +3,22 @@ import threading
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock, ModbusServerContext
 from pymodbus.server.asynchronous import StartTcpServer
 
-from battery.util import FloatHandler
-
-"""
-Battery represents the Server/Slave. Basically is a modbus server wrapper
-"""
+from battery.payload_handler import PayloadHandler
 
 
 class Battery:
     """
+    Battery represents the Server/Slave. Basically is a modbus server wrapper.
+    """
+
+    """
     Initialize the store and the context
     """
     store = ModbusSlaveContext(
-        di=ModbusSequentialDataBlock.create(),  # discrete input (1 bit, read-only)
-        co=ModbusSequentialDataBlock.create(),  # coils (1 bit, read-write)
-        hr=ModbusSequentialDataBlock.create(),  # holding registers (16 bit, read-write)
-        ir=ModbusSequentialDataBlock.create())  # input registers (16 bit, read-only)
+        di=ModbusSequentialDataBlock.create(),
+        co=ModbusSequentialDataBlock.create(),
+        hr=ModbusSequentialDataBlock.create(),
+        ir=ModbusSequentialDataBlock.create())
 
     context = ModbusServerContext(slaves=store, single=True)
 
@@ -26,40 +26,48 @@ class Battery:
         self.fields = env['fields']
         self.id = env['id']
         self.max_capacity = env['battery_capacity']
-        self.float_handler = FloatHandler(env['float_store'], self.store)
+        self.payload_handler = PayloadHandler(env['float_store'], self.store)
+        self.set_initial_values()
+        self.run_server(self.context, env['server_address'])
+
+    def set_initial_values(self):
+        """
+        setting initial values to fields which have 'init' keyword in their dictionary
+        """
         for field_name in self.fields:
             if 'init' in self.fields[field_name]:
                 self.set_value(self.fields[field_name], self.fields[field_name]['init'])
 
     def set_value(self, field, value):
         """
-        sets the value to the given address; ALL data which is assigned to  16-bit registers (meaning fx > 2) is
-        multiplied by scaling factor and converted to integers first with the method handle_float()
-        :param field:
+        sets the value to the given field; ALL data which is assigned to  16-bit registers (meaning fx > 2) will
+        be encoded by payload_handler
+        :param field: a field from the the dictionary (fields[field_name])
         :param value: value to set
         """
         fx = field['reg_type']
         addr = field['address']
         if fx > 2:
             mode = field['encode']
-            value = self.float_handler.encode_float(value, mode)
+            value = self.payload_handler.encode(value, mode)
             self.store.setValues(fx, addr, value)
         else:
             self.store.setValues(fx, addr, [value])
 
     def get_value(self, field):
         """
-        gets the value from given address; ALL data from  16-bit registers (meaning fx > 2) is divided by scaling factor
-        :param field:
-        :return: value from the given address
+        gets the value of a given field; ALL data from  16-bit registers (meaning fx > 2) will be decoded  by
+        payload_handler
+        :param field: a field from the the dictionary (fields[field_name])
+        :return: value of the given field
         """
         fx = field['reg_type']
         addr = field['address']
         if fx <= 2:
-            value = self.store.getValues(fx, addr, 1)[0]
+            value = int(self.store.getValues(fx, addr, 1)[0])
         elif fx > 2:
             mode = field['encode']
-            value = self.float_handler.decode_float(fx, addr, mode)
+            value = self.payload_handler.decode(fx, addr, mode)
         return value
 
     def is_input_connected(self):

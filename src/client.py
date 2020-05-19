@@ -13,7 +13,7 @@ class GreenerEye:
         self.field = env['fields']
         server_address = env['server_address']
         self.client = ModbusClient(server_address[0], server_address[1])
-        self.scaling_factor = env["float_store"]['scaling_factor']
+        self.scaling_factor = env["float_store"]['default_scaling_factor']
         self.byte_order = env["float_store"]["byte_order"]
         self.word_order = env["float_store"]["word_order"]
 
@@ -63,18 +63,18 @@ class GreenerEye:
         print(r)
 
     def set_converter_started(self, bit):
-        self.client.write_coil(self.field['converter_started'][1], bit)
+        self.client.write_coil(self.field['converter_started']['address'], bit)
 
     def set_input_connected(self, bit):
-        self.client.write_coil(self.field['input_connected'][1], bit)
+        self.client.write_coil(self.field['input_connected']['address'], bit)
 
     def run(self):
         self.client.connect()
         print("CLIENT: is running")
-        self.read_float_example()
+        # self.read_float_example()
 
-        #self.set_converter_started(False)
-        #self.set_input_connected(False)
+        self.set_converter_started(False)
+        self.set_input_connected(False)
 
 
 if __name__ == "__main__":

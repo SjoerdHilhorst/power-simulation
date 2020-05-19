@@ -1,5 +1,5 @@
-comb = "COMB"
-scale = "SCALE"
+COMB = "COMB"
+SCALE = "SCALE"
 
 INT8 = 'int8'
 UINT8 = 'uint8'
@@ -9,7 +9,7 @@ FLOAT32 = 'float32'
 INT32 = 'int32'
 UINT32 = 'uint32'
 
-coil = 1
-discrete = 2
-holding = 3
-input = 4
+CO = 1  # coils (1 bit, read-write)
+DI = 2  # discrete input (1 bit, read-only)
+HR = 3  # holding registers (16 bit, read-write)
+IR = 4  # input registers (16 bit, read-only)
