@@ -4,7 +4,7 @@ for testing if the battery server works
 """
 
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
-
+from config.var_names import *
 from pymodbus.payload import BinaryPayloadDecoder
 
 
@@ -13,7 +13,7 @@ class GreenerEye:
         self.field = env['fields']
         server_address = env['server_address']
         self.client = ModbusClient(server_address[0], server_address[1])
-        self.scaling_factor = env["float_store"]['default_scaling_factor']
+        self.d_s_factor = env["float_store"]['default_scaling_factor']
         self.byte_order = env["float_store"]["byte_order"]
         self.word_order = env["float_store"]["word_order"]
 
@@ -26,18 +26,28 @@ class GreenerEye:
         elif fx == 2:
             return self.client.read_discrete_inputs(addr).bits[0]
         elif fx == 3:
-            mode = field['encode'][0]
+            encoding = field['encode']
             val = self.client.read_holding_registers(addr, 2)
         else:
-            mode = field['encode'][0]
+            encoding = field['encode']
             val = self.client.read_input_registers(addr, 2).registers
 
         d = self.from_registers(val)
 
-        if mode == "SCALE":
-            return d.decode_32bit_int() / self.scaling_factor
-        elif mode == "COMB":
-            return d.decode_32bit_float()
+        decode_type = {
+            INT8: lambda: d.decode_8bit_int(),
+            UINT8: lambda: d.decode_8bit_uint(),
+            INT16: lambda: d.decode_16bit_int(),
+            UINT16: lambda: d.decode_16bit_uint(),
+            INT32: lambda: d.decode_32bit_int(),
+            UINT32: lambda: d.decode_32bit_uint(),
+            FLOAT32: lambda: d.decode_32bit_float(),
+        }
+
+        if encoding['e_type'] == SCALE:
+            return decode_type[encoding['d_type']]() / encoding.get('s_factor', self.d_s_factor)
+        if encoding['e_type'] == COMB:
+            return decode_type[encoding['d_type']]()
 
     def from_registers(self, r):
         return BinaryPayloadDecoder.fromRegisters(r.registers, byteorder=self.byte_order, wordorder=self.word_order)
@@ -75,6 +85,8 @@ class GreenerEye:
 
         self.set_converter_started(False)
         self.set_input_connected(False)
+
+        self.read_float_example()
 
 
 if __name__ == "__main__":
