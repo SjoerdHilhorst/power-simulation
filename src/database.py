@@ -9,7 +9,7 @@ class Database:
     def create_battery_table(self, address, drop_table):
         with sqlite3.connect(self.db_name) as conn:
             c = conn.cursor()
-            columns = " REAL, ".join(address) + "REAL, time timestamp"
+            columns = " REAL, ".join(address) + " REAL, time timestamp"
             table_name = "battery"
 
             if drop_table:
