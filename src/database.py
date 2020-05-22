@@ -23,6 +23,5 @@ class Database:
             c = conn.cursor()
             values = ",".join(str(value) for value in values)
             query = "INSERT INTO %s VALUES (datetime('now'), %s)" % (self.table_name, values)
-            print(query)
             c.execute(query)
             conn.commit()
