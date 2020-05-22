@@ -8,7 +8,7 @@ class Graph:
     def __init__(self, fields):
         style.use('ggplot')
         self.fig = plt.figure()
-        self.data = {'t': 0}
+        self.data = {'time': 0}
         self.graphs = {}
 
         idx = 1
@@ -21,7 +21,7 @@ class Graph:
 
     def animate(self, i):
         for key, graph in self.graphs.items():
-            graph.plot(list(range(self.data['t'])), self.data[key], color='green', linewidth=0.4)
+            graph.plot(list(range(self.data['time'])), self.data[key], color='green', linewidth=0.4)
 
     def run(self):
         self.anim = animation.FuncAnimation(self.fig, self.animate)
