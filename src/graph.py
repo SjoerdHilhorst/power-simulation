@@ -24,5 +24,5 @@ class Graph:
             graph.plot(list(range(self.data['t'])), self.data[key], color='green', linewidth=0.4)
 
     def run(self):
-        ani = animation.FuncAnimation(self.fig, self.animate, interval=100)
+        self.anim = animation.FuncAnimation(self.fig, self.animate)
         plt.show()
