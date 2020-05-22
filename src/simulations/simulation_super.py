@@ -286,7 +286,7 @@ class SimulationSuper:
         values = []
         for field_name in fields:
             values.append(self.battery.get_value(fields[field_name]))
-        self.db.write("battery", values)
+        self.db.write(values)
 
     def write_to_graph(self):
         for field_name in self.graph.graphs:
