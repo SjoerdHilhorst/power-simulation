@@ -122,7 +122,7 @@ env = {
     # for debugging purposes
     'database': {
         # disable for better performance
-        'enabled': False,
+        'enabled': True,
         'db_name': 'power_simulation',
         'drop_table_on_start': True
     },
