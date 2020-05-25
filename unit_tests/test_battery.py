@@ -1,9 +1,9 @@
 import unittest
-from src.battery.battery import Battery
-from src.config.var_names import *
+from battery.battery import Battery
+from config.var_names import *
 
 
-class TestsBattery(unittest.TestCase):
+class TestBattery(unittest.TestCase):
 
     def test_get_value(self):
         test_env = {
@@ -62,7 +62,6 @@ class TestsBattery(unittest.TestCase):
         self.assertEqual(50, test_battery.get_value(test_battery.fields['accept_values_test']))
         self.assertEqual(0, test_battery.get_value(test_battery.fields['input_connected_test']))
 
-
     def test_is_input_connected(self):
         test_env = {
             'server_address': ['localhost', 5030],
@@ -109,7 +108,6 @@ class TestsBattery(unittest.TestCase):
         test_battery.set_value(test_battery.fields['converter_started'], 0)
         self.assertFalse(test_battery.is_converter_started())
 
-
     def test_set_initial_values(self):
         test_env = {
             'server_address': ['localhost', 5030],
@@ -151,3 +149,8 @@ class TestsBattery(unittest.TestCase):
         self.assertEqual(1, test_battery.get_value(test_battery.fields['input_connected']))
         self.assertEqual(1, test_battery.get_value(test_battery.fields['system_on_backup_battery']))
         self.assertEqual(1500, test_battery.get_value(test_battery.fields['custom']))
+
+
+if __name__ == '__main__':
+    unittest.main()
+

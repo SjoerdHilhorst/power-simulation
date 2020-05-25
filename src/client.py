@@ -4,7 +4,7 @@ for testing if the battery server works
 """
 
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
-from src.config.var_names import *
+from config.var_names import *
 from pymodbus.payload import BinaryPayloadDecoder
 
 
