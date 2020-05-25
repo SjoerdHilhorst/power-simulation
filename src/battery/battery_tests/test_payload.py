@@ -4,7 +4,7 @@ import unittest
 from config.var_names import *
 
 
-class TestUtil(unittest.TestCase):
+class TestPayload(unittest.TestCase):
 
     def test_encode(self):
         test_store = ModbusSlaveContext(t=ModbusSequentialDataBlock.create())
@@ -126,7 +126,7 @@ class TestUtil(unittest.TestCase):
         self.assertEqual(32.87,
                          test_handler.decode(1, 4, test_fields['scale_16_uint']['encode']))
         test_builder.reset()
-        test_builder.add_32bit_int(1)
+        test_builder.add_32bit_int(1000)
         test_store.setValues(1, 5, test_builder.to_registers())
         self.assertEqual(1,
                          test_handler.decode(1, 5, test_fields['scale_32_int']['encode']))
