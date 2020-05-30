@@ -1,5 +1,4 @@
 from battery import Battery
-
 from database import Database
 from graph import Graph
 from config.env import env

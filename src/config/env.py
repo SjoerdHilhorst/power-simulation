@@ -19,8 +19,8 @@ env = {
     # Map of the registers of the form "field_name": configuration:
     #           * reg_type: type of the register (coil/discrete input/holding register/input register)
     #           * address: actual address
-    #           * encode:
-    #               - e_type: encoding type (SCALE/COMB)
+    #           * encode: (not needed for CO and DI)
+    #               - e_type: encoding type (SCALE/COMB, optional for integers)
     #               - s_factor: scaling factor (optional)
     #               - d_type: data type ((U)INT8, (U)INT16, (U)INT32, FLOAT32)
     #           * init: initial value (optional)
@@ -68,21 +68,21 @@ env = {
             {'reg_type': HR, 'address': 50, 'encode': {'e_type': SCALE, 'd_type': FLOAT32}},
 
         'system_status':
-            {'reg_type': HR, 'address': 52, 'encode': {'e_type': SCALE, 'd_type': INT16}, 'init': 1},
+            {'reg_type': HR, 'address': 52, 'encode': {'d_type': INT16}, 'init': 1},
         'system_mode':
-            {'reg_type': HR, 'address': 54, 'encode': {'e_type': SCALE, 'd_type': INT16}, 'init': 5},
+            {'reg_type': HR, 'address': 54, 'encode': {'d_type': INT16}, 'init': 5},
         'accept_values':
-            {'reg_type': HR, 'address': 10, 'encode': {'e_type': SCALE, 's_factor': 1, 'd_type': INT8},
+            {'reg_type': HR, 'address': 56, 'encode': {'e_type': SCALE, 's_factor': 1, 'd_type': INT8},
              'init': 1},
         'converter_started':
-            {'reg_type': CO, 'address': 11, 'encode': {'e_type': SCALE, 's_factor': 1, 'd_type': INT8}, 'init': 1},
+            {'reg_type': CO, 'address': 11,  'init': 1},
         'input_connected':
-            {'reg_type': CO, 'address': 12, 'encode': {'e_type': SCALE, 's_factor': 1, 'd_type': INT8}, 'init': 1},
+            {'reg_type': CO, 'address': 12,  'init': 1},
         'system_on_backup_battery':
-            {'reg_type': CO, 'address': 13, 'encode': {'e_type': SCALE, 's_factor': 1, 'd_type': INT8}, 'init': 1},
+            {'reg_type': CO, 'address': 13, 'init': 1},
 
         'soc':
-            {'reg_type': HR, 'address': 10, 'encode': {'e_type': SCALE, 'd_type': INT32}, 'init': 72.2},
+            {'reg_type': HR, 'address': 10, 'encode': {'e_type': COMB, 'd_type': FLOAT32}, 'init': 72.2},
 
         'custom':
             {'reg_type': HR, 'address': 58, 'encode': {'e_type': COMB, 'd_type': FLOAT32}, 'init': 200},
@@ -99,7 +99,7 @@ env = {
 
     'float_store': {
         # only used for SCALE, increase for more precision
-        'default_scaling_factor': 1000,
+        'default_scaling_factor': 100,
         # Defines Endianness in modbus register,  '>' is Big Endian, '<' is Little Endian
         'word_order': '>',
         'byte_order': '>',
