@@ -162,8 +162,8 @@ class TestPayload(unittest.TestCase):
         self.assertEqual(32.99, test_handler.decode(1, 4, test_fields['scale_16_uint']['encode']))
         test_store.setValues(1, 5, test_handler.encode(1000, test_fields['scale_32_int']['encode']))
         self.assertEqual(1000, test_handler.decode(1, 5, test_fields['scale_32_int']['encode']))
-        test_store.setValues(1, 6, test_handler.encode(63.2, test_fields['scale_32_int']['encode']))
-        self.assertEqual(63.2, test_handler.decode(1, 6, test_fields['scale_32_int']['encode']))
+        test_store.setValues(1, 6, test_handler.encode(63.2, test_fields['scale_32_uint']['encode']))
+        self.assertEqual(63.2, test_handler.decode(1, 6, test_fields['scale_32_uint']['encode']))
         test_store.setValues(1, 7, test_handler.encode(1.333, test_fields['scale_32_float']['encode']))
         self.assertEqual(1.3, test_handler.decode(1, 7, test_fields['scale_32_float']['encode']))
         test_store.setValues(1, 8, test_handler.encode(789.4375, test_fields['comb_32_float']['encode']))
@@ -172,40 +172,47 @@ class TestPayload(unittest.TestCase):
     def test_no_e_type(self):
         test_store = ModbusSlaveContext(t=ModbusSequentialDataBlock.create())
         test_env = {'fields':
-                        {'scale_8_int':
+                        {'8_int':
                              {'reg_type': CO, 'address': 1,
-                              'encode': {'e_type': SCALE, 's_factor': 100, 'd_type': INT8}
+                              'encode': {'d_type': INT8}
                               },
-                         'scale_8_uint':
+                         '8_uint':
                              {'reg_type': CO, 'address': 2,
-                              'encode': {'e_type': SCALE, 's_factor': 10, 'd_type': UINT8}
+                              'encode': {'d_type': UINT8}
                               },
-                         'scale_16_int':
+                         '16_int':
                              {'reg_type': CO, 'address': 3,
-                              'encode': {'e_type': SCALE, 's_factor': 100, 'd_type': INT16}
+                              'encode': {'d_type': INT16}
                               },
-                         'scale_16_uint':
+                         '16_uint':
                              {'reg_type': CO, 'address': 4,
-                              'encode': {'e_type': SCALE, 's_factor': 100, 'd_type': UINT16}
+                              'encode': {'d_type': UINT16}
                               },
-                         'scale_32_int':
-                             {'reg_type': CO, 'address': 5, 'encode': {'e_type': SCALE, 'd_type': INT32}
+                         '32_int':
+                             {'reg_type': CO, 'address': 5,
+                              'encode': {'d_type': INT32}
                               },
-                         'scale_32_uint':
-                             {'reg_type': CO, 'address': 6, 'encode': {'e_type': SCALE, 'd_type': UINT32}
-                              },
-                         'scale_32_float':
-                             {'reg_type': CO, 'address': 7,
-                              'encode': {'e_type': SCALE, 's_factor': 10, 'd_type': FLOAT32}
-                              },
-                         'comb_32_float':
-                             {'reg_type': CO, 'address': 8, 'encode': {'e_type': COMB, 'd_type': FLOAT32}
+                         '32_uint':
+                             {'reg_type': CO, 'address': 6,
+                              'encode': {'d_type': UINT32}
                               }},
                     'byte_order': '<',
                     'word_order': '<',
                     'default_scaling_factor': 1000}
         test_fields = test_env['fields']
         test_handler = PayloadHandler(test_env, test_store)
+        test_store.setValues(1, 1, test_handler.encode(1, test_fields['8_int']['encode']))
+        self.assertEqual(1, test_handler.decode(1, 1, test_fields['8_int']['encode']))
+        test_store.setValues(1, 2, test_handler.encode(10, test_fields['8_uint']['encode']))
+        self.assertEqual(10, test_handler.decode(1, 2, test_fields['8_uint']['encode']))
+        test_store.setValues(1, 3, test_handler.encode(12, test_fields['16_int']['encode']))
+        self.assertEqual(12, test_handler.decode(1, 3, test_fields['16_int']['encode']))
+        test_store.setValues(1, 4, test_handler.encode(32, test_fields['16_uint']['encode']))
+        self.assertEqual(32, test_handler.decode(1, 4, test_fields['16_uint']['encode']))
+        test_store.setValues(1, 5, test_handler.encode(1000, test_fields['32_int']['encode']))
+        self.assertEqual(1000, test_handler.decode(1, 5, test_fields['32_int']['encode']))
+        test_store.setValues(1, 6, test_handler.encode(63, test_fields['32_uint']['encode']))
+        self.assertEqual(63, test_handler.decode(1, 6, test_fields['32_uint']['encode']))
 
 
 if __name__ == '__main__':
