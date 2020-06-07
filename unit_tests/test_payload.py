@@ -76,28 +76,16 @@ class TestPayload(unittest.TestCase):
                               'encode': {'e_type': SCALE, 's_factor': 10, 'd_type': INT8}
                               },
                          'scale_8_uint':
-                             {'reg_type': CO, 'address': 2,
+                             {'reg_type': CO, 'address': 4,
                               'encode': {'e_type': SCALE, 's_factor': 10, 'd_type': UINT8}
                               },
                          'scale_16_int':
-                             {'reg_type': CO, 'address': 3,
+                             {'reg_type': CO, 'address': 6,
                               'encode': {'e_type': SCALE, 's_factor': 100, 'd_type': INT16}
                               },
                          'scale_16_uint':
-                             {'reg_type': CO, 'address': 4,
+                             {'reg_type': CO, 'address': 8,
                               'encode': {'e_type': SCALE, 's_factor': 100, 'd_type': UINT16}
-                              },
-                         'scale_32_int':
-                             {'reg_type': CO, 'address': 5, 'encode': {'e_type': SCALE, 'd_type': INT32}
-                              },
-                         'scale_32_uint':
-                             {'reg_type': CO, 'address': 6, 'encode': {'e_type': SCALE, 'd_type': UINT32}
-                              },
-                         'scale_32_float':
-                             {'reg_type': CO, 'address': 7, 'encode': {'e_type': SCALE, 'd_type': FLOAT32}
-                              },
-                         'comb_32_float':
-                             {'reg_type': CO, 'address': 8, 'encode': {'e_type': COMB, 'd_type': FLOAT32}
                               }},
                     'byte_order': '<',
                     'word_order': '<',
@@ -112,39 +100,19 @@ class TestPayload(unittest.TestCase):
                          test_handler.decode(1, 1, test_fields['scale_8_int']['encode']))
         test_builder.reset()
         test_builder.add_8bit_uint(100)
-        test_store.setValues(1, 2, test_builder.to_registers())
+        test_store.setValues(1, 4, test_builder.to_registers())
         self.assertEqual(10,
-                         test_handler.decode(1, 2, test_fields['scale_8_uint']['encode']))
+                         test_handler.decode(1, 4, test_fields['scale_8_uint']['encode']))
         test_builder.reset()
         test_builder.add_16bit_int(1350)
-        test_store.setValues(1, 3, test_builder.to_registers())
+        test_store.setValues(1, 6, test_builder.to_registers())
         self.assertEqual(13.5,
-                         test_handler.decode(1, 3, test_fields['scale_16_int']['encode']))
+                         test_handler.decode(1, 6, test_fields['scale_16_int']['encode']))
         test_builder.reset()
         test_builder.add_16bit_uint(3287)
-        test_store.setValues(1, 4, test_builder.to_registers())
-        self.assertEqual(32.87,
-                         test_handler.decode(1, 4, test_fields['scale_16_uint']['encode']))
-        test_builder.reset()
-        test_builder.add_32bit_int(1000)
-        test_store.setValues(1, 5, test_builder.to_registers())
-        self.assertEqual(1,
-                         test_handler.decode(1, 5, test_fields['scale_32_int']['encode']))
-        test_builder.reset()
-        test_builder.add_32bit_uint(63200)
-        test_store.setValues(1, 6, test_builder.to_registers())
-        self.assertEqual(63.2,
-                         test_handler.decode(1, 6, test_fields['scale_32_uint']['encode']))
-        test_builder.reset()
-        test_builder.add_32bit_float(1333)
-        test_store.setValues(1, 7, test_builder.to_registers())
-        self.assertEqual(1.333,
-                         test_handler.decode(1, 7, test_fields['scale_32_float']['encode']))
-        test_builder.reset()
-        test_builder.add_32bit_float(789.4375)
         test_store.setValues(1, 8, test_builder.to_registers())
-        self.assertEqual(789.4375,
-                         test_handler.decode(1, 8, test_fields['comb_32_float']['encode']))
+        self.assertEqual(32.87,
+                         test_handler.decode(1, 8, test_fields['scale_16_uint']['encode']))
         test_builder.reset()
 
     def test_combo(self):
@@ -200,6 +168,44 @@ class TestPayload(unittest.TestCase):
         self.assertEqual(1.3, test_handler.decode(1, 7, test_fields['scale_32_float']['encode']))
         test_store.setValues(1, 8, test_handler.encode(789.4375, test_fields['comb_32_float']['encode']))
         self.assertEqual(789.4375, test_handler.decode(1, 8, test_fields['comb_32_float']['encode']))
+
+    def test_no_e_type(self):
+        test_store = ModbusSlaveContext(t=ModbusSequentialDataBlock.create())
+        test_env = {'fields':
+                        {'scale_8_int':
+                             {'reg_type': CO, 'address': 1,
+                              'encode': {'e_type': SCALE, 's_factor': 100, 'd_type': INT8}
+                              },
+                         'scale_8_uint':
+                             {'reg_type': CO, 'address': 2,
+                              'encode': {'e_type': SCALE, 's_factor': 10, 'd_type': UINT8}
+                              },
+                         'scale_16_int':
+                             {'reg_type': CO, 'address': 3,
+                              'encode': {'e_type': SCALE, 's_factor': 100, 'd_type': INT16}
+                              },
+                         'scale_16_uint':
+                             {'reg_type': CO, 'address': 4,
+                              'encode': {'e_type': SCALE, 's_factor': 100, 'd_type': UINT16}
+                              },
+                         'scale_32_int':
+                             {'reg_type': CO, 'address': 5, 'encode': {'e_type': SCALE, 'd_type': INT32}
+                              },
+                         'scale_32_uint':
+                             {'reg_type': CO, 'address': 6, 'encode': {'e_type': SCALE, 'd_type': UINT32}
+                              },
+                         'scale_32_float':
+                             {'reg_type': CO, 'address': 7,
+                              'encode': {'e_type': SCALE, 's_factor': 10, 'd_type': FLOAT32}
+                              },
+                         'comb_32_float':
+                             {'reg_type': CO, 'address': 8, 'encode': {'e_type': COMB, 'd_type': FLOAT32}
+                              }},
+                    'byte_order': '<',
+                    'word_order': '<',
+                    'default_scaling_factor': 1000}
+        test_fields = test_env['fields']
+        test_handler = PayloadHandler(test_env, test_store)
 
 
 if __name__ == '__main__':
