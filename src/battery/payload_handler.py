@@ -7,6 +7,7 @@ class PayloadHandler:
     encodes/decodes values according to the way it is stored in registry
     SCALE stands for multiplying/dividing by a scaling factor
     COMB stands for storing the value of one field in two registers
+    if none of those provided encodes only based on the type
     """
 
     def __init__(self, env, store):
@@ -27,11 +28,10 @@ class PayloadHandler:
             UINT32: lambda x: self.builder.add_32bit_uint(x),
             FLOAT32: lambda x: self.builder.add_32bit_float(x),
         }
-        if encoding['e_type'] == SCALE:
-            encode_type[encoding['d_type']](round(value * encoding.get('s_factor', self.d_s_factor)))
-        else:
+        if 'e_type' not in encoding or encoding['e_type'] == COMB:
             encode_type[encoding['d_type']](value)
-
+        else:
+            encode_type[encoding['d_type']](round(value * encoding.get('s_factor', self.d_s_factor)))
         return self.builder.to_registers()
 
     def decode(self, fx, addr, encoding):
@@ -47,7 +47,7 @@ class PayloadHandler:
             UINT32: lambda: decoder.decode_32bit_uint(),
             FLOAT32: lambda: decoder.decode_32bit_float(),
         }
-        if encoding['e_type'] == SCALE:
-            return decode_type[encoding['d_type']]() / encoding.get('s_factor', self.d_s_factor)
-        else:
+        if 'e_type' not in encoding or encoding['e_type'] == COMB:
             return decode_type[encoding['d_type']]()
+        else:
+            return decode_type[encoding['d_type']]() / encoding.get('s_factor', self.d_s_factor)
