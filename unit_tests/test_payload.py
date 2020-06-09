@@ -1,4 +1,4 @@
-from battery.payload_handler import *
+from server.payload_handler import *
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock
 import unittest
 from config.var_names import *

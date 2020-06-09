@@ -1,5 +1,5 @@
 import unittest
-from battery.battery import Battery
+from server.battery import Battery
 from config.var_names import *
 
 
