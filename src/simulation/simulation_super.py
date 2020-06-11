@@ -131,7 +131,7 @@ class SimulationSuper:
     def get_soc(self):
         """
         :return: previous SoC + [(active_power_converter) /
-                max battery capacity * 3600.
+                max server capacity * 3600.
         """
         if not self.battery.is_converter_started():
             return self.battery.get_value(self.fields['soc'])

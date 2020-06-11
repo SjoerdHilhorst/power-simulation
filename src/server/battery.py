@@ -3,7 +3,7 @@ import threading
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock, ModbusServerContext
 from pymodbus.server.asynchronous import StartTcpServer
 
-from battery.payload_handler import PayloadHandler
+from src.server.payload_handler import PayloadHandler
 
 
 class Battery:

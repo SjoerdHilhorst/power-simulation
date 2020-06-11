@@ -1,6 +1,6 @@
 import unittest
-from battery.battery import Battery
-from config.var_names import *
+from src.server.battery import Battery
+from src.config.var_names import *
 
 
 class TestBattery(unittest.TestCase):
@@ -33,7 +33,7 @@ class TestBattery(unittest.TestCase):
 
     def test_set_value(self):
         test_env = {
-            'server_address': ['localhost', 5030],
+            'server_address': ['localhost', 5040],
             'id': 'GREENER_TEST_002',
             'battery_capacity': 330,
             'fields': {
@@ -64,7 +64,7 @@ class TestBattery(unittest.TestCase):
 
     def test_is_input_connected(self):
         test_env = {
-            'server_address': ['localhost', 5030],
+            'server_address': ['localhost', 5050],
             'id': 'GREENER_TEST_003',
             'battery_capacity': 330,
             'fields': {
@@ -87,7 +87,7 @@ class TestBattery(unittest.TestCase):
 
     def test_is_converter_started(self):
         test_env = {
-            'server_address': ['localhost', 5030],
+            'server_address': ['localhost', 5060],
             'id': 'GREENER_TEST_004',
             'battery_capacity': 330,
             'fields': {
@@ -110,7 +110,7 @@ class TestBattery(unittest.TestCase):
 
     def test_set_initial_values(self):
         test_env = {
-            'server_address': ['localhost', 5030],
+            'server_address': ['localhost', 5070],
             'id': 'GREENER_TEST_004',
             'battery_capacity': 330,
             'fields': {
