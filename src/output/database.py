@@ -4,7 +4,7 @@ import sqlite3
 class Database:
     def __init__(self, env, address):
         self.db_name = env["db_name"] + ".db"
-        self.table_name = "battery"
+        self.table_name = "server"
         self.create_battery_table(address, env["drop_table_on_start"])
 
     def create_battery_table(self, address, drop_table):

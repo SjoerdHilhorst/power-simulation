@@ -1,7 +1,7 @@
 from numpy.ma import sin
 
-from util.csv_reader import CSVReader
-from simulations.simulation_super import SimulationSuper
+from simulation.csv_reader import CSVReader
+from simulation import SimulationSuper
 
 
 class Simulation(SimulationSuper):

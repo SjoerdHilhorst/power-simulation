@@ -1,8 +1,8 @@
-from battery import Battery
-from database import Database
-from graph import Graph
+from server import Battery
+from output import Database
+from output import Graph
 from config.env import env
-from simulations.simulation import Simulation
+from simulation import Simulation
 
 if __name__ == "__main__":
 

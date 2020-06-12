@@ -1,6 +1,6 @@
 """ Client == master == GreenerEye
 This is a simple client example
-for testing if the battery server works
+for testing if the server server works
 """
 
 from pymodbus.client.sync import ModbusTcpClient as ModbusClient
@@ -43,11 +43,11 @@ class GreenerEye:
             UINT32: lambda: d.decode_32bit_uint(),
             FLOAT32: lambda: d.decode_32bit_float(),
         }
-
-        if encoding['e_type'] == SCALE:
-            return decode_type[encoding['d_type']]() / encoding.get('s_factor', self.d_s_factor)
-        if encoding['e_type'] == COMB:
+        if 'e_type' not in encoding or encoding['e_type'] == COMB:
             return decode_type[encoding['d_type']]()
+        else:
+            return decode_type[encoding['d_type']]() / encoding.get('s_factor', self.d_s_factor)
+
 
     def from_registers(self, r):
         return BinaryPayloadDecoder.fromRegisters(r.registers, byteorder=self.byte_order, wordorder=self.word_order)

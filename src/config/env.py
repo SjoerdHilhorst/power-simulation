@@ -105,7 +105,7 @@ env = {
         'byte_order': '>',
     },
 
-    # show a realtime graph of battery fields
+    # show a realtime graph of server fields
     'graph': {
         'enabled': True,
         # define which fields to plot
