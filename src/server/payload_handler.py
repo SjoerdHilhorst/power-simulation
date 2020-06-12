@@ -1,5 +1,5 @@
 from pymodbus.payload import BinaryPayloadBuilder, BinaryPayloadDecoder
-from src.config.var_names import *
+from config.var_names import *
 
 
 class PayloadHandler:

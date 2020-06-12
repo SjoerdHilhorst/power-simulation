@@ -1,6 +1,6 @@
 from server import Battery
-from output.database import Database
-from output.graph import Graph
+from output import Database
+from output import Graph
 from config.env import env
 from simulation import Simulation
 
