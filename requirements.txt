@@ -5,10 +5,10 @@ cycler==0.10.0
 hyperlink==19.0.0
 idna==2.9
 incremental==17.5.0
-kiwisolver==1.2.0
-matplotlib==3.2.1
+kiwisolver==1.1.0
+matplotlib==3.0.3
 numpy==1.18.4
-pandas==1.0.3
+pandas==0.25.3
 PyHamcrest==2.0.2
 pymodbus==2.3.0
 pyparsing==2.4.7
