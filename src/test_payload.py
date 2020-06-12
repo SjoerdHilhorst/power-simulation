@@ -1,7 +1,7 @@
-from src.server.payload_handler import *
+from server.payload_handler import *
 from pymodbus.datastore import ModbusSlaveContext, ModbusSequentialDataBlock
 import unittest
-from src.config.var_names import *
+from config.var_names import *
 
 
 class TestPayload(unittest.TestCase):

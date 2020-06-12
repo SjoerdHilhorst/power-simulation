@@ -7,7 +7,7 @@ class TestBattery(unittest.TestCase):
 
     def test_get_value(self):
         test_env = {
-            'server_address': ['localhost', 5030],
+            'server_address': ['localhost', 5090],
             'id': 'GREENER_TEST_001',
             'battery_capacity': 330,
             'fields': {
@@ -33,7 +33,7 @@ class TestBattery(unittest.TestCase):
 
     def test_set_value(self):
         test_env = {
-            'server_address': ['localhost', 5040],
+            'server_address': ['localhost', 5045],
             'id': 'GREENER_TEST_002',
             'battery_capacity': 330,
             'fields': {
