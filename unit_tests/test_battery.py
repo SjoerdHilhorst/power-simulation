@@ -1,6 +1,6 @@
 import unittest
-from src.server.battery import Battery
-from src.config.var_names import *
+from server.battery import Battery
+from config.var_names import *
 
 
 class TestBattery(unittest.TestCase):
