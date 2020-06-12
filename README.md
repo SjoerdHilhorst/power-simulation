@@ -3,6 +3,7 @@ Simulation of battery for [Greener Power Solutions](https://www.gogreener.eu/) w
 A software engineering project for Rijksuniversiteit Groningen.
 
 ## Prerequisites
+The software requires Python 3.5
 To use this project you need to clone the repo:
 ```
 git clone https://github.com/SjoerdHilhorst/power-simulation.git
